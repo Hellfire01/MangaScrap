@@ -1,0 +1,25 @@
+
+ arguments for MangaScrapp :
+
+ -a --add 'manga name' [manga site (default is manga fox)]
+    add manga to database
+
+ -u --update [manga name] [manga chapter] [manga page]
+    update database / manga
+
+ -dl --download 'manga name' [manga site (default is manga fox)]
+    add manga and download
+
+ -l --list [manga name / manga site]
+    shows content of database
+
+ -d --delete [manga name] [manga chapter] [manga page]
+    deletes manga from database and from files
+
+ -h --help
+    displays help
+
+ Warning !
+ The [manga name] is found in the url
+ ex : "black clover" => http://mangafox.me/manga/black_clover/
+ [manga name] = "black_clover"
