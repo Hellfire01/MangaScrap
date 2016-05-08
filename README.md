@@ -6,6 +6,7 @@ to update them when ever a new chapter is published
 versions :
 
 0.1.0 : alpha with database and manga download and update on mangafox
+0.1.1 : small debug to avoid manga duplicates in database
 
 gems required :
 - nokogiri

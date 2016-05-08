@@ -141,7 +141,9 @@ class Download
     if @doc == nil || @links == nil || @links.size == 0
       abort("failed to get manga " + manga_name + " chapter index")
     end
-    @db.add_manga(manga_name, @doc.xpath('//p[@class="summary"]').text, site, site + manga_name, @links.size)
+    if db.manga_in_data?(manga_name) == false
+      @db.add_manga(manga_name, @doc.xpath('//p[@class="summary"]').text, site, site + manga_name, @links.size)
+    end
     dir_create(@dir)
   end
 end
