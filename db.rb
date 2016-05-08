@@ -31,7 +31,7 @@ class DB
 
   def delete_manga(manganame)
     begin
-      @db.execute "DELETE FROM manga_list WHERE name = #{manganame}"
+      @db.execute "DELETE FROM manga_list WHERE name = '#{manganame}'"
     rescue SQLite3::Exception => e
       puts "exception on database while excecuting : "
       puts "DELETE FROM manga_list WHERE name = #{manganame}"

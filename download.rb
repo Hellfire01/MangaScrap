@@ -158,16 +158,34 @@ def download(db, work_dir)
     puts "missing argument : --help for more information"
   else
     site = "http://mangafox.me/manga/"
+    file = false
     if (ARGV.size > 2)
-      site = ARGV[2].to_s
+      ret = get_mangas()
+      if (ret != nil)
+	file = true
+      else
+	site = ARGV[2].to_s
+      end
     end
-    name = ARGV[1].to_s
-    if (db.manga_in_data?(name) == true)
-      puts "manga was found in database, updating it"
-      update(db, work_dir)
+    if (file == false)
+      name = ARGV[1].to_s
+      if (db.manga_in_data?(name) == true)
+	puts "manga was found in database, updating it"
+	update(db, work_dir)
+      else
+	dl = Download.new(db, name, work_dir, site)
+	dl.manga()
+      end
     else
-      dl = Download.new(db, name, work_dir, site)
-      dl.manga()
+      ret.each do |manga|
+	if (name.size == 1)
+	  site = "http://mangafox.me/manga/"
+	else
+	  site == manga[1]
+	end
+	Download.new(db, manga[0], work_dir, site)
+	dl.manga()
+      end
     end
   end
 end

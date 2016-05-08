@@ -49,7 +49,16 @@ def update(db, work_dir)
     else
       abort('could not find ' + ARGV[1] + ' in database')
     end
+  when 3
+    ret = get_mangas()
+    if (ret != nil)
+      ret.each do |name|
+	update_manga(db, name[0], work_dir)
+      end
+    else
+      abort("error while trying to get content of file ( -t option )")
+    end
   else
-    abort('too many arguments for update, --help for help')
+    abort('bad number of arguments for update, --help for help')
   end
 end

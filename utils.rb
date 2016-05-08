@@ -72,7 +72,7 @@ end
 # determines if directory exists
 def dir_create(directory)
   if Dir.exists?(directory) == true
-    puts directory + " exists"
+    puts "folder " + directory + " exists"
   else
     puts directory + " does not exist, creating it"
     Dir.mkdir(directory)
@@ -100,4 +100,31 @@ def file_name(dir, chap_value, page_nb)
   page_buffer = ((page_nb > 1000) ? "0" : ((page_nb > 100) ? "00" : ((page_nb > 10) ? "000" : "0000")))
   name_buffer = dir + "manga_c" + chap_buffer + chap_str + "_p" + page_buffer + page_nb.to_s
   return name_buffer
+end
+
+# open -t option file and return array
+def get_mangas()
+  ret = Array.new
+  if (ARGV[1] == "-t")
+    line_num = 0
+    begin
+      text = File.open(ARGV[2]).read
+    rescue Exception => e
+      abort(e.message)
+    end
+    text.gsub!(/\r\n?/, "\n")
+    text.each_line do |line|
+      elems = line.split(" ")
+      if (elems.size > 2)
+	abort("there is more than one space on line #{line_num}")
+      end
+      ret << elems
+      line_num += 1
+    end
+  else
+    return nil
+  end
+  ARGV.delete_at(2)
+  ARGV.delete_at(1)
+  return ret
 end

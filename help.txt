@@ -1,25 +1,45 @@
 
  arguments for MangaScrapp :
 
- -a --add 'manga name' [manga site (default is manga fox)]
+ -a --add [-t 'name of file'] / 'manga name' [manga site (default is manga fox)]
     add manga to database
 
- -u --update [manga name]
+ -u --update [-t 'name of file'] / [manga name]
     update database / manga
 
- -dl --download 'manga name' [manga site (default is manga fox)]
+ -dl --download [-t 'name of file'] 'manga name' [manga site (default is manga fox)]
     add manga and download
 
  -l --list [manga name / manga site]
     shows content of database
 
- -d --delete [manga name]
+ -d --delete [-t 'name of file'] / [manga name]
     deletes manga from database ( not the files )
 
  -h --help
     displays help
 
+ -t + 'file name' allows you to do multiple mangas at once
+ it is used with add, update, download and delete
+ if used, no other arguments are required
+ in the file, each manga is separated by a line break
+ syntax is : manga_name [site]
+ the site will be ignored for update and delete
+ 
+ example :
+ black_clover
+ crepuscule_yamchi http://mangafox.me/
+
+ Usage exemples :
+ ./MangaScrapp -a my_super_manga
+    adds 'my_super_manga' to the database for future update
+ ./MangaScrapp
+ ./MangaScrapp -u
+    updates all mangas in database
+ ./MangaScrapp -t file.txt
+    updates all mangas in file.txt
+
  Warning !
  The [manga name] is found in the url
- ex : "black clover" => http://mangafox.me/manga/black_clover/
- [manga name] = "black_clover"
+ ex : "black clover" => http://mangafox.me/manga/black_clover/ => "black_clover"
+ ex : "crepuscule" => http://mangafox.me/manga/crepuscule_yamchi/ => "crepuscule_yamchi"
