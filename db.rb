@@ -1,5 +1,3 @@
-require 'sqlite3'
-
 class DB
   #manga database
   def add_manga(manganame, description, site, link, nb_chapters)
@@ -76,10 +74,10 @@ class DB
 
   def get_manga_list()
     begin
-      ret = @db.execute "SELECT name FROM manga_list"
+      ret = @db.execute "SELECT name FROM manga_list ORDER BY name COLLATE NOCASE"
     rescue SQLite3::Exception => e
       puts "exception on database while excecuting : "
-      puts "SELECT name FROM manga_list"
+      puts "SELECT name FROM manga_list ORDER BY name COLLATE NOCASE"
       abort(e.message)
     end
     return ret

@@ -1,6 +1,3 @@
-require 'nokogiri'
-require_relative 'get_link'
-
 class Download
   def get_chapter_values()
     ret = []
@@ -77,12 +74,11 @@ class Download
       page_nb += 1
       last_pos = chapter.rindex(/\//)
       link = chapter[0..last_pos].strip + page_nb.to_s + ".html"
-      previous = page
-      page = get_link(link)
-      if (page.xpath('//option[@selected="selected"]')[0].text == previous.xpath('//option[@selected="selected"]')[0].text)
+      if (redirection_detection(link) == true)
 	puts "end of chapter with #{page_nb - 1} pages"
 	break
       end
+      page = get_link(link)
     end
     @db.add_trace(@manga_name, @chapter_value)
   end
@@ -128,20 +124,14 @@ class Download
     @site = site
     @doc = get_link(site + manga_name)
     @links = @doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
-    begin
-      open(site + manga_name) do |resp|
-	if (resp.base_uri.to_s != (site + manga_name))
-	  abort ("could not find manga #{manga_name} at " + site + manga_name)
-	end
-      end
-    rescue OpenURI::HTTPError => error
-      puts "exception when trying to connect to site"
-      puts error.message
+    if (redirection_detection(site + manga_name) == true)
+      abort ("could not find manga #{manga_name} at " + site + manga_name)
     end
     if @doc == nil || @links == nil || @links.size == 0
       abort("failed to get manga " + manga_name + " chapter index")
     end
     if db.manga_in_data?(manga_name) == false
+      puts "added #{manga_name} to database"
       @db.add_manga(manga_name, @doc.xpath('//p[@class="summary"]').text, site, site + manga_name, @links.size)
     end
     dir_create(@dir)

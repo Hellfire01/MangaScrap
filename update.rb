@@ -1,4 +1,5 @@
 def update_manga(db, name, work_dir)
+  puts ""
   manga = db.get_manga(name)
   todo = db.get_todo(name)
   dw = Download.new(db, name, work_dir, manga[3])
@@ -19,10 +20,12 @@ def update_manga(db, name, work_dir)
   chapters = dw.get_chapter_values()
   chapters.each do |chap|
     if (traces.select{|id, value| value == chap}.size == 0)
+      puts ""
       puts "did not find #{chap}"
       dw.chapter(chap)
     end
   end
+  puts ""
 end
 
 def update_all(db, work_dir)

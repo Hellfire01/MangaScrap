@@ -1,12 +1,31 @@
-require 'nokogiri'
-
 #change this variable to set the number of tries per link and picture
 $nb_tries = 25
 
 #change this variable to set the sleeping time between downloads
-#Warning !!! => setting these variables too low may result in an IP ba for the site
+#Warning !!! => setting these variables too low may result in an IP ban
 $between_sleep = 0.25
 $failure_sleep = 1.5
+
+# detects if there whas a redirection on the required link
+def redirection_detection(url)
+  tries ||= $nb_tries
+  begin
+    open(url) do |resp|
+      if (resp.base_uri.to_s != url)
+	return true
+      end
+    end
+  rescue OpenURI::HTTPError
+    if tries > 0
+	tries -= 1
+	sleep($failure_sleep)
+	retry
+    else
+      abort("connection is lost, stopping programm")
+    end
+  end
+  return false
+end  
 
 # conect to link and download page
 def get_link(link)
