@@ -2,6 +2,17 @@ require 'nokogiri'
 require_relative 'get_link'
 
 class Download
+  def get_chapter_values()
+    ret = []
+    @links.reverse.each do |chapter|
+      chap_cut = chapter.split("/")
+      tmp = chap_cut[chap_cut.size - 2]
+      tmp.slice!(0)
+      ret << tmp.to_f
+    end
+    return ret
+  end
+
   def _extract_link(chapter_nb)
     i = 0
     @links.each do |chapter|
@@ -15,7 +26,9 @@ class Download
       i += 1
     end
     if (i == @links.size)
-      abort("could not find the requested chapter (#{chapter_nb}) in the manga page")
+      puts "could not find the requested chapter (#{chapter_nb}) in the manga page"
+      p @links
+      abort()
     end
     return @links[i]
   end
@@ -46,11 +59,12 @@ class Download
     link = chapter[0..last_pos].strip + page_nb.to_s + ".html"
     page = get_link(link)
     if (page == nil)
-      abort("leaving programm => could not download data from #{link}")
+      puts "leaving programm => could not download data from #{link}"
+      return false
     end
-    puts "chapter #{chapter_nb}/#{@links.size} => #{@chapter_value.to_s}"
-    puts "page #{page}"
+    puts "chapter #{chapter_nb}/#{@links.size} => #{@chapter_value.to_s} / page #{page_nb}"
     _page(chapter_nb, page_nb, page)
+    return true
   end
 
   def _chapter(chapter, chapter_nb)
@@ -75,7 +89,7 @@ class Download
 
   def chapter(chapter_nb)
     chapter = _extract_link(chapter_nb)
-    puts "chapter #{chapter_nb}/#{@links.size} => #{@chapter_value.to_s}"
+    puts "downloading chapter #{chapter_nb}"
     _chapter(chapter, chapter_nb)
   end
 
@@ -114,8 +128,18 @@ class Download
     @site = site
     @doc = get_link(site + manga_name)
     @links = @doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
-    if @doc == nil
-      abort("failed to get manga " + manga_name + "chapter index")
+    begin
+      open(site + manga_name) do |resp|
+	if (resp.base_uri.to_s != (site + manga_name))
+	  abort ("could not find manga #{manga_name} at " + site + manga_name)
+	end
+      end
+    rescue OpenURI::HTTPError => error
+      puts "exception when trying to connect to site"
+      puts error.message
+    end
+    if @doc == nil || @links == nil || @links.size == 0
+      abort("failed to get manga " + manga_name + " chapter index")
     end
     @db.add_manga(manga_name, @doc.xpath('//p[@class="summary"]').text, site, site + manga_name, @links.size)
     dir_create(@dir)
@@ -131,12 +155,12 @@ def download(db, work_dir)
       site = ARGV[2].to_s
     end
     name = ARGV[1].to_s
-#    if (db.find_manga(name) == true)
-#      puts "manga was found in database, updating it"
-#      update(db)
-#    else
+    if (db.manga_in_data?(name) == true)
+      puts "manga was found in database, updating it"
+      update(db, work_dir)
+    else
       dl = Download.new(db, name, work_dir, site)
       dl.manga()
-#    end
+    end
   end
 end

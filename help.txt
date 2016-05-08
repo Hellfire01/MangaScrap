@@ -4,7 +4,7 @@
  -a --add 'manga name' [manga site (default is manga fox)]
     add manga to database
 
- -u --update [manga name] [manga chapter] [manga page]
+ -u --update [manga name]
     update database / manga
 
  -dl --download 'manga name' [manga site (default is manga fox)]
@@ -13,8 +13,8 @@
  -l --list [manga name / manga site]
     shows content of database
 
- -d --delete [manga name] [manga chapter] [manga page]
-    deletes manga from database and from files
+ -d --delete [manga name]
+    deletes manga from database ( not the files )
 
  -h --help
     displays help

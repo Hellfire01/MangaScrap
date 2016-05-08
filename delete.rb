@@ -1,3 +1,0 @@
-def delete(db)
-
-end

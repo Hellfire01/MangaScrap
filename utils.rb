@@ -1,7 +1,7 @@
 require 'nokogiri'
 
 #change this variable to set the number of tries per link and picture
-$nb_tries = 20
+$nb_tries = 25
 
 #change this variable to set the sleeping time between downloads
 #Warning !!! => setting these variables too low may result in an IP ba for the site

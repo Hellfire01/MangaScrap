@@ -4,7 +4,7 @@ def add(db, work_dir)
   end
   manga_name = ARGV[1]
   site = "http://mangafox.me/manga/"
-  if (ARGV.size > 1)
+  if (ARGV.size > 2)
     site = ARGV[2]
   end
   Download.new(db, manga_name, work_dir, site)

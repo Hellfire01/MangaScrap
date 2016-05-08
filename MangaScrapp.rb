@@ -1,16 +1,9 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-# sqlite3 tables :
-#
-# manga_list(id, name, site, link, chapters)
-# <name_of_manga>_todo(id, chapter, page, link)
-
 require 'open-uri'
 require 'nokogiri'
 require 'sqlite3'
-#todo => regarder s'il ne serait pas possible déplacer
-# les require dans le code pour un gain de performances
 require_relative 'utils'
 require_relative 'download'
 require_relative 'db'
@@ -18,31 +11,30 @@ require_relative 'update'
 require_relative 'help'
 require_relative 'add'
 require_relative 'list'
-require_relative 'delete'
 
-work_dir = Dir.home + "/Documents/web_tests/"
+work_dir = Dir.home + "/Documents/mangas/"
 
 dir_create(work_dir)
 db = DB.new()
 
 if ARGV.size == 0
-  update(db)
+  update(db, work_dir)
 else
   case ARGV[0]
   when "-u", "--update"
-    abort('update')
-    update(db)
+    update(db, work_dir)
   when "-a", "--add"
-    abort('add')
-    add(gb)
+    add(db, work_dir)
   when "-dl", "--download"
     download(db, work_dir)
   when "-l", "--list"
-    abort('list')
     list(db)
   when "-d", "--delete"
-    abort('delete')
-    delete(bd)
+    if (ARGV.size < 2)
+      puts "need a manga's name to delete"
+    else
+      db.delete_manga(ARGV[1])
+    end
   when "-h", "--help"
     help()
   else
