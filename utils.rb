@@ -4,7 +4,7 @@ $nb_tries = 25
 #change this variable to set the sleeping time between downloads
 #Warning !!! => setting these variables too low may result in an IP ban
 $between_sleep = 0.25
-$failure_sleep = 1.5
+$failure_sleep = 1
 
 # detects if there whas a redirection on the required link
 def redirection_detection(url)

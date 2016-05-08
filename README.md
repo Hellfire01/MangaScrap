@@ -8,6 +8,7 @@ versions :
 0.1.0 : alpha with database and manga download and update on mangafox
 0.1.1 : small debug to avoid manga duplicates in database
 0.1.2 : better code factorisation and better redirection detection
+0.1.3 : MangaScrapp now deletes the .txt files generated after an error
 
 gems required :
 - nokogiri

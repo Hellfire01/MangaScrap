@@ -30,16 +30,24 @@ class Download
     return @links[i]
   end
 
-  def _page(chapter_nb, page_nb, page)
+  def _page(chapter_nb, page_nb, page, del = false)
     pic_link = page.xpath('//img[@id="image"]').map{ |img| img['src']}
     if pic_link[0] == nil
-      abort("could not extract picture source link chapter #{chapter_nb} / page #{page_nb}")
+      puts "could not extract picture source link chapter #{chapter_nb} / page #{page_nb}"
+      @db.add_todo(@manga_name, @chapter_value, page_nb)
+      puts "added link of page #{page_nb} to todo database ( pic will be downloaded on next update )"
+      return false
     end
     pic_buffer = get_pic(pic_link[0])
     name_buffer = file_name(@dir, @chapter_value, page_nb)
     if pic_buffer != nil
       File.open(name_buffer + ".jpg", 'wb') do |pic|
 	pic << pic_buffer.read
+      end
+      if (del == true)
+	if (File.exists?(name_buffer + ".txt") == true)
+	  File.delete(name_buffer + ".txt")
+	end
       end
     else
       File.open(name_buffer + ".txt", 'w') do |pic|
@@ -48,9 +56,10 @@ class Download
       @db.add_todo(@manga_name, @chapter_value, page_nb)
       puts "added link of page #{page_nb} to todo database ( pic will be downloaded on next update )"
     end
+    return true
   end
 
-  def page(chapter_nb, page_nb)
+  def page(chapter_nb, page_nb, del = false)
     chapter = _extract_link(chapter_nb)
     last_pos = chapter.rindex(/\//)
     link = chapter[0..last_pos].strip + page_nb.to_s + ".html"
@@ -60,7 +69,10 @@ class Download
       return false
     end
     puts "chapter #{chapter_nb}/#{@links.size} => #{@chapter_value.to_s} / page #{page_nb}"
-    _page(chapter_nb, page_nb, page)
+    if (_page(chapter_nb, page_nb, page, del) == false)
+      puts "link = " + link
+    end
+    
     return true
   end
 
@@ -70,7 +82,9 @@ class Download
     page = get_link(link)
     page_nb = 1
     while next_ == true
-      _page(chapter_nb, page_nb, page)
+      if (_page(chapter_nb, page_nb, page) == false)
+	puts "link = " + link
+      end
       page_nb += 1
       last_pos = chapter.rindex(/\//)
       link = chapter[0..last_pos].strip + page_nb.to_s + ".html"
@@ -87,6 +101,7 @@ class Download
     chapter = _extract_link(chapter_nb)
     puts "downloading chapter #{chapter_nb}"
     _chapter(chapter, chapter_nb)
+    puts ""
   end
 
   def cover()

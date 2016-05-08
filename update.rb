@@ -3,12 +3,13 @@ def update_manga(db, name, work_dir)
   manga = db.get_manga(name)
   todo = db.get_todo(name)
   dw = Download.new(db, name, work_dir, manga[3])
+  puts ""
   if todo.size != 0
     puts "atempting download of pages of todo database"
     todo.each do |elem|
       chapter_nb = elem[1]
       page_nb = elem[2]
-      if (dw.page(chapter_nb, page_nb) == true)
+      if (dw.page(chapter_nb, page_nb, true) == true)
         db.delete_todo(name, elem[0])
       end
     end
