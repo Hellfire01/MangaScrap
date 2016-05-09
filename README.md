@@ -10,6 +10,7 @@ versions :
 0.1.2 : better code factorisation and better redirection detection
 0.1.3 : MangaScrapp now deletes the .txt files generated after an error
 0.1.4 : MangaScrapp can now take a file with manga names as an argument
+0.1.5 : better management of exceptions due to connection lost
 
 gems required :
 - nokogiri

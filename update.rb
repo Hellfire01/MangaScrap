@@ -9,8 +9,14 @@ def update_manga(db, name, work_dir)
     todo.each do |elem|
       chapter_nb = elem[1]
       page_nb = elem[2]
-      if (dw.page(chapter_nb, page_nb, true) == true)
-        db.delete_todo(name, elem[0])
+      if (page_nb != -1)
+	if (dw.page(chapter_nb, page_nb, true) == true)
+	  db.delete_todo(name, elem[0])
+	end
+      else
+	if (dw.chapter(chapter_nb) == true)
+	  db.delete_todo(name, elem[0])
+	end
       end
     end
   else

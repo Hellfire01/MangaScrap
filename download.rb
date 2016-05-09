@@ -80,6 +80,11 @@ class Download
     link = chapter
     next_ = true
     page = get_link(link)
+    if (page == nil)
+      puts "could not get chapter #{chapter_nb} link, adding it to doto database"
+      @db.add_todo(@manga_name, @chapter_value, -1)      
+      return false
+    end
     page_nb = 1
     while next_ == true
       if (_page(chapter_nb, page_nb, page) == false)
@@ -95,13 +100,15 @@ class Download
       page = get_link(link)
     end
     @db.add_trace(@manga_name, @chapter_value)
+    return true
   end
 
   def chapter(chapter_nb)
     chapter = _extract_link(chapter_nb)
     puts "downloading chapter #{chapter_nb}"
-    _chapter(chapter, chapter_nb)
+    ret = _chapter(chapter, chapter_nb)
     puts ""
+    return ret
   end
 
   def cover()
@@ -138,11 +145,14 @@ class Download
     @db = db
     @site = site
     @doc = get_link(site + manga_name)
+    if @doc == nil
+      abort("failed to get manga " + manga_name + " chapter index")
+    end
     @links = @doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
     if (redirection_detection(site + manga_name) == true)
       abort ("could not find manga #{manga_name} at " + site + manga_name)
     end
-    if @doc == nil || @links == nil || @links.size == 0
+    if @links == nil || @links.size == 0
       abort("failed to get manga " + manga_name + " chapter index")
     end
     if db.manga_in_data?(manga_name) == false

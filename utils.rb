@@ -15,12 +15,13 @@ def redirection_detection(url)
 	return true
       end
     end
-  rescue OpenURI::HTTPError
+  rescue => error
     if tries > 0
 	tries -= 1
 	sleep($failure_sleep)
 	retry
     else
+      puts error.message
       abort("connection is lost, stopping programm")
     end
   end
@@ -34,7 +35,7 @@ def get_link(link)
     page = Nokogiri::HTML(open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}", "From" => "mat1994@free.fr")) do |noko|
       noko.noblanks.noerror
     end
-  rescue OpenURI::HTTPError => error
+  rescue => error
     if tries > 0
 	tries -= 1
 	sleep($failure_sleep)
@@ -54,7 +55,7 @@ def get_pic(link)
   tries ||= $nb_tries
   begin
     page = open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}", "From" => "mat1994@free.fr")
-  rescue OpenURI::HTTPError => error
+  rescue => error
     if tries > 0
 	tries -= 1
 	sleep($failure_sleep)
