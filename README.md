@@ -6,18 +6,18 @@ MangaScrapp is only compatiple with mangafox at the moment but it is planned to 
 
 #### versions :
 
-0.1.0 : alpha with database and manga download and update on mangafox<br />
+0.1.0 : alpha with database, manga download and and manga update on mangafox<br />
 0.1.1 : small debug to avoid manga duplicates in database<br />
 0.1.2 : better code factorisation and better redirection detection<br />
 0.1.3 : MangaScrapp now deletes the .txt files generated after an error<br />
 0.1.4 : MangaScrapp can now take a file with manga names as an argument<br />
-0.1.5 : better management of exceptions due to connection lost<br />
+0.1.5 : better management of exceptions due to connection loss<br />
 
-###### gems required :
+##### gems required :
 - nokogiri
 - sqlite3
 
-###### notes :
+##### notes :
 ./MangaScrapp -h => displays instructions<br />
 The programm will download all mangas in Documents/mangas/<br />
 ( it will create the mangas folder automaticaly )<br />
