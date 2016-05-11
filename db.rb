@@ -4,7 +4,7 @@ class DB
   #manga database
   def add_manga(manganame, description, site, link, nb_chapters)
     begin
-      prep = @db.prepare "INSERT INTO manga_list VALUES (NULL, ?, ?, ?, ?, #{nb_chapters}, 0)"
+      prep = @db.prepare "INSERT INTO manga_list VALUES (NULL, ?, ?, ?, ?, #{nb_chapters}, 0, NULL, NULL)"
       prep.bind_param 1, manganame
       prep.bind_param 2, description
       prep.bind_param 3, site

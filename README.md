@@ -16,6 +16,7 @@ MangaScrapp is only compatiple with mangafox at the moment but it is planned to 
 0.2.0 : Changed database ( added data to manga, but not yet used ) + permanent parameters management<br />
 0.2.1 : small bug correction
 0.2.2 : changed info display for update
+0.2.3 : corrected error on database due to the 0.2.0 update
 
 ##### gems required :
 - nokogiri
