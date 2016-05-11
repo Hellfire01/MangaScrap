@@ -12,10 +12,14 @@ def update_manga(db, name)
       if (page_nb != -1)
 	if (dw.page(chapter_nb, page_nb, true) == true)
 	  db.delete_todo(name, elem[0])
+	else
+	  puts "failed to download page #{page_nb} of chapter #{chapter_nb}"
 	end
       else
 	if (dw.chapter(chapter_nb) == true)
 	  db.delete_todo(name, elem[0])
+	else
+	  puts "failed to download chapter #{chapter_nb}"
 	end
       end
     end
@@ -34,6 +38,7 @@ def update_manga(db, name)
       dw.chapter(chap)
     end
   end
+  puts ""
   if (miss == true)
     puts "downloaded missing chapters for #{name}"
   else
