@@ -53,13 +53,12 @@ def update_all(db)
 end
 
 def update(db)
-  work_dir = db.get_params[0]
   case ARGV.size
   when 0, 1
-    update_all(db, work_dir)
+    update_all(db)
   when 2
     if (db.manga_in_data?(ARGV[1]) == true)
-      update_manga(db, ARGV[1])
+      update_manga(db)
     else
       abort('could not find ' + ARGV[1] + ' in database')
     end
