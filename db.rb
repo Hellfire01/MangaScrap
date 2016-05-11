@@ -1,3 +1,5 @@
+$default_manga_path = Dir.home + "/Documents/mangas/"
+
 class DB
   #manga database
   def add_manga(manganame, description, site, link, nb_chapters)
@@ -139,10 +141,75 @@ class DB
     return ret
   end
 
+  #params
+  def get_params()
+    begin
+      ret = @db.execute "SELECT * FROM params"
+    rescue SQLite3::Exception => e
+      puts "could not get params"
+      abort (e.message)
+    end
+    return ret[0]
+  end
+
+  def set_params_path(path)
+    begin
+      prep = @db.prepare "UPDATE params SET manga_path = ? WHERE Id = 1"
+      prep.bind_param 1, path
+      prep.execute
+    rescue SQLite3::Exception => e
+      puts "could not update manga path"
+      abort (e.message)
+    end
+  end
+
+  def set_params_failure_sleep(sleep)
+    begin
+      @db.execute "UPDATE params SET failure_sleep = #{sleep} WHERE Id = 1"
+    rescue SQLite3::Exception => e
+      puts "could not update failure sleep"
+      abort (e.message)
+    end
+  end
+
+  def set_params_between_sleep(sleep)
+    begin
+      @db.execute "UPDATE params SET between_sleep = #{sleep} WHERE Id = 1"
+    rescue SQLite3::Exception => e
+      puts "could not update between sleep"
+      abort (e.message)
+    end
+  end
+
+  def set_params_nb_tries(nb)
+    begin
+      @db.execute "UPDATE params SET nb_tries_on_fail = #{nb} WHERE Id = 1"
+    rescue SQLite3::Exception => e
+      puts "could not update number of tries"
+      abort (e.message)
+    end
+  end
+
+  def reset_parameters()
+    begin
+      prep = @db.prepare "UPDATE params SET
+      manga_path = ?,
+      between_sleep = 0.25,
+      failure_sleep = 0.5,
+      nb_tries_on_fail = 20
+      WHERE Id = 1"
+      prep.bind_param 1, $default_manga_path
+      prep.execute
+    rescue SQLite3::Exception => e
+      puts "could not update manga path"
+      abort (e.message)
+    end
+  end
+
   #init database
   def initialize()
     begin
-      @db = SQLite3::Database.new "manga"
+      @db = SQLite3::Database.new "manga.db"
       @db.execute "CREATE TABLE IF NOT EXISTS manga_list(
       Id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT,
@@ -150,10 +217,31 @@ class DB
       site TEXT,
       link TEXT,
       chapters INT,
-      downloaded_chapters INT)"
+      downloaded_chapters INT,
+      author TEXT,
+      artist TEXT)"
+      @db.execute "CREATE TABLE IF NOT EXISTS params(
+      Id INTEGER PRIMARY KEY AUTOINCREMENT,
+      manga_path TEXT,
+      between_sleep FLOAT,
+      failure_sleep FLOAT,
+      nb_tries_on_fail INT)"
     rescue SQLite3::Exception => e
       puts "Exception occurred when opening DataBase"
       abort(e.message)
+    end
+    puts "got database"
+    begin
+      ret = @db.execute "SELECT * FROM params"
+      if (ret.size == 0)
+	puts "initializing params './MangaScrapp -pl' to list params"
+	prep = @db.prepare "INSERT INTO params VALUES (NULL, ?, 0.25, 0.5, 20)"
+	prep.bind_param 1, $default_manga_path
+	prep.execute
+      end
+    rescue SQLite3::Exception => e
+      puts "exception while retrieving params"
+      abort (e.message)
     end
   end
 end

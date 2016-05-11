@@ -11,41 +11,34 @@ require_relative 'update'
 require_relative 'help'
 require_relative 'add'
 require_relative 'list'
+require_relative 'delete'
+require_relative 'params'
 
-work_dir = Dir.home + "/Documents/mangas/"
-
-dir_create(work_dir)
 db = DB.new()
+init_utils(db)
+dir_create(db.get_params[1])
+puts ""
 
 if ARGV.size == 0
   update(db, work_dir)
 else
   case ARGV[0]
   when "-u", "--update"
-    update(db, work_dir)
+    update(db)
   when "-a", "--add"
-    add(db, work_dir)
+    add(db)
   when "-dl", "--download"
-    download(db, work_dir)
+    download(db)
   when "-l", "--list"
     list(db)
   when "-d", "--delete"
-    if (ARGV.size < 2)
-      puts "need a manga's name to delete"
-    elsif (ARGV.size == 2)
-      db.delete_manga(ARGV[1])
-      puts "deleted #{ARGV[1]} from database"
-    else
-      ret = get_mangas()
-      if (ret != nil)
-	ret.each do |name|
-	  db.delete_manga(name[0])
-	  puts "deleted #{name[0]} from database"
-	end
-      else
-	abort("error while trying to get content of file ( -t option )")
-      end
-    end
+    delete(db)
+  when "-pl", "--param_list"
+    param_list(db)
+  when "-ps", "--param_set"
+    param_set(db)
+  when "-pr", "--param_reset"
+    param_reset(db)
   when "-h", "--help"
     help()
   else

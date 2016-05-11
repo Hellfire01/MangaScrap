@@ -1,4 +1,4 @@
-def add(db, work_dir)
+def add(db)
   if ARGV.size < 2
     abort ('not enough arguments')
   end
@@ -14,7 +14,7 @@ def add(db, work_dir)
     end
   end
   if (file == false)
-    Download.new(db, manga_name, work_dir, site)
+    Download.new(db, manga_name, site)
   else
     ret.each do |name|
       if (name.size == 1)
@@ -22,7 +22,7 @@ def add(db, work_dir)
       else
 	site == name[1]
       end
-      Download.new(db, name[0], work_dir, site)
+      Download.new(db, name[0], site)
     end
   end
 end

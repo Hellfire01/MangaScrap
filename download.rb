@@ -139,7 +139,8 @@ class Download
     end
   end
 
-  def initialize(db, manga_name, work_dir, site)
+  def initialize(db, manga_name, site)
+    work_dir = db.get_params[1]
     @manga_name = manga_name
     @dir = work_dir + manga_name + "/"
     @db = db
@@ -163,7 +164,7 @@ class Download
   end
 end
 
-def download(db, work_dir)
+def download(db)
   if (ARGV.size == 1)
     puts "missing argument : --help for more information"
   else
@@ -183,7 +184,7 @@ def download(db, work_dir)
 	puts "manga was found in database, updating it"
 	update(db, work_dir)
       else
-	dl = Download.new(db, name, work_dir, site)
+	dl = Download.new(db, name, site)
 	dl.manga()
       end
     else
@@ -193,7 +194,7 @@ def download(db, work_dir)
 	else
 	  site == manga[1]
 	end
-	Download.new(db, manga[0], work_dir, site)
+	Download.new(db, manga[0], site)
 	dl.manga()
       end
     end

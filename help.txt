@@ -16,8 +16,21 @@
  -d --delete [-t 'name of file'] / [manga name]
     deletes manga from database ( not the files )
 
+ -pl --param_list
+    lists actual settings
+
+ -ps --param_set 'parameter id' 'value'
+    sets the speciefied parameter
+    WARNING : when setting the destination folder of mangas, the already downloaded
+              pages are NOT moved
+    NOTE : the parameter id is the value given between parentheses with the -pl option
+
+ -pr --param_reset
+    resets the parameters to default, will ask for confirmation
+
  -h --help
     displays help
+
 
  -t + 'file name' allows you to do multiple mangas at once
  it is used with add, update, download and delete
@@ -38,6 +51,7 @@
     updates all mangas in database
  ./MangaScrapp -t file.txt
     updates all mangas in file.txt
+ ./MangaScrapp -ps 
 
  Warning !
  The [manga name] is found in the url

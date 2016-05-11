@@ -1,10 +1,14 @@
-#change this variable to set the number of tries per link and picture
-$nb_tries = 25
+$nb_tries = -1
+$between_sleep = -1
+$failure_sleep = -1
 
-#change this variable to set the sleeping time between downloads
-#Warning !!! => setting these variables too low may result in an IP ban
-$between_sleep = 0.25
-$failure_sleep = 1
+#inits the global variables
+def init_utils(db)
+  params = db.get_params()
+  $between_sleep = params[2]
+  $failure_sleep = params[3]
+  $nb_tries = params[4]
+end
 
 # detects if there whas a redirection on the required link
 def redirection_detection(url)
@@ -32,7 +36,7 @@ end
 def get_link(link)
   tries ||= $nb_tries
   begin
-    page = Nokogiri::HTML(open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}", "From" => "mat1994@free.fr")) do |noko|
+    page = Nokogiri::HTML(open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}")) do |noko|
       noko.noblanks.noerror
     end
   rescue => error
@@ -54,7 +58,7 @@ end
 def get_pic(link)
   tries ||= $nb_tries
   begin
-    page = open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}", "From" => "mat1994@free.fr")
+    page = open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}")
   rescue => error
     if tries > 0
 	tries -= 1
