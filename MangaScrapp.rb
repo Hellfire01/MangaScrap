@@ -20,7 +20,7 @@ dir_create(db.get_params[1])
 puts ""
 
 if ARGV.size == 0
-  update(db, work_dir)
+  update(db)
 else
   case ARGV[0]
   when "-u", "--update"
