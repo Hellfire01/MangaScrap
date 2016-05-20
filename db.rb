@@ -2,32 +2,49 @@ $default_manga_path = Dir.home + "/Documents/mangas/"
 
 class DB
   #manga database
-  def add_manga(manganame, description, site, link, nb_chapters)
+  def add_manga(manganame, description, site, link, author, artist, type, status, genres, release)
     begin
-      prep = @db.prepare "INSERT INTO manga_list VALUES (NULL, ?, ?, ?, ?, #{nb_chapters}, 0, NULL, NULL)"
+      prep = @db.prepare "INSERT INTO manga_list VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
       prep.bind_param 1, manganame
       prep.bind_param 2, description
       prep.bind_param 3, site
       prep.bind_param 4, link
+      prep.bind_param 5, author
+      prep.bind_param 6, artist
+      prep.bind_param 7, type
+      prep.bind_param 8, status
+      prep.bind_param 9, genres.join(", ")
+      prep.bind_param 10, release
       prep.execute
     rescue SQLite3::Exception => e
-      puts "Exception while inserting element into database"
-      puts "executing : INSERT INTO manga_list VALUES (NULL, '#{manganame}', '#{description}', '#{site}', '#{link}', #{nb_chapters}, 0)"
+      puts "Exception while adding manga to database"
       abort ("message is : '" + e.message + "'")
     end
     begin
-      @db.execute "CREATE TABLE IF NOT EXISTS manga_todo_#{manganame} (Id INTEGER PRIMARY KEY, chapter DOUBLE, page INTEGER)"
+      @db.execute "CREATE TABLE IF NOT EXISTS manga_todo_#{manganame} (Id INTEGER PRIMARY KEY, volume INTERGER, chapter DOUBLE, page INTEGER)"
     rescue SQLite3::Exception => e
       puts "exception occured while trying to create todo table"
-      puts "executing : CREATE TABLE IF NOT EXISTS manga_todo_#{manganame} (Id INTEGER PRIMARY KEY, chapter DOUBLE, page INTEGER)"
+      puts "executing : CREATE TABLE IF NOT EXISTS manga_todo_#{manganame} (Id INTEGER PRIMARY KEY, volume INTERGER, chapter DOUBLE, page INTEGER)"
       abort ("message is : '" + e.message + "'")  
     end
     begin
-      @db.execute "CREATE TABLE IF NOT EXISTS manga_trace_#{manganame} (Id INTEGER PRIMARY KEY, chapter DOUBLE)"
+      @db.execute "CREATE TABLE IF NOT EXISTS manga_trace_#{manganame} (Id INTEGER PRIMARY KEY, volume INTERGER, chapter DOUBLE)"
     rescue SQLite3::Exception => e
       puts "exception occured while trying to create trace table"
-      puts "executing : CREATE TABLE IF NOT EXISTS manga_trace_#{manganame} (Id INTEGER PRIMARY KEY, chapter DOUBLE)"
+      puts "executing : CREATE TABLE IF NOT EXISTS manga_trace_#{manganame} (Id INTEGER PRIMARY KEY, volume INTERGER, chapter DOUBLE)"
       abort ("message is : '" + e.message + "'")  
+    end
+  end
+
+  def update_manga(manganame, description)
+    begin
+      prep = @db.prepare "UPDATE manga_list SET description=? WHERE name=?"
+      prep.bind_param 1, description
+      prep.bind_param 2, manganame
+      prep.execute
+    rescue SQLite3::Exception => e
+      puts "Error while trying to update data of #{manganame}"
+      abort("message is : '" + e.message + "'")
     end
   end
 
@@ -86,11 +103,13 @@ class DB
   end
 
   #todo database
-  def add_todo(manganame, chapter_value, page_nb)
+  def add_todo(manganame, volume_value, chapter_value, page_nb)
+    #check if the elements does not already exist
     begin
-      prep = @db.prepare "INSERT INTO manga_todo_#{manganame} VALUES (NULL, ?, ?)"
-      prep.bind_param 1, chapter_value
-      prep.bind_param 2, page_nb
+      prep = @db.prepare "INSERT INTO manga_todo_#{manganame} VALUES (NULL, ?, ?, ?)"
+      prep.bind_param 1, volume_value
+      prep.bind_param 2, chapter_value
+      prep.bind_param 3, page_nb
       prep.execute
     rescue SQLite3::Exception => e
       puts "could not insert page into todo database"
@@ -120,10 +139,11 @@ class DB
   end
 
   #trace database
-  def add_trace(manga_name, chapter_value)
+  def add_trace(manga_name, volume_value, chapter_value)
     begin
-      prep = @db.prepare "INSERT INTO manga_trace_#{manga_name} VALUES (NULL, ?)"
-      prep.bind_param 1, chapter_value
+      prep = @db.prepare "INSERT INTO manga_trace_#{manga_name} VALUES (NULL, ?, ?)"
+      prep.bind_param 1, volume_value
+      prep.bind_param 2, chapter_value
       prep.execute
     rescue SQLite3::Exception => e
       puts "could not insert chapter into trace database"
@@ -216,10 +236,12 @@ class DB
       description TEXT,
       site TEXT,
       link TEXT,
-      chapters INT,
-      downloaded_chapters INT,
       author TEXT,
-      artist TEXT)"
+      artist TEXT,
+      type TEXT,
+      status BOOL,
+      genres TEXT,
+      release INT)"
       @db.execute "CREATE TABLE IF NOT EXISTS params(
       Id INTEGER PRIMARY KEY AUTOINCREMENT,
       manga_path TEXT,
@@ -245,3 +267,9 @@ class DB
     end
   end
 end
+
+# manga_list info :
+# link = the url when on the presentation page of the manga
+# type = manga || manwha || ...
+# status = ongoing Y/N
+# genres = fantaisy, horror, SF, ...

@@ -76,11 +76,9 @@ end
 
 # determines if directory exists
 def dir_create(directory)
-  if Dir.exists?(directory) == true
-    puts "folder " + directory + " exists"
-  else
+  if Dir.exists?(directory) == false
     puts directory + " does not exist, creating it"
-    Dir.mkdir(directory)
+    FileUtils.mkdir_p(directory)
   end
 end
 
@@ -90,21 +88,6 @@ def list_dir(work_dir)
   Dir.foreach(Dir.home + "/Documents/web_tests/.") do |file|
     puts file
   end
-end
-
-# get file name
-def file_name(dir, chap_value, page_nb)
-  chap_str = chap_value.to_s
-  val = chap_str.index('.')
-  if (val != nil)
-    chap_str[val] = ''
-  else
-    chap_str += '0'
-  end
-  chap_buffer = ((chap_value > 1000) ? "0" : ((chap_value > 100) ? "00" : ((chap_value > 10) ? "000" : "0000")))
-  page_buffer = ((page_nb > 1000) ? "0" : ((page_nb > 100) ? "00" : ((page_nb > 10) ? "000" : "0000")))
-  name_buffer = dir + "manga_c" + chap_buffer + chap_str + "_p" + page_buffer + page_nb.to_s
-  return name_buffer
 end
 
 # open -t option file and return array

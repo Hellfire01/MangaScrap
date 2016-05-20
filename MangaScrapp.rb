@@ -4,8 +4,11 @@
 require 'open-uri'
 require 'nokogiri'
 require 'sqlite3'
+require 'fileutils'
+
 require_relative 'utils'
 require_relative 'download'
+require_relative 'download_class'
 require_relative 'db'
 require_relative 'update'
 require_relative 'help'
@@ -14,9 +17,9 @@ require_relative 'list'
 require_relative 'delete'
 require_relative 'params'
 
+
 db = DB.new()
 init_utils(db)
-dir_create(db.get_params[1])
 puts ""
 
 if ARGV.size == 0

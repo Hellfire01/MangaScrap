@@ -30,13 +30,22 @@ def update_manga(db, name)
   miss = false
   traces = db.get_trace(name)
   chapters = dw.get_chapter_values()
+  volumes = dw.get_volume_values()
+  i = 0
   chapters.each do |chap|
-    if (traces.select{|id, value| value == chap}.size == 0)
+    if (traces.select{|id, vol_value, chap_value| vol_value == volumes[i] && chap_value == chap}.size == 0)
+      if miss == false
+        puts ""
+	dw.cover()
+	dw.update_data()
+      end
       miss = true
       puts ""
-      puts "did not find chapter #{chap} in #{name}'s trace database"
-      dw.chapter(chap)
+      puts "did not find volume #{volumes[i]} chapter #{chap} in #{name}'s trace database"
+      puts "downloading volume #{volumes[i]} chapter #{chap} ( link #{i + 1} / #{chapters.size} )"
+      dw.chapter(volumes[i], chap)
     end
+    i += 1
   end
   puts ""
   if (miss == true)
@@ -63,7 +72,7 @@ def update(db)
     update_all(db)
   when 2
     if (db.manga_in_data?(ARGV[1]) == true)
-      update_manga(db)
+      update_manga(db, ARGV[1])
     else
       abort('could not find ' + ARGV[1] + ' in database')
     end

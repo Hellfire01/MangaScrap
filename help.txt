@@ -23,7 +23,11 @@
     sets the speciefied parameter
     WARNING : when setting the destination folder of mangas, the already downloaded
               pages are NOT moved
-    NOTE : the parameter id is the value given between parentheses with the -pl option
+        parameter possible values :
+        mp => the path to witch the "manga" directory is created
+        bs => the sleep between 2 page downloads
+        fs => the sleep between 2 page download fails
+        nb => the number of download fails allowed before putting the page in the todo database
 
  -pr --param_reset
     resets the parameters to default, will ask for confirmation

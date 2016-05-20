@@ -14,7 +14,11 @@ def add(db)
     end
   end
   if (file == false)
-    Download.new(db, manga_name, site)
+    if db.manga_in_data?(manga_name) == true
+      puts "manga is already in database"
+    else
+      Download.new(db, manga_name, site)
+    end
   else
     ret.each do |name|
       if (name.size == 1)
@@ -22,7 +26,11 @@ def add(db)
       else
 	site == name[1]
       end
-      Download.new(db, name[0], site)
+      if db.manga_in_data?(name[0]) == true
+	puts "manga is already in database"
+      else
+	Download.new(db, name[0], site)
+      end
     end
   end
 end
