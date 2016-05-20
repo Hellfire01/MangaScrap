@@ -58,7 +58,6 @@ end
 
 def update_all(db)
   list = db.get_manga_list()
-
   puts "updating all mangas in database"  
   list.each do |elem|
     puts "updating " + elem[0]

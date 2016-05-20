@@ -10,6 +10,25 @@ def init_utils(db)
   $nb_tries = params[4]
 end
 
+# used for the description.txt file of every manga
+def data_conc(manga_name, description, site, link, author, artist, type, status, genres, release)
+  ret =  "name         = " + manga_name + "\n"
+  ret += "author       = " + author + "\n"
+  ret += "artist       = " + artist + "\n"
+  ret += "release year = " + release.to_s + "\n"
+  ret += "type         = " + type + "\n"
+  ret += "status       = " + status + "\n"
+  ret += "genres       = " + genres.join(", ") + "\n"
+  ret += "\n"
+  ret += "site = " + site + "\n"
+  ret += "link = " + link + "\n"
+  ret += "\n"
+  ret += "description :\n"
+  ret += description
+  ret += "\n"
+  return ret
+end
+
 # detects if there whas a redirection on the required link
 def redirection_detection(url)
   tries ||= $nb_tries

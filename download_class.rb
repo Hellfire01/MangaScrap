@@ -1,4 +1,13 @@
 class Download
+  def _chap_link_corrector()
+    @links.each do |chapter|
+      chap_cut = chapter.split("/")
+      if chap_cut[chap_cut.size - 1] != "1.html"
+	chapter += "1.html"
+      end
+    end
+  end
+
   def get_volume_values()
     ret = []
     @links.reverse.each do |chapter|
@@ -162,9 +171,8 @@ class Download
   end
 
   def initialize(db, manga_name, site)
-    work_dir = db.get_params[1]
     @manga_name = manga_name
-    @dir = work_dir + manga_name + "/"
+    @dir = db.get_params[1] + manga_name + "/"
     @db = db
     @site = site
     @doc = get_link(site + manga_name)
@@ -178,7 +186,7 @@ class Download
     if @links == nil || @links.size == 0
       abort("failed to get manga " + manga_name + " chapter index")
     end
-    chap_link_corrector(@links)
+    _chap_link_corrector()
     @has_volumes = false
     if @links[0].split('/').size == 8
       @has_volumes = true
@@ -204,10 +212,17 @@ class Download
     status = @doc.xpath('//div[@class="data"]/span')[0].text.gsub(/\s+/, "").split(',')[0]
     tmp_type = @doc.xpath('//div[@id="title"]/h1')[0].text.split(' ')
     type = tmp_type[tmp_type.size - 1]
-    if db.manga_in_data?(manga_name) == false
+    is_in_db = db.manga_in_data?(manga_name)
+    if is_in_db == false
       puts "added #{manga_name} to database"
       @db.add_manga(manga_name, @description, site, site + manga_name, author, artist, type, status, genres, release)
     end
     dir_create(@dir)
+    if is_in_db == false
+      cover()
+    end
+    File.open(@dir + "description.txt", 'w') do |txt|
+      txt << data_conc(manga_name, @description, site, site + manga_name, author, artist, type, status, genres, release)
+    end
   end
 end

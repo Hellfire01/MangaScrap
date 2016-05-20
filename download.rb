@@ -14,15 +14,6 @@ def file_name(dir, vol_value, chap_value, page_nb)
   return name_buffer
 end
 
-def chap_link_corrector(links)
-  links.each do |chapter|
-    chap_cut = chapter.split("/")
-    if chap_cut[chap_cut.size - 1] != "1.html"
-      chapter += "1.html"
-    end
-  end
-end
-
 def download(db)
   if (ARGV.size == 1)
     puts "missing argument : --help for more information"

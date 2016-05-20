@@ -15,7 +15,7 @@ def add(db)
   end
   if (file == false)
     if db.manga_in_data?(manga_name) == true
-      puts "manga is already in database"
+      puts manga_name + " is already in database"
     else
       Download.new(db, manga_name, site)
     end
@@ -27,7 +27,7 @@ def add(db)
 	site == name[1]
       end
       if db.manga_in_data?(name[0]) == true
-	puts "manga is already in database"
+	puts name[0] + " is already in database"
       else
 	Download.new(db, name[0], site)
       end
