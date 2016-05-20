@@ -1,6 +1,6 @@
 class Download
   def _chap_link_corrector()
-    @links.each do |chapter|
+    @links.map! do |chapter|
       chap_cut = chapter.split("/")
       if chap_cut[chap_cut.size - 1] != "1.html"
 	chapter += "1.html"

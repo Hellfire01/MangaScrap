@@ -19,3 +19,4 @@
 0.3.0 : Changed the database, MangaScrapp now fully manages Volumes, added GemFile<br />
 0.3.1 : small bug correction + added a description file to each manga<br />
 0.3.2 : corrected a bug that sometimes occured when trying to download the cover<br />
+0.3.3 : bug fix<br />
