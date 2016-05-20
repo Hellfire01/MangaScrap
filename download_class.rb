@@ -1,9 +1,11 @@
 class Download
   def _chap_link_corrector()
-    @links.map! do |chapter|
-      chap_cut = chapter.split("/")
-      if chap_cut[chap_cut.size - 1] != "1.html"
-	chapter += "1.html"
+    if @links[0].split('/').size != 8
+      @links.map! do |chapter|
+	chap_cut = chapter.split("/")
+	if chap_cut[chap_cut.size - 1] != "1.html"
+	  chapter += "1.html"
+	end
       end
     end
   end
@@ -95,6 +97,7 @@ class Download
     puts "chapter #{chapter_nb}/#{@links.size} => #{@chapter_value.to_s} / page #{page_nb}"
     if (_page(chapter_nb, page_nb, page, del) == false)
       puts "link = " + link
+      return false
     end
     return true
   end
