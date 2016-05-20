@@ -141,7 +141,7 @@ class Download
     cover_buffer = get_pic(cover_link[0])
     if cover_buffer != nil
       open(@dir + 'cover.jpg', 'wb') do |pic|
-	pic << open(cover_buffer).read
+	pic << cover_buffer.read()
       end
     else
       puts "WARNING : could not download cover"
