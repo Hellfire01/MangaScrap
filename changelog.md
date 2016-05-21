@@ -21,7 +21,4 @@
 0.3.2 : corrected a bug that sometimes occured when trying to download the cover<br />
 0.3.3 : bug fix<br />
 0.3.4 : more bug fix<br />
-
-
-
-
+0.3.5 : more bug fix<br />
