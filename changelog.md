@@ -23,3 +23,4 @@
 0.3.4 : more bug fix<br />
 0.3.5 : more bug fix<br />
 0.3.6 : successfully corrected the bug where the lack of "1.html" at the end of a link could be an issue<br />
+0.3.7 : added a -c / --clear option to erase content of the todo database of a manga<br />

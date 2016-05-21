@@ -32,6 +32,9 @@
  -pr --param_reset
     resets the parameters to default, will ask for confirmation
 
+ -c --clear [-t 'name of file'] / [manga name]
+    clears the todo database from the manga
+
  -h --help
     displays help
 

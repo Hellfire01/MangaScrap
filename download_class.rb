@@ -13,6 +13,9 @@ class Download
     @links.reverse.each do |chapter|
       if @has_volumes == true
 	chap_cut = chapter.split("/")
+	if chap_cut[chap_cut.size - 1] != "1.html"
+	  chapter += "1.html"
+	end
 	tmp = chap_cut[chap_cut.size - 3]
 	tmp.slice!(0)
 	ret << tmp.to_i

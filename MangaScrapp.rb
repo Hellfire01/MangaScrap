@@ -16,7 +16,7 @@ require_relative 'add'
 require_relative 'list'
 require_relative 'delete'
 require_relative 'params'
-
+require_relative 'clear'
 
 db = DB.new()
 init_utils(db)
@@ -42,6 +42,8 @@ else
     param_set(db)
   when "-pr", "--param_reset"
     param_reset(db)
+  when "-c", "--clear"
+    clear(db)
   when "-h", "--help"
     help()
   else

@@ -133,7 +133,17 @@ class DB
       @db.execute "DELETE FROM manga_todo_#{manganame} WHERE Id = #{id}"
     rescue SQLite3::Exception => e
       puts "exception on database while excecuting : "
-      puts "SELECT * FROM manga_todo_#{manganame}"
+      puts "DELETE FROM manga_todo_#{manganame} WHERE Id = #{id}"
+      abort(e.message)
+    end
+  end
+
+  def clear_todo(manganame)
+    begin
+      @db.execute "DELETE FROM manga_todo_#{manganame}"
+    rescue SQLite3::Exception => e
+      puts "exception on database while excecuting : "
+      puts "DELETE FROM manga_todo_#{manganame}"
       abort(e.message)
     end
   end
