@@ -27,6 +27,9 @@ class Download
     ret = []
     @links.reverse.each do |chapter|
       chap_cut = chapter.split("/")
+      if chap_cut[chap_cut.size - 1] != "1.html"
+        chapter += "1.html"
+      end
       tmp = chap_cut[chap_cut.size - 2]
       tmp.slice!(0)
       ret << tmp.to_f
@@ -38,6 +41,9 @@ class Download
     i = 0
     @links.each do |chapter|
       chap_cut = chapter.split("/")
+      if chap_cut[chap_cut.size - 1] != "1.html"
+        chapter += "1.html"
+      end
       tmp = chap_cut[chap_cut.size - 2]
       tmp.slice!(0)
       @chapter_value = tmp.to_f
