@@ -7,19 +7,20 @@ def update_manga(db, name)
   if todo.size != 0
     puts "atempting download of pages of todo database"
     todo.each do |elem|
-      chapter_nb = elem[1]
-      page_nb = elem[2]
+      volume_nb = elem[2]
+      chapter_nb = elem[3]
+      page_nb = elem[4]
       if (page_nb != -1)
-	if (dw.page(chapter_nb, page_nb, true) == true)
-	  db.delete_todo(name, elem[0])
+	if (dw.page(volume_nb, chapter_nb, page_nb, true) == true)
+	  db.delete_todo(elem[0])
 	else
-	  puts "failed to download page #{page_nb} of chapter #{chapter_nb}"
+	  puts "failed to download page #{page_nb} of chapter #{chapter_nb} of volume #{volume_nb}"
 	end
       else
-	if (dw.chapter(chapter_nb) == true)
-	  db.delete_todo(name, elem[0])
+	if (dw.chapter(volume_nb, chapter_nb) == true)
+	  db.delete_todo(elem[0])
 	else
-	  puts "failed to download chapter #{chapter_nb}"
+	  puts "failed to download chapter #{chapter_nb} of volume #{volume_nb}"
 	end
       end
     end
@@ -32,8 +33,8 @@ def update_manga(db, name)
   chapters = dw.get_chapter_values()
   volumes = dw.get_volume_values()
   i = 0
-  chapters.each do |chap|
-    if (traces.select{|id, vol_value, chap_value| vol_value == volumes[i] && chap_value == chap}.size == 0)
+  while i < chapters.size
+    if (traces.select{|id, manga_name, vol_value, chap_value| vol_value == volumes[i] && chap_value == chapters[i]}.size == 0)
       if miss == false
         puts ""
 	dw.cover()
@@ -41,9 +42,9 @@ def update_manga(db, name)
       end
       miss = true
       puts ""
-      puts "did not find volume #{volumes[i]} chapter #{chap} in #{name}'s trace database"
-      puts "downloading volume #{volumes[i]} chapter #{chap} ( link #{i + 1} / #{chapters.size} )"
-      dw.chapter(volumes[i], chap)
+      puts "did not find volume #{volumes[i]} chapter #{chapters[i]} in #{name}'s trace database"
+      puts "downloading volume #{volumes[i]} chapter #{chapters[i]} ( link #{i + 1} / #{chapters.size} )"
+      dw.chapter(volumes[i], chapters[i])
     end
     i += 1
   end

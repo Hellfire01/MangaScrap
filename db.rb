@@ -20,20 +20,6 @@ class DB
       puts "Exception while adding manga to database"
       abort ("message is : '" + e.message + "'")
     end
-    begin
-      @db.execute "CREATE TABLE IF NOT EXISTS manga_todo_#{manganame} (Id INTEGER PRIMARY KEY, volume INTERGER, chapter DOUBLE, page INTEGER)"
-    rescue SQLite3::Exception => e
-      puts "exception occured while trying to create todo table"
-      puts "executing : CREATE TABLE IF NOT EXISTS manga_todo_#{manganame} (Id INTEGER PRIMARY KEY, volume INTERGER, chapter DOUBLE, page INTEGER)"
-      abort ("message is : '" + e.message + "'")  
-    end
-    begin
-      @db.execute "CREATE TABLE IF NOT EXISTS manga_trace_#{manganame} (Id INTEGER PRIMARY KEY, volume INTERGER, chapter DOUBLE)"
-    rescue SQLite3::Exception => e
-      puts "exception occured while trying to create trace table"
-      puts "executing : CREATE TABLE IF NOT EXISTS manga_trace_#{manganame} (Id INTEGER PRIMARY KEY, volume INTERGER, chapter DOUBLE)"
-      abort ("message is : '" + e.message + "'")  
-    end
   end
 
   def update_manga(manganame, description)
@@ -49,26 +35,25 @@ class DB
   end
 
   def delete_manga(manganame)
+    mangaid = get_manga(manganame)[0]
     begin
       @db.execute "DELETE FROM manga_list WHERE name = '#{manganame}'"
     rescue SQLite3::Exception => e
       puts "exception on database while excecuting : "
       puts "DELETE FROM manga_list WHERE name = #{manganame}"
-      abort(e.message)
+      abort("message is : '" + e.message + "'")
     end
     begin
-      @db.execute "DROP TABLE manga_todo_#{manganame}"
+      @db.execute "DELETE FROM manga_todo WHERE mangaId=#{mangaid}"
     rescue SQLite3::Exception => e
-      puts "exception on database while excecuting : "
-      puts "DROP TABLE manga_todo_#{manganame}"
-      abort(e.message)
+      puts "exception on database while deleting todo of " + manganame
+      abort("message is : '" + e.message + "'")
     end
     begin
-      @db.execute "DROP TABLE manga_trace_#{manganame}"
+      @db.execute "DELETE FROM manga_trace WHERE mangaId=#{mangaid}"
     rescue SQLite3::Exception => e
-      puts "exception on database while excecuting : "
-      puts "DROP TABLE manga_trace_#{manganame}"
-      abort(e.message)
+      puts "exception on database while deleting trace of " + manganame
+      abort("message is : '" + e.message + "'")
     end
   end
 
@@ -78,7 +63,7 @@ class DB
     rescue SQLite3::Exception => e
       puts "exception on database while excecuting : "
       puts "SELECT name FROM manga_list WHERE name='#{manganame}'"
-      abort(e.message)
+      abort("message is : '" + e.message + "'")
     end
     return ret[0]
   end
@@ -97,7 +82,7 @@ class DB
     rescue SQLite3::Exception => e
       puts "exception on database while excecuting : "
       puts "SELECT name FROM manga_list ORDER BY name COLLATE NOCASE"
-      abort(e.message)
+      abort("message is : '" + e.message + "'")
     end
     return ret
   end
@@ -105,68 +90,70 @@ class DB
   #todo database
   def add_todo(manganame, volume_value, chapter_value, page_nb)
     #check if the elements does not already exist
+    mangaId = get_manga(manganame)[0]
     begin
-      prep = @db.prepare "INSERT INTO manga_todo_#{manganame} VALUES (NULL, ?, ?, ?)"
+      prep = @db.prepare "INSERT INTO manga_todo VALUES (NULL, #{mangaId}, ?, ?, ?)"
       prep.bind_param 1, volume_value
       prep.bind_param 2, chapter_value
       prep.bind_param 3, page_nb
       prep.execute
     rescue SQLite3::Exception => e
       puts "could not insert page into todo database"
-      abort (e.message)
+      abort("message is : '" + e.message + "'")
     end
   end
 
   def get_todo(manganame)
+    mangaId = get_manga(manganame)[0]
     begin
-      ret = @db.execute "SELECT * FROM manga_todo_#{manganame}"
+      ret = @db.execute "SELECT * FROM manga_todo WHERE mangaId=#{mangaId}"
     rescue SQLite3::Exception => e
-      puts "exception on database while excecuting : "
-      puts "SELECT * FROM manga_todo_#{manganame}"
-      abort(e.message)
+      puts "exception on database while getting todo of " + manganame
+      abort("message is : '" + e.message + "'")
     end
     return ret
   end
 
-  def delete_todo(manganame, id)
+  def delete_todo(id)
     begin
-      @db.execute "DELETE FROM manga_todo_#{manganame} WHERE Id = #{id}"
+      @db.execute "DELETE FROM manga_todo WHERE Id = #{id}"
     rescue SQLite3::Exception => e
-      puts "exception on database while excecuting : "
-      puts "DELETE FROM manga_todo_#{manganame} WHERE Id = #{id}"
-      abort(e.message)
+      puts "exception on database while deleting todo element"
+      abort("message is : '" + e.message + "'")
     end
   end
 
   def clear_todo(manganame)
+    mangaId = get_manga(manganame)[0]
     begin
-      @db.execute "DELETE FROM manga_todo_#{manganame}"
+      @db.execute "DELETE FROM manga_todo WHERE mangaId=#{mangaId}"
     rescue SQLite3::Exception => e
-      puts "exception on database while excecuting : "
-      puts "DELETE FROM manga_todo_#{manganame}"
-      abort(e.message)
+      puts "exception on database while deleting todo of #{manganame}"
+      abort("message is : '" + e.message + "'")
     end
   end
 
   #trace database
-  def add_trace(manga_name, volume_value, chapter_value)
+  def add_trace(manganame, volume_value, chapter_value)
+    mangaId = get_manga(manganame)[0]
     begin
-      prep = @db.prepare "INSERT INTO manga_trace_#{manga_name} VALUES (NULL, ?, ?)"
+      prep = @db.prepare "INSERT INTO manga_trace VALUES (NULL, #{mangaId}, ?, ?)"
       prep.bind_param 1, volume_value
       prep.bind_param 2, chapter_value
       prep.execute
     rescue SQLite3::Exception => e
       puts "could not insert chapter into trace database"
-      abort (e.message)
+      abort("message is : '" + e.message + "'")
     end
   end
   
-  def get_trace(manga_name)
+  def get_trace(manganame)
+    mangaId = get_manga(manganame)[0]
     begin
-      ret = @db.execute "SELECT * FROM manga_trace_#{manga_name}"
+      ret = @db.execute "SELECT * FROM manga_trace WHERE mangaId=#{mangaId}"
     rescue SQLite3::Exception => e
-      puts "could not get trace database"
-      abort (e.message)
+      puts "could not get trace database of #{manganame}"
+      abort("message is : '" + e.message + "'")
     end
     return ret
   end
@@ -240,7 +227,7 @@ class DB
   def initialize()
     begin
       @db = SQLite3::Database.new "manga.db"
-      @db.execute "CREATE TABLE IF NOT EXISTS manga_list(
+      @db.execute "CREATE TABLE IF NOT EXISTS manga_list (
       Id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT,
       description TEXT,
@@ -252,17 +239,42 @@ class DB
       status BOOL,
       genres TEXT,
       release INT)"
-      @db.execute "CREATE TABLE IF NOT EXISTS params(
+    rescue SQLite3::Exception => e
+      puts "Exception occurred when opening / creating manga table"
+      abort ("message is : '" + e.message + "'")  
+    end
+    begin
+      @db.execute "CREATE TABLE IF NOT EXISTS params (
       Id INTEGER PRIMARY KEY AUTOINCREMENT,
       manga_path TEXT,
       between_sleep FLOAT,
       failure_sleep FLOAT,
       nb_tries_on_fail INT)"
     rescue SQLite3::Exception => e
-      puts "Exception occurred when opening DataBase"
-      abort(e.message)
+      puts "Exception occurred when opening / creating params table"
+      abort ("message is : '" + e.message + "'")
     end
-    puts "got database"
+    begin
+      @db.execute "CREATE TABLE IF NOT EXISTS manga_todo (
+      Id INTEGER PRIMARY KEY,
+      mangaId INTERGER,
+      volume INTERGER,
+      chapter DOUBLE,
+      page INTEGER)"
+    rescue SQLite3::Exception => e
+      puts "exception occured while trying to open / create todo table"
+      abort ("message is : '" + e.message + "'")  
+    end
+    begin
+      @db.execute "CREATE TABLE IF NOT EXISTS manga_trace (
+      Id INTEGER PRIMARY KEY,
+      mangaId INTERGER,
+      volume INTERGER,
+      chapter DOUBLE)"
+    rescue SQLite3::Exception => e
+      puts "exception occured while trying to open / create trace table"
+      abort ("message is : '" + e.message + "'")  
+    end
     begin
       ret = @db.execute "SELECT * FROM params"
       if (ret.size == 0)
@@ -273,13 +285,7 @@ class DB
       end
     rescue SQLite3::Exception => e
       puts "exception while retrieving params"
-      abort (e.message)
+      abort ("message is : '" + e.message + "'")  
     end
   end
 end
-
-# manga_list info :
-# link = the url when on the presentation page of the manga
-# type = manga || manwha || ...
-# status = ongoing Y/N
-# genres = fantaisy, horror, SF, ...

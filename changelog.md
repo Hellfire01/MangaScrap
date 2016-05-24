@@ -7,7 +7,7 @@
 0.1.4 : MangaScrapp can now take a file with manga names as an argument<br />
 0.1.5 : better management of exceptions due to connection loss<br />
 
-###### Warning, the database changes and is not compatible with the previous versions
+###### Warning, the database changes and is not compatible with the previous versions<br />
 
 0.2.0 : Changed database ( added data to manga, but not yet used ) + permanent parameters management<br />
 0.2.1 : small bug correction<br />
@@ -22,5 +22,7 @@
 0.3.3 : bug fix<br />
 0.3.4 : more bug fix<br />
 0.3.5 : more bug fix<br />
-0.3.6 : successfully corrected the bug where the lack of "1.html" at the end of a link could be an issue<br />
-0.3.7 : added a -c / --clear option to erase content of the todo database of a manga<br />
+
+###### Warning, the database changes and is not compatible with the previous versions<br />
+
+0.4.0 : Changed the database ( much less tables ), fixed a bug where the wrong link whas used for chapter update<br />

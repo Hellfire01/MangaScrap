@@ -40,27 +40,39 @@ class Download
     return ret
   end
 
-  def _extract_link(chapter_nb)
+  def _extract_link(volume_nb, chapter_nb)
     i = 0
-    @links.each do |chapter|
-      chap_cut = chapter.split("/")
-      if chap_cut[chap_cut.size - 1] != "1.html"
-        chapter += "1.html"
+    link_ret = nil
+    @links.reverse.each do |link|
+      link_cut = link.split("/")
+      if link_cut[link_cut.size - 1] != "1.html"
+        link += "1.html"
       end
-      tmp = chap_cut[chap_cut.size - 2]
-      tmp.slice!(0)
-      @chapter_value = tmp.to_f
-      if (@chapter_value == chapter_nb)
+      if (@has_volumes == true)
+	vol_tmp = link_cut[link_cut.size - 3]
+	vol_tmp[0] = ''
+	vol_value = vol_tmp.to_i
+	if (volume_nb != vol_value)
+          i += 1
+	  next
+	end
+      end
+      chap_tmp = link_cut[link_cut.size - 2]
+      chap_tmp[0] = ''
+      chap_value = chap_tmp.to_f
+      if (chapter_nb != chap_value)
+        i += 1
+	next
+      else
+	link_ret = link
 	break
       end
-      i += 1
     end
-    if (i == @links.size)
-      puts "could not find the requested chapter (#{chapter_nb}) in the manga page"
-      p @links
-      abort()
+    if (link_ret == nil)
+      abort("Error, could not find volume #{volume_nb} / chapter #{chapter_nb} in links")
     end
-    return @links[i]
+    puts link_ret
+    return link_ret
   end
 
   def _page(chapter_nb, page_nb, page, del = false)
@@ -110,6 +122,10 @@ class Download
   end
 
   def _chapter(vol_value, chapter, chapter_nb)
+    chap_cut = chapter.split("/")
+    if chap_cut[chap_cut.size - 1] != "1.html"
+      chapter += "1.html"
+    end
     link = chapter
     next_ = true
     page = get_link(link)
@@ -138,9 +154,10 @@ class Download
   end
 
   def chapter(volume_nb, chapter_nb)
+    link = _extract_link(volume_nb, chapter_nb)
     @volume_value = volume_nb
-    chapter = _extract_link(chapter_nb)
-    ret = _chapter(volume_nb, chapter, chapter_nb)
+    @chapter_value = chapter_nb
+    ret = _chapter(volume_nb, link, chapter_nb)
     puts ""
     return ret
   end
