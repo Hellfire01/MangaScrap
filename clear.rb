@@ -1,11 +1,11 @@
 def confirm_clear (db, name)
-    puts "going to delete #{name}"
+    puts "going to delete #{name}'s todo database elements"
     puts "Write 'YES' to continue"
     ret = STDIN.gets.chomp
     puts ""
     if (ret == "YES")
       db.clear_todo(name)
-      puts "deleted #{name}'s from database"
+      puts "deleted #{name}'s todo from database"
     else
       puts "did not delete #{name}"
     end

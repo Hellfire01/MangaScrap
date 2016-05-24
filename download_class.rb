@@ -98,14 +98,14 @@ class Download
       File.open(name_buffer + ".txt", 'w') do |pic|
 	pic << "could not be downloaded"
       end
-      @db.add_todo(@manga_name, @chapter_value, page_nb)
+      @db.add_todo(@manga_name, @volume_value, @chapter_value, page_nb)
       puts "added link of page #{page_nb} to todo database ( pic will be downloaded on next update )"
     end
     return true
   end
 
   def page(volume_nb, chapter_nb, page_nb, del = false)
-    chapter = _extract_link(chapter_nb)
+    chapter = _extract_link(volume_nb, chapter_nb)
     last_pos = chapter.rindex(/\//)
     link = chapter[0..last_pos].strip + page_nb.to_s + ".html"
     page = get_link(link)
@@ -128,6 +128,8 @@ class Download
     end
     link = chapter
     next_ = true
+    last_pos = chapter.rindex(/\//)
+    link = chapter[0..last_pos].strip + "1.html"
     page = get_link(link)
     if (page == nil)
       puts "could not get chapter #{chapter_nb} link, adding it to doto database"

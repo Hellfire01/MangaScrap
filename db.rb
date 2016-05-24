@@ -89,8 +89,16 @@ class DB
 
   #todo database
   def add_todo(manganame, volume_value, chapter_value, page_nb)
-    #check if the elements does not already exist
     mangaId = get_manga(manganame)[0]
+    todo = get_todo(manganame)
+    insert = [mangaId, volume_value, chapter_value, page_nb]
+    todo.each() do |elem|
+      elem.shift
+      if elem == insert
+	puts "manga #{manganame}, volume #{volume_value}, chapter #{chapter_value}, page #{page_nb} is already in todo database"
+	return
+      end
+    end
     begin
       prep = @db.prepare "INSERT INTO manga_todo VALUES (NULL, #{mangaId}, ?, ?, ?)"
       prep.bind_param 1, volume_value

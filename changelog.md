@@ -26,3 +26,4 @@
 ###### Warning, the database changes and is not compatible with the previous versions<br />
 
 0.4.0 : Changed the database ( much less tables ), fixed a bug where the wrong link whas used for chapter update<br />
+0.4.1 : bug fixes + prevented insertion of the same page multiple times in the database<br />
