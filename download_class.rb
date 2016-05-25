@@ -75,16 +75,20 @@ class Download
     return link_ret
   end
 
-  def _page(chapter_nb, page_nb, page, del = false)
+  def _page(volume_nb, chapter_nb, page_nb, page, del = false)
     pic_link = page.xpath('//img[@id="image"]').map{ |img| img['src']}
     if pic_link[0] == nil
       puts "could not extract picture source link chapter #{chapter_nb} / page #{page_nb}"
-      @db.add_todo(@manga_name, @volume_value, @chapter_value, page_nb)
-      puts "added link of page #{page_nb} to todo database ( pic will be downloaded on next update )"
+      if (@db.add_todo(@manga_name, volume_nb, chapter_nb, page_nb) == true)
+	puts "added link of page #{page_nb} to todo database ( pic will be downloaded on next update )"
+      end
       return false
     end
     pic_buffer = get_pic(pic_link[0])
-    name_buffer = file_name(@dir, @volume_value, @chapter_value, page_nb)
+    if pic_buffer == nil
+      return false
+    end
+    name_buffer = file_name(@dir, volume_nb, chapter_nb, page_nb)
     if pic_buffer != nil
       File.open(name_buffer + ".jpg", 'wb') do |pic|
 	pic << pic_buffer.read
@@ -98,8 +102,9 @@ class Download
       File.open(name_buffer + ".txt", 'w') do |pic|
 	pic << "could not be downloaded"
       end
-      @db.add_todo(@manga_name, @volume_value, @chapter_value, page_nb)
-      puts "added link of page #{page_nb} to todo database ( pic will be downloaded on next update )"
+      if @db.add_todo(@manga_name, volume_nb, chapter_nb, page_nb) == true
+	puts "added link of page #{page_nb} to todo database ( pic will be downloaded on next update )"
+      end
     end
     return true
   end
@@ -113,8 +118,8 @@ class Download
       puts "leaving programm => could not download data from #{link}"
       return false
     end
-    puts "chapter #{chapter_nb}/#{@links.size} => #{@chapter_value.to_s} / page #{page_nb}"
-    if (_page(chapter_nb, page_nb, page, del) == false)
+    puts "chapter #{chapter_nb}/#{@links.size} => #{chapter_nb.to_s} / page #{page_nb}"
+    if (_page(volume_nb, chapter_nb, page_nb, page, del) == false)
       puts "link = " + link
       return false
     end
@@ -133,13 +138,12 @@ class Download
     page = get_link(link)
     if (page == nil)
       puts "could not get chapter #{chapter_nb} link, adding it to doto database"
-      @db.add_todo(@manga_name, @volume_value, @chapter_value, -1)
+      @db.add_todo(@manga_name, vol_value, chapter_nb, -1)
       return false
     end
     page_nb = 1
     while next_ == true
-      @volume_value = vol_value
-      if (_page(chapter_nb, page_nb, page) == false)
+      if (_page(vol_value, chapter_nb, page_nb, page) == false)
 	puts "link = " + link
       end
       page_nb += 1
@@ -151,14 +155,12 @@ class Download
       end
       page = get_link(link)
     end
-    @db.add_trace(@manga_name, @volume_value, @chapter_value)
+    @db.add_trace(@manga_name, vol_value, chapter_nb)
     return true
   end
 
   def chapter(volume_nb, chapter_nb)
     link = _extract_link(volume_nb, chapter_nb)
-    @volume_value = volume_nb
-    @chapter_value = chapter_nb
     ret = _chapter(volume_nb, link, chapter_nb)
     puts ""
     return ret
@@ -187,8 +189,7 @@ class Download
       chap_cut = chapter.split("/")
       tmp = chap_cut[chap_cut.size - 2]
       tmp.slice!(0)
-      @chapter_value = tmp.to_f
-      puts ((volumes[i] != 0) ? "volume #{volumes[i]} " : "" ) + "chapter #{@chapter_value.to_s} ( link #{chapter_nb}/#{@links.size} )"
+      puts ((volumes[i] != 0) ? "volume #{volumes[i]} " : "" ) + "chapter #{chapter_nb.to_s} ( link #{chapter_nb}/#{@links.size} )"
       _chapter(volumes[i], chapter, chapter_nb)
       chapter_nb += 1
       i += 1

@@ -64,8 +64,8 @@ def get_link(link)
 	sleep($failure_sleep)
 	retry
     else
-      puts 'could nor get ' + link + ' after ' + $nb_tries.to_s + ' tries'
-      puts error.message
+      puts 'could not get ' + link + ' after ' + $nb_tries.to_s + ' tries'
+      puts "message is : " + error.message
       return nil
     end
   end
@@ -75,17 +75,22 @@ end
 
 # conect to link and download picture
 def get_pic(link)
+  safe_link = link.gsub(/[\[\]]/) { '%%%s' % $&.ord.to_s(16) }
   tries ||= $nb_tries
   begin
-    page = open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}")
+    page = open(safe_link, "User-Agent" => "Ruby/#{RUBY_VERSION}")
+  rescue URI::InvalidURIError
+    puts "Warning : bad url"
+    puts link
+    return nil
   rescue => error
     if tries > 0
 	tries -= 1
 	sleep($failure_sleep)
 	retry
     else
-      puts 'could nor get picture ' + link + ' after ' + $nb_tries.to_s + ' tries'
-      puts error.message
+      puts 'could not get picture ' + safe_link + ' after ' + $nb_tries.to_s + ' tries'
+      puts "message is : " + error.message
       return nil
     end
   end

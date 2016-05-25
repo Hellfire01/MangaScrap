@@ -20,7 +20,6 @@ require_relative 'clear'
 
 db = DB.new()
 init_utils(db)
-puts ""
 
 if ARGV.size == 0
   update(db)

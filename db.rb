@@ -58,6 +58,9 @@ class DB
   end
 
   def get_manga(manganame)
+    if manganame == nil
+      abort("error while trying to get manga => name is nil")
+    end
     begin
       ret = @db.execute "SELECT * FROM manga_list WHERE name='#{manganame}'"
     rescue SQLite3::Exception => e
@@ -92,11 +95,17 @@ class DB
     mangaId = get_manga(manganame)[0]
     todo = get_todo(manganame)
     insert = [mangaId, volume_value, chapter_value, page_nb]
+    if manganame == nil || volume_value == nil || chapter_value == nil || page_nb == nil
+      puts "Error while trying to insert element in todo database => nil"
+      p insert
+      puts "(manganame, volume, chapter, page)"
+      abort("")
+    end
     todo.each() do |elem|
       elem.shift
       if elem == insert
 	puts "manga #{manganame}, volume #{volume_value}, chapter #{chapter_value}, page #{page_nb} is already in todo database"
-	return
+	return false
       end
     end
     begin
@@ -109,6 +118,7 @@ class DB
       puts "could not insert page into todo database"
       abort("message is : '" + e.message + "'")
     end
+    return true
   end
 
   def get_todo(manganame)

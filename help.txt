@@ -64,3 +64,5 @@
  The [manga name] is found in the url
  ex : "black clover" => http://mangafox.me/manga/black_clover/ => "black_clover"
  ex : "crepuscule" => http://mangafox.me/manga/crepuscule_yamchi/ => "crepuscule_yamchi"
+
+
