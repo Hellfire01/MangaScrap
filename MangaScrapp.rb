@@ -5,6 +5,7 @@ require 'open-uri'
 require 'nokogiri'
 require 'sqlite3'
 require 'fileutils'
+require 'tk'
 
 require_relative 'utils'
 require_relative 'download'

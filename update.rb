@@ -1,8 +1,5 @@
-def update_manga(db, name)
-  puts "updating " + name
-  manga = db.get_manga(name)
+def manga_todo(name, db, dw)
   todo = db.get_todo(name)
-  dw = Download.new(db, name, manga[3])
   if todo.size != 0
     puts "atempting download of pages of todo database"
     todo.each do |elem|
@@ -24,17 +21,25 @@ def update_manga(db, name)
       end
     end
   end
+end
+
+def manga_missing_chapters(name, db, dw)
   miss = false
   traces = db.get_trace(name)
   chapters = dw.get_chapter_values()
   volumes = dw.get_volume_values()
   i = 0
   if traces.size != chapters.size
+    puts "updating data"
+    if traces.size > chapters.size
+      puts "WARNING !!! => the number of already downloaded chapters (#{traces.size}) is superior to the number of available chapters (#{chapters.size})"
+      puts "checking if any chapters are missing"
+    end
     miss = true
     dw.cover()
     dw.update_data()
     while i < chapters.size
-      if (traces.select{|id, manga_name, vol_value, chap_value| vol_value == volumes[i] && chap_value == chapters[i]}.size == 0)
+      if (traces.count{|id, manga_name, vol_value, chap_value| vol_value == volumes[i] && chap_value == chapters[i]} == 0)
 	puts ""
 	puts "did not find volume #{volumes[i]} chapter #{chapters[i]} in #{name}'s trace database"
 	puts "downloading volume #{volumes[i]} chapter #{chapters[i]} ( link #{i + 1} / #{chapters.size} )"
@@ -42,13 +47,21 @@ def update_manga(db, name)
       end
       i += 1
     end
+  else
   end
   if (miss == true)
     puts "downloaded missing chapters for #{name}"
   else
     puts "no missing chapters for #{name}"
   end
-  puts ""
+end
+
+def update_manga(db, name)
+  puts "updating " + name
+  manga = db.get_manga(name)
+  dw = Download.new(db, name, manga[3])
+  manga_todo(name, db, dw)
+  manga_missing_chapters(name, db, dw)
 end
 
 def update_all(db)

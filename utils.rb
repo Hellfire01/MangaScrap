@@ -121,7 +121,7 @@ def get_mangas()
     line_num = 0
     begin
       text = File.open(ARGV[2]).read
-    rescue Exception => e
+    rescue => e
       abort(e.message)
     end
     text.gsub!(/\r\n?/, "\n")

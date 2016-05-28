@@ -29,3 +29,4 @@
 0.4.1 : bug fixes + prevented insertion of the same page multiple times in the database<br />
 0.4.2 : bug fixes + general stability increase<br />
 0.4.3 : stability and optimisation<br />
+0.4.4 : optimisation and code cleaning<br />

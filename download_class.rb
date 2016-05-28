@@ -1,21 +1,21 @@
 class Download
-  def _chap_link_corrector()
-    @links.map do |chapter|
-      chap_cut = chapter.split("/")
-      if chap_cut[chap_cut.size - 1] != "1.html"
-	chapter += "1.html"
+  def cover()
+    cover_link = @doc.xpath('//div[@class="cover"]/img').map{ |cover_l| cover_l['src'] }
+    cover_buffer = get_pic(cover_link[0])
+    if cover_buffer != nil
+      open(@dir + 'cover.jpg', 'wb') do |pic|
+	pic << cover_buffer.read()
       end
+    else
+      puts "WARNING : cover could not download cover"
     end
   end
 
   def get_volume_values()
     ret = []
-    @links.reverse.each do |chapter|
+    @links.reverse_each do |chapter|
       if @has_volumes == true
 	chap_cut = chapter.split("/")
-	if chap_cut[chap_cut.size - 1] != "1.html"
-	  chapter += "1.html"
-	end
 	tmp = chap_cut[chap_cut.size - 3]
 	tmp.slice!(0)
 	ret << tmp.to_i
@@ -28,11 +28,8 @@ class Download
 
   def get_chapter_values()
     ret = []
-    @links.reverse.each do |chapter|
+    @links.reverse_each do |chapter|
       chap_cut = chapter.split("/")
-      if chap_cut[chap_cut.size - 1] != "1.html"
-        chapter += "1.html"
-      end
       tmp = chap_cut[chap_cut.size - 2]
       tmp.slice!(0)
       ret << tmp.to_f
@@ -43,7 +40,7 @@ class Download
   def _extract_link(volume_nb, chapter_nb)
     i = 0
     link_ret = nil
-    @links.reverse.each do |link|
+    @links.reverse_each do |link|
       link_cut = link.split("/")
       if link_cut[link_cut.size - 1] != "1.html"
         link += "1.html"
@@ -127,11 +124,6 @@ class Download
   end
 
   def _chapter(vol_value, chapter, chapter_nb)
-    chap_cut = chapter.split("/")
-    if chap_cut[chap_cut.size - 1] != "1.html"
-      chapter += "1.html"
-    end
-    link = chapter
     next_ = true
     last_pos = chapter.rindex(/\//)
     link = chapter[0..last_pos].strip + "1.html"
@@ -166,31 +158,16 @@ class Download
     return ret
   end
 
-  def cover()
-    cover_link = @doc.xpath('//div[@class="cover"]/img').map{ |cover_l| cover_l['src'] }
-    cover_buffer = get_pic(cover_link[0])
-    if cover_buffer != nil
-      open(@dir + 'cover.jpg', 'wb') do |pic|
-	pic << cover_buffer.read()
-      end
-    else
-      puts "WARNING : cover could not download cover"
-    end
-  end
-
   def manga()
-    puts "getting links"
-    chapter_nb = 1
+    puts "getting data"
+    chapters = get_chapter_values()
     volumes = get_volume_values()
     i = 0
     cover()
-    @links.reverse.each do |chapter|
-      chap_cut = chapter.split("/")
-      tmp = chap_cut[chap_cut.size - 2]
-      tmp.slice!(0)
-      puts ((volumes[i] != 0) ? "volume #{volumes[i]} " : "" ) + "chapter #{chapter_nb.to_s} ( link #{chapter_nb}/#{@links.size} )"
-      _chapter(volumes[i], chapter, chapter_nb)
-      chapter_nb += 1
+    update_data()
+    while i < chapters.size
+      puts "downloading volume #{volumes[i]} / chapter #{chapters[i]} ( link #{i + 1} / #{chapters.size} )"
+      chapter(volumes[i], chapters[i])
       i += 1
     end
   end
@@ -215,7 +192,6 @@ class Download
     if @links == nil || @links.size == 0
       abort("failed to get manga " + manga_name + " chapter index")
     end
-    _chap_link_corrector()
     @has_volumes = false
     if @links[0].split('/').size == 8
       @has_volumes = true
