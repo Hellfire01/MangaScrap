@@ -1,19 +1,19 @@
 
  arguments for MangaScrapp :
 
- -a --add [-t 'name of file'] / 'manga name' [manga site (default is manga fox)]
+ -a --add [-f 'name of file'] / 'manga name' [manga site (default is manga fox)]
     add manga to database
 
- -u --update [-t 'name of file'] / [manga name]
+ -u --update [-f 'name of file'] / [manga name]
     update database / manga
 
- -dl --download [-t 'name of file'] 'manga name' [manga site (default is manga fox)]
+ -dl --download [-f 'name of file'] 'manga name' [manga site (default is manga fox)]
     add manga and download
 
  -l --list [manga name / manga site]
     shows content of database
 
- -d --delete [-t 'name of file'] / [manga name]
+ -d --delete [-f 'name of file'] / [manga name]
     deletes manga from database ( not the files )
 
  -pl --param_list
@@ -32,14 +32,14 @@
  -pr --param_reset
     resets the parameters to default, will ask for confirmation
 
- -c --clear [-t 'name of file'] / [manga name]
+ -c --clear [-f 'name of file'] / [manga name]
     clears the todo database from the manga
 
  -h --help
     displays help
 
 
- -t + 'file name' allows you to do multiple mangas at once
+ -f + 'file name' allows you to do multiple mangas at once
  it is used with add, update, download and delete
  if used, no other arguments are required
  in the file, each manga is separated by a line break
@@ -56,7 +56,7 @@
  ./MangaScrapp
  ./MangaScrapp -u
     updates all mangas in database
- ./MangaScrapp -t file.txt
+ ./MangaScrapp -f file.txt
     updates all mangas in file.txt
  ./MangaScrapp -ps 
 

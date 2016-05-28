@@ -167,7 +167,6 @@ class Download
   end
 
   def cover()
-    puts "downloading cover"
     cover_link = @doc.xpath('//div[@class="cover"]/img').map{ |cover_l| cover_l['src'] }
     cover_buffer = get_pic(cover_link[0])
     if cover_buffer != nil
@@ -175,7 +174,7 @@ class Download
 	pic << cover_buffer.read()
       end
     else
-      puts "WARNING : could not download cover"
+      puts "WARNING : cover could not download cover"
     end
   end
 

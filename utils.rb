@@ -114,10 +114,10 @@ def list_dir(work_dir)
   end
 end
 
-# open -t option file and return array
+# open -f option file and return array
 def get_mangas()
   ret = Array.new
-  if (ARGV[1] == "-t")
+  if (ARGV[1] == "-f")
     line_num = 0
     begin
       text = File.open(ARGV[2]).read

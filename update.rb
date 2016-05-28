@@ -1,9 +1,8 @@
 def update_manga(db, name)
-  puts ""
+  puts "updating " + name
   manga = db.get_manga(name)
   todo = db.get_todo(name)
   dw = Download.new(db, name, manga[3])
-  puts ""
   if todo.size != 0
     puts "atempting download of pages of todo database"
     todo.each do |elem|
@@ -24,31 +23,26 @@ def update_manga(db, name)
 	end
       end
     end
-  else
-    puts "no elements in todo database"
   end
-  puts "checking for missing data"
   miss = false
   traces = db.get_trace(name)
   chapters = dw.get_chapter_values()
   volumes = dw.get_volume_values()
   i = 0
-  while i < chapters.size
-    if (traces.select{|id, manga_name, vol_value, chap_value| vol_value == volumes[i] && chap_value == chapters[i]}.size == 0)
-      if miss == false
-        puts ""
-	dw.cover()
-	dw.update_data()
+  if traces.size != chapters.size
+    miss = true
+    dw.cover()
+    dw.update_data()
+    while i < chapters.size
+      if (traces.select{|id, manga_name, vol_value, chap_value| vol_value == volumes[i] && chap_value == chapters[i]}.size == 0)
+	puts ""
+	puts "did not find volume #{volumes[i]} chapter #{chapters[i]} in #{name}'s trace database"
+	puts "downloading volume #{volumes[i]} chapter #{chapters[i]} ( link #{i + 1} / #{chapters.size} )"
+	dw.chapter(volumes[i], chapters[i])
       end
-      miss = true
-      puts ""
-      puts "did not find volume #{volumes[i]} chapter #{chapters[i]} in #{name}'s trace database"
-      puts "downloading volume #{volumes[i]} chapter #{chapters[i]} ( link #{i + 1} / #{chapters.size} )"
-      dw.chapter(volumes[i], chapters[i])
+      i += 1
     end
-    i += 1
   end
-  puts ""
   if (miss == true)
     puts "downloaded missing chapters for #{name}"
   else
@@ -61,7 +55,6 @@ def update_all(db)
   list = db.get_manga_list()
   puts "updating all mangas in database"  
   list.each do |elem|
-    puts "updating " + elem[0]
     update_manga(db, elem[0])
   end
 end
@@ -83,7 +76,7 @@ def update(db)
 	update_manga(db, name[0])
       end
     else
-      abort("error while trying to get content of file ( -t option )")
+      abort("error while trying to get content of file ( -f option )")
     end
   else
     abort('bad number of arguments for update, --help for help')

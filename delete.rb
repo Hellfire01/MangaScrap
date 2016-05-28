@@ -23,7 +23,7 @@ def delete (db)
 	confirm_delete(db, name)
       end
     else
-      abort("error while trying to get content of file ( -t option )")
+      abort("error while trying to get content of file ( -f option )")
     end
   end
 end
