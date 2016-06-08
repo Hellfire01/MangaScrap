@@ -20,7 +20,7 @@ def clear (db)
     ret = get_mangas()
     if (ret != nil)
       ret.each do |name|
-	confirm_clear(db, name)
+        confirm_clear(db, name)
       end
     else
       abort("error while trying to get content of file ( -f option )")

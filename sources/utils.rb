@@ -1,13 +1,16 @@
 $nb_tries = -1
 $between_sleep = -1
 $failure_sleep = -1
+$error_sleep = -1
 
 #inits the global variables
-def init_utils(db)
+def init_utils()
+  db = Params.new()
   params = db.get_params()
   $between_sleep = params[2]
   $failure_sleep = params[3]
   $nb_tries = params[4]
+  $error_sleep = params[5]
 end
 
 # used for the description.txt file of every manga
@@ -44,15 +47,16 @@ def redirection_detection(url)
 	sleep($failure_sleep)
 	retry
     else
-      puts error.message
-      abort("connection is lost, stopping programm")
+      puts "connection is lost or could not find manga, stopping programm"
+      puts url
+      abort error.message
     end
   end
   return false
 end  
 
 # conect to link and download page
-def get_link(link)
+def get_page(link)
   tries ||= $nb_tries
   begin
     page = Nokogiri::HTML(open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}")) do |noko|
@@ -60,9 +64,9 @@ def get_link(link)
     end
   rescue => error
     if tries > 0
-	tries -= 1
-	sleep($failure_sleep)
-	retry
+      tries -= 1
+      sleep($failure_sleep)
+      retry
     else
       puts 'could not get ' + link + ' after ' + $nb_tries.to_s + ' tries'
       puts "message is : " + error.message
@@ -79,9 +83,10 @@ def get_pic(link)
   tries ||= $nb_tries
   begin
     page = open(safe_link, "User-Agent" => "Ruby/#{RUBY_VERSION}")
-  rescue URI::InvalidURIError
+  rescue URI::InvalidURIError => error
     puts "Warning : bad url"
     puts link
+    puts "message is : " + error.message
     return nil
   rescue => error
     if tries > 0
@@ -128,7 +133,7 @@ def get_mangas()
     text.each_line do |line|
       elems = line.split(" ")
       if (elems.size > 2)
-	abort("there is more than one space on line #{line_num}")
+        abort("there is more than one space on line #{line_num}")
       end
       ret << elems
       line_num += 1
@@ -139,4 +144,26 @@ def get_mangas()
   ARGV.delete_at(2)
   ARGV.delete_at(1)
   return ret
+end
+
+# get file name
+def file_name(dir, vol_value, chap_value, page_nb)
+  chap_str = chap_value.to_s
+  val = chap_str.index('.')
+  if (val != nil)
+    chap_str[val] = ''
+  else
+    chap_str += '0'
+  end
+  if vol_value == -1
+    vol_buffer = "XXXX"
+  elsif vol_value == -2
+    vol_buffer = "_VTB"
+  else
+    vol_buffer = ((vol_value > 1000) ? "0" : ((vol_value > 100) ? "00" : ((vol_value > 10) ? "000" : "0000")))
+  end
+  chap_buffer = ((chap_value > 1000) ? "0" : ((chap_value > 100) ? "00" : ((chap_value > 10) ? "000" : "0000")))
+  page_buffer = ((page_nb > 1000) ? "0" : ((page_nb > 100) ? "00" : ((page_nb > 10) ? "000" : "0000")))
+  name_buffer = dir + "manga_v" + vol_buffer + vol_value.to_s + "_c" + chap_buffer + chap_str + "_p" + page_buffer + page_nb.to_s
+  return name_buffer
 end

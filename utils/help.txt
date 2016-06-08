@@ -1,5 +1,5 @@
 
- arguments for MangaScrapp :
+ arguments for MangaScrap :
 
  -a --add [-f 'name of file'] / 'manga name' [manga site (default is manga fox)]
     add manga to database
@@ -51,14 +51,14 @@
  crepuscule_yamchi http://mangafox.me/
 
  Usage exemples :
- ./MangaScrapp -a my_super_manga
+ ./MangaScrap -a my_super_manga
     adds 'my_super_manga' to the database for future update
- ./MangaScrapp
- ./MangaScrapp -u
+ ./MangaScrap
+ ./MangaScrap -u
     updates all mangas in database
- ./MangaScrapp -f file.txt
+ ./MangaScrap -f file.txt
     updates all mangas in file.txt
- ./MangaScrapp -ps 
+ ./MangaScrap -ps 
 
  Warning !
  The [manga name] is found in the url

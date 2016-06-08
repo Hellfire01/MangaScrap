@@ -1,4 +1,4 @@
-black_clover http://mangafox.me/manga/
+black_clover http://mangafox.me/
 crepuscule_yamchi
 doulou_dalu
 doupo_cangqiong
@@ -8,7 +8,7 @@ onepunch_man
 overlord
 panlong
 qwan
-re_monster http://mangafox.me/manga/
+re_monster http://mangafox.me/
 school_shock
 seirei_tsukai_no_kenbu_hyouju_issei
 sky_blue
