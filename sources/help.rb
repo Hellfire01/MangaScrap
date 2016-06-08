@@ -1,6 +1,6 @@
 def help()
   begin
-    file = File.open("help.txt", "r")
+    file = File.open("utils/help.txt", "r")
     content = file.read
     puts content
   rescue Errno::ENOENT => e

@@ -133,7 +133,10 @@ def get_mangas()
     text.each_line do |line|
       elems = line.split(" ")
       if (elems.size > 2)
-        abort("there is more than one space on line #{line_num}")
+        abort("there is more than one space on line #{line_num} this should not be possible, ./MangaScrap -h for help")
+      end
+      if (elems.size == 1)
+        elems << "http://mangafox.me/"
       end
       ret << elems
       line_num += 1

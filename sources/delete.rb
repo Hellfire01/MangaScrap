@@ -20,7 +20,7 @@ def delete (db)
     ret = get_mangas()
     if (ret != nil)
       ret.each do |name|
-        confirm_delete(db, name)
+        confirm_delete(db, name[0])
       end
     else
       abort("error while trying to get content of file ( -f option )")

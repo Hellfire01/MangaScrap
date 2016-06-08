@@ -35,3 +35,4 @@
 ###### Warning : the parameters where reset ( new db file and more options )
 
 0.5.0 : Changed the code architecture to fix a few bugs and make the code easier to update and maintain + added a few parameters options and getting ready for multiple sites<br />
+0.5.1 : bug fixes + updated the help option<br />

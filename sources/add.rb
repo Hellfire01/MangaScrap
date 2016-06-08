@@ -36,7 +36,7 @@ def add(db)
         if (site != "http://mangafox.me/")
           abort ("sorry, MangaScrap does not deal with other sites than mangafox ( yet )")
         else
-          Download_mf.new(db, manga_name)
+          Download_mf.new(db, name[0])
         end
       end
     end

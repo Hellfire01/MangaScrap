@@ -118,6 +118,7 @@ class Download_mf
 
   def chapter(volume, chapter)
     link = link_generator(volume, chapter, 1)
+    puts link
     if (link == nil)
       return false
     end
@@ -190,8 +191,10 @@ class Download_mf
     @links = @doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
     while (@links == nil || @links.size == 0) && tries > 0
       puts "error while retreiving chapter index of " + @manga_name
-      @doc = get_page(@site + manga_name)
-      @links = @doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
+      @doc = get_page(@site + @manga_name)
+      if (doc != nil)
+        @links = @doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
+      end
       tries -= 1
     end
     if @links == nil || @links.size == 0

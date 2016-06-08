@@ -24,10 +24,13 @@
     WARNING : when setting the destination folder of mangas, the already downloaded
               pages are NOT moved
         parameter possible values :
-        mp => the path to witch the "manga" directory is created
-        bs => the sleep between 2 page downloads
-        fs => the sleep between 2 page download fails
-        nb => the number of download fails allowed before putting the page in the todo database
+        mp => the path to witch the "manga" directory is created ( string )
+        bs => the sleep between 2 page downloads ( seconds )
+        fs => the sleep between 2 page download fails ( seconds )
+        nb => the number of download fails allowed before putting the page in the todo database ( int )
+	es => time between 2 errors - such as a conection loss - ( seconds )
+	dd => delete the chapters that are not in the link list - after they where moved to an other
+	      volume for example - ( true / false )
 
  -pr --param_reset
     resets the parameters to default, will ask for confirmation
@@ -62,6 +65,7 @@
 
  Warning !
  The [manga name] is found in the url
+ ex : "bleach" => http://mangafox.me/manga/bleach/ => "bleach"
  ex : "black clover" => http://mangafox.me/manga/black_clover/ => "black_clover"
  ex : "crepuscule" => http://mangafox.me/manga/crepuscule_yamchi/ => "crepuscule_yamchi"
 
