@@ -2,7 +2,7 @@ class Download_mf
   def link_generator(volume, chapter, page)
     link = @site + "manga/" + @manga_name + "/"
     if (volume >= 0)
-      vol_buffer = ((volume > 10) ? "" : "0")
+      vol_buffer = ((volume >= 10) ? "" : "0")
       link += "v" + vol_buffer + volume.to_s + "/"
     elsif (volume == -2)
       link += "vTBD/"
@@ -13,6 +13,7 @@ class Download_mf
     if (redirection_detection(link) == true)
       return nil
     end
+    puts link
     return link
   end
 
@@ -24,7 +25,7 @@ class Download_mf
     link_split = link.split('/')
     page = link_split[link_split.size - 1].chomp(".html").to_i
     link_split[link_split.size - 2][0] = ''
-    chapter = link_split[link_split.size - 2].to_i
+    chapter = link_split[link_split.size - 2].to_f
     if link_split.size == 8
       link_split[link_split.size - 3][0] = ''
       if link_split[link_split.size - 3] == "TBD"
@@ -118,7 +119,6 @@ class Download_mf
 
   def chapter(volume, chapter)
     link = link_generator(volume, chapter, 1)
-    puts link
     if (link == nil)
       return false
     end

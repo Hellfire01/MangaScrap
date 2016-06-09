@@ -52,7 +52,9 @@ def MF_manga_missing_chapters(name, db, dw)
       puts ""
       puts "did not find chapter #{data[1]}" + volume_string + " in #{name}'s trace database"
       puts "downloading chapter #{data[1]}" + volume_string + " ( link #{i + 1} / #{links.size} )"
-      dw.chapter(data[0], data[1])
+      if (dw.chapter(data[0], data[1]) == false)
+        puts "failed to download chapter ( put it in database )"
+      end
     end
     i += 1
   end
@@ -67,6 +69,7 @@ def MF_manga_extra_chapters(name, db, dw)
 end
 
 def MF_update(db, name)
+  puts ""
   pdb = Params.new()
   params = pdb.get_params()
   dw = Download_mf.new(db, name)
