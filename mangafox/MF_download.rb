@@ -11,6 +11,8 @@ class Download_mf
     link += "c" + chap_buffer + chapter.to_s + "/"
     link += page.to_s + ".html"
     if (redirection_detection(link) == true)
+      puts "Error : generated a bad link"
+      puts "link = " + link
       return nil
     end
     puts link
@@ -26,6 +28,9 @@ class Download_mf
     page = link_split[link_split.size - 1].chomp(".html").to_i
     link_split[link_split.size - 2][0] = ''
     chapter = link_split[link_split.size - 2].to_f
+    if (chapter % 1 == 0)
+      chapter = chapter.to_i
+    end
     if link_split.size == 8
       link_split[link_split.size - 3][0] = ''
       if link_split[link_split.size - 3] == "TBD"
@@ -58,6 +63,7 @@ class Download_mf
       File.open(name_buffer + ".txt", 'w') do |pic|
         pic << "could not be downloaded"
       end
+      puts "Error : no picture to save"
       return false
     end
     return true
