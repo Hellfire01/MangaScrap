@@ -8,8 +8,13 @@ class Download_mf
       link += "vTBD/"
     end
     chap_buffer = ((chapter < 10) ? "00" : ((chapter < 100) ? "0" : ""))
-    link += "c" + chap_buffer + chapter.to_s + "/"
-    link += page.to_s + ".html"
+    link += "c" + chap_buffer
+    if (chapter % 1 == 0)
+      link += chapter.to_i.to_s
+    else
+      link += chapter.to_s
+    end
+    link += "/" + page.to_s + ".html"
     if (redirection_detection(link) == true)
       puts "Error : generated a bad link"
       puts "link = " + link
