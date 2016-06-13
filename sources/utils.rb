@@ -164,9 +164,10 @@ def file_name(dir, vol_value, chap_value, page_nb)
     vol_buffer = "_VTB"
   else
     vol_buffer = ((vol_value > 1000) ? "0" : ((vol_value > 100) ? "00" : ((vol_value > 10) ? "000" : "0000")))
+    vol_buffer += vol_value.to_s
   end
   chap_buffer = ((chap_value > 1000) ? "0" : ((chap_value > 100) ? "00" : ((chap_value > 10) ? "000" : "0000")))
   page_buffer = ((page_nb > 1000) ? "0" : ((page_nb > 100) ? "00" : ((page_nb > 10) ? "000" : "0000")))
-  name_buffer = dir + "manga_v" + vol_buffer + vol_value.to_s + "_c" + chap_buffer + chap_str + "_p" + page_buffer + page_nb.to_s
+  name_buffer = dir + "manga_v" + vol_buffer + "_c" + chap_buffer + chap_str + "_p" + page_buffer + page_nb.to_s
   return name_buffer
 end

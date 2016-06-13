@@ -10,6 +10,7 @@ require_relative 'DB/manga_db'
 require_relative 'DB/params_db'
 require_relative 'mangafox/MF_download'
 require_relative 'mangafox/MF_update'
+require_relative 'mangafox/MF_redl'
 require_relative 'sources/utils'
 require_relative 'sources/update'
 require_relative 'sources/help'
@@ -18,6 +19,7 @@ require_relative 'sources/list'
 require_relative 'sources/delete'
 require_relative 'sources/params'
 require_relative 'sources/clear'
+require_relative 'sources/redl'
 
 db = DB.new()
 init_utils()
@@ -44,6 +46,8 @@ else
     param_reset()
   when "-c", "--clear"
     clear(db)
+  when "-redl", "--re-download"
+    re_dl(db)
   when "-h", "--help"
     help()
   else

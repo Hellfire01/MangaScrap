@@ -13,6 +13,7 @@ def MF_manga_todo(name, db, dw)
   if todo.size != 0
     puts "atempting download of pages of todo database"
     todo.each do |elem|
+      volume_nb = elem[2]
       chapter_nb = elem[3]
       page_nb = elem[4]
       volume_string = MF_volume_string(elem[2])
@@ -30,6 +31,7 @@ def MF_manga_todo(name, db, dw)
         end
       end
     end
+    puts "done"
   else
     puts "no element in todo database"
   end
@@ -74,7 +76,9 @@ def MF_update(db, name)
   params = pdb.get_params()
   dw = Download_mf.new(db, name)
   MF_manga_todo(name, db, dw)
+  puts ""
   MF_manga_missing_chapters(name, db, dw)
+  puts ""
   if (params[6] == "true")
     MF_manga_extra_chapters(name, db, dw)
   end

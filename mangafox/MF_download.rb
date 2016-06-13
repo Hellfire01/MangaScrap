@@ -71,6 +71,9 @@ class Download_mf
 
   def page_link(link)
     page = get_page(link)
+    if (page == nil)
+      return false
+    end
     data = data_extractor(link)
     pic_link = page.xpath('//img[@id="image"]').map{ |img| img['src']}
     if pic_link[0] == nil
@@ -124,6 +127,9 @@ class Download_mf
   end
 
   def chapter(volume, chapter)
+    if (chapter % 1 == 0)
+      chapter = chapter.to_i
+    end
     link = link_generator(volume, chapter, 1)
     if (link == nil)
       return false
@@ -151,7 +157,7 @@ class Download_mf
   end
 
   def data()
-    puts "downloading data"
+    puts "downloading data for " + @manga_name
     i = 0
     genres = []
     release = 0
@@ -193,12 +199,12 @@ class Download_mf
   end
 
   def extract_links()
-    tries = 10
+    tries = 3
     @links = @doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
     while (@links == nil || @links.size == 0) && tries > 0
       puts "error while retreiving chapter index of " + @manga_name
       @doc = get_page(@site + @manga_name)
-      if (doc != nil)
+      if (@doc != nil)
         @links = @doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
       end
       tries -= 1

@@ -38,3 +38,4 @@
 0.5.1 : bug fixes + updated the help option<br />
 0.5.2 : bug fixes<br />
 0.5.3 : finished debugging the link generator and the data extractor<br />
+0.5.4 : bug fixes + optimisation : it is now possible to set the bs and the fs sleep at 0.2 ( instead of 0.25 and 0.5 )<br />

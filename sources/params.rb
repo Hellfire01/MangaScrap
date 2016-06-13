@@ -45,8 +45,8 @@ def param_set()
 	puts "you need to give a value"
       else
 	tmp = ARGV[2].to_f
-	if (tmp < 0.25)
-	  puts "the 'between sleep' value canot be < 0.25"
+	if (tmp < 0.2)
+	  puts "the 'between sleep' value canot be < 0.2"
 	else
 	  db.set_params_between_sleep(tmp)
 	  puts "updated between sleep to " + ARGV[2]
@@ -57,8 +57,8 @@ def param_set()
 	puts "you need to give a value"
       else
 	tmp = ARGV[2].to_f
-	if (tmp < 0.5)
-	  puts "the 'failure sleep' value canot be < 0.5"
+	if (tmp < 0.2)
+	  puts "the 'failure sleep' value canot be < 0.2"
 	else
 	  db.set_params_failure_sleep(tmp)
 	  puts "updated failure sleep to " + ARGV[2]
@@ -113,8 +113,8 @@ def param_reset()
   puts "WARNING ! You are about to reset your parameters !"
   puts "the parameters will be set to :"
   puts "manga path      = " + Dir.home + "/Documents/mangas/"
-  puts "between sleep   = 0.25"
-  puts "failure sleep   = 0.5"
+  puts "between sleep   = 0.2"
+  puts "failure sleep   = 0.2"
   puts "number of tries = 20"
   puts "error sleep     = 30"
   puts "delete diif     = true"
