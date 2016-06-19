@@ -41,4 +41,7 @@
 0.5.4 : bug fixes + optimisation : it is now possible to set the bs and the fs sleep at 0.2 ( instead of 0.25 and 0.5 )<br />
 0.5.5 : fixed a bad link generation if a chapter in the todo database whas a float and not an int<br />
 
+
+
 0.6.0 : added the -redl option + re-enabled the -dl opion + bub fixes<br />
+0.6.1 : the manga list files can now have empty lines and comments<br />

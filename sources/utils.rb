@@ -132,6 +132,9 @@ def get_mangas()
     end
     text.gsub!(/\r\n?/, "\n")
     text.each_line do |line|
+      if (line == nil || line.size <= 1 || line[0] == '#' || line[0] == '\n')
+        next
+      end
       elems = line.split(" ")
       if (elems.size > 2)
         abort("there is more than one space on line #{line_num} this should not be possible, ./MangaScrap -h for help")

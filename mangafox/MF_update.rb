@@ -19,7 +19,7 @@ def MF_manga_todo(name, db, dw)
       page_nb = elem[4]
       volume_string = MF_volume_string(elem[2])
       if (page_nb != -1)
-        puts "downloading page #{data[2]}, chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ")
+        puts "downloading page #{page_nb}, chapter #{chapter_nb}" + ((volume_nb == -1) ? "" : ", volume #{volume_nb} ")
         if (dw.page(volume_nb, chapter_nb, page_nb) == true)
           db.delete_todo(elem[0])
         else

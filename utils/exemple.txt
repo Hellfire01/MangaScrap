@@ -1,6 +1,10 @@
 black_clover http://mangafox.me/
 crepuscule_yamchi
 doulou_dalu
+
+#this is a comment
+#comments MUST start with a '#' as the very first character of the line
+
 doupo_cangqiong
 gate_jietai_kare_no_chi_nite_kaku_tatakeri
 nejimaki_kagyu
@@ -8,6 +12,10 @@ onepunch_man
 overlord
 panlong
 qwan
+
+
+# empty lines are ignored
+
 re_monster http://mangafox.me/
 school_shock
 seirei_tsukai_no_kenbu_hyouju_issei
