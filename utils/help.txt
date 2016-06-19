@@ -8,7 +8,17 @@
     update database / manga
 
  -dl --download [-f 'name of file'] 'manga name' [manga site (default is manga fox)]
-    add manga and download
+    add manga and then download
+
+ -redl --redownload 'manga name' [volume] [chapter] [page]
+    will download the specified volume / chapter / page ( the order doesn't matter )
+    each value must be preceded by a 'v' for the volume, 'c' for the chapter and 'p' for the page
+    ./MangaScrap -redl bleach v30
+        will download the volume 30 of bleach
+    ./MangaScrap -redl toriko v2 p3 c4
+        will download the volume 2, chapter 4, page 3 of toriko
+    ./MangaScrap -redl fairy_tail vTBD c56
+        will download the chapter 56 of the to be declared ( TBD ) volume
 
  -l --list [manga name / manga site]
     shows content of database
@@ -23,14 +33,14 @@
     sets the speciefied parameter
     WARNING : when setting the destination folder of mangas, the already downloaded
               pages are NOT moved
-        parameter possible values :
+        'parameter id' values :
         mp => the path to witch the "manga" directory is created ( string )
         bs => the sleep between 2 page downloads ( seconds )
         fs => the sleep between 2 page download fails ( seconds )
         nb => the number of download fails allowed before putting the page in the todo database ( int )
-	es => time between 2 errors - such as a conection loss - ( seconds )
-	dd => delete the chapters that are not in the link list - after they where moved to an other
-	      volume for example - ( true / false )
+        es => time between 2 errors - such as a conection loss - ( seconds )
+        dd => delete the chapters that are not in the link list - after they where moved to an other
+              volume for example - ( true / false )
 
  -pr --param_reset
     resets the parameters to default, will ask for confirmation
@@ -48,7 +58,7 @@
  in the file, each manga is separated by a line break
  syntax is : manga_name [site]
  the site will be ignored for update and delete
- 
+
  example :
  black_clover
  crepuscule_yamchi http://mangafox.me/
@@ -56,12 +66,15 @@
  Usage exemples :
  ./MangaScrap -a my_super_manga
     adds 'my_super_manga' to the database for future update
+ ./MangaScrap -a -f my_manga_list.txt
+    adds all mangas of 'my_manga_list.txt' to the database for future update
  ./MangaScrap
- ./MangaScrap -u
     updates all mangas in database
  ./MangaScrap -f file.txt
     updates all mangas in file.txt
- ./MangaScrap -ps 
+ ./MangaScrap -ps mp /home/toto/
+    sets the path of the manga directory to the last argument
+    WARNING : it does NOT move the already downloaded pages
 
  Warning !
  The [manga name] is found in the url

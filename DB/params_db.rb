@@ -12,6 +12,13 @@ class Params
   end
 
   def set_params_path(path)
+    if (path == nil || path.size == 0)
+      puts "you need to input a path"
+      exit 5
+    end
+    if (path[path.size - 1] != '/')
+      path += '/'
+    end
     begin
       prep = @db.prepare "UPDATE params SET manga_path = ? WHERE Id = 1"
       prep.bind_param 1, path

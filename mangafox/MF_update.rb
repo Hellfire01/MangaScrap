@@ -11,6 +11,7 @@ end
 def MF_manga_todo(name, db, dw)
   todo = db.get_todo(name)
   if todo.size != 0
+    puts ""
     puts "atempting download of pages of todo database"
     todo.each do |elem|
       volume_nb = elem[2]
@@ -18,12 +19,14 @@ def MF_manga_todo(name, db, dw)
       page_nb = elem[4]
       volume_string = MF_volume_string(elem[2])
       if (page_nb != -1)
+        puts "downloading page #{data[2]}, chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ")
         if (dw.page(volume_nb, chapter_nb, page_nb) == true)
           db.delete_todo(elem[0])
         else
           puts "failed to download page #{page_nb} of chapter #{chapter_nb}" + volume_string
         end
       else
+        puts "downloading chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ")
         if (dw.chapter(volume_nb, chapter_nb) == true)
           db.delete_todo(elem[0])
         else
@@ -46,6 +49,7 @@ def MF_manga_missing_chapters(name, db, dw)
     data = dw.data_extractor(link)
     if (traces.count{|id, manga_name, vol_value, chap_value| vol_value == data[0] && chap_value == data[1]} == 0)
       if (miss == false)
+        puts ""
         puts "updating chapters"
         dw.data()
         miss = true
@@ -70,16 +74,18 @@ end
 def MF_manga_extra_chapters(name, db, dw)
 end
 
-def MF_update(db, name)
-  puts ""
+#used by Download_mf to avoid creating a second instance of the same class
+def MF_update_dw(name, dw, db)
   pdb = Params.new()
   params = pdb.get_params()
-  dw = Download_mf.new(db, name)
   MF_manga_todo(name, db, dw)
-  puts ""
   MF_manga_missing_chapters(name, db, dw)
-  puts ""
   if (params[6] == "true")
     MF_manga_extra_chapters(name, db, dw)
   end
+end
+
+def MF_update(db, name)
+  dw = Download_mf.new(db, name)
+  MF_update_dw(name, dw, db)
 end

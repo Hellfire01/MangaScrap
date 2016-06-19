@@ -152,6 +152,20 @@ class DB
   #trace database
   def add_trace(manganame, volume_value, chapter_value)
     mangaId = get_manga(manganame)[0]
+    trace = get_trace(manganame)
+    insert = [mangaId, volume_value, chapter_value]
+    if manganame == nil || volume_value == nil || chapter_value == nil
+      puts "Error while trying to insert element in trace database => nil"
+      p insert
+      puts "(manganame, volume, chapter, page)"
+      abort("")
+    end
+    trace.each() do |elem|
+      elem.shift
+      if elem == insert
+        return # element is already in trace database
+      end
+    end
     begin
       prep = @db.prepare "INSERT INTO manga_trace VALUES (NULL, #{mangaId}, ?, ?)"
       prep.bind_param 1, volume_value

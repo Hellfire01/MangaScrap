@@ -20,7 +20,6 @@ class Download_mf
       puts "link = " + link
       return nil
     end
-    puts link
     return link
   end
 
@@ -82,13 +81,22 @@ class Download_mf
     data = data_extractor(link)
     pic_link = page.xpath('//img[@id="image"]').map{ |img| img['src']}
     if pic_link[0] == nil
+      puts "added page #{data[2]}, chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ") + " to todo database"
+      @db.add_todo(@manga_name, data[0], data[1], data[2])
       return false
     end
     pic_buffer = get_pic(pic_link[0])
     if pic_buffer == nil
+      puts "added page #{data[2]}, chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ") + " to todo database"
+      @db.add_todo(@manga_name, data[0], data[1], data[2])
       return false
     end
-    return write_pic(pic_buffer, data)
+    if write_pic(pic_buffer, data) == false
+      puts "added page #{data[2]}, chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ") + " to todo database"
+      @db.add_todo(@manga_name, data[0], data[1], data[2])
+      return false
+    end
+    return true
   end
 
   def page(volume, chapter, page)
@@ -100,6 +108,7 @@ class Download_mf
   end
 
   def chapter_link(link)
+    puts "link is : " + link
     data = data_extractor(link)
     next_ = true
     last_pos = link.rindex(/\//)
@@ -142,12 +151,8 @@ class Download_mf
     return chapter_link(link)
   end
 
-  # entry point only ( not used by the class )
-  def volume(volume)
-  end
-
   def download()
-    if db.manga_in_data?(manga_name) == false
+    if @db.manga_in_data?(@manga_name) == false
       @links.reverse_each do |link|
         data = data_extractor(link)
         puts link
@@ -157,7 +162,7 @@ class Download_mf
       end
     else
       puts @manga_name + " whas found in database, updating it"
-      update(@manga_name)
+      MF_update_dw(@manga_name, self, @db)
     end
   end
 
@@ -222,7 +227,7 @@ class Download_mf
   def initialize(db, manga_name)
     @manga_name = manga_name
     @params = Params.new()
-    @dir = @params.get_params[1] + "magafox" + "/" + manga_name + "/"
+    @dir = @params.get_params[1] + "mangafox" + "/" + manga_name + "/"
     @db = db
     @site = "http://mangafox.me/"
     if (redirection_detection(@site + "/manga/" + manga_name) == true)

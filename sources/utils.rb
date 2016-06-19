@@ -38,7 +38,7 @@ def redirection_detection(url)
   begin
     open(url) do |resp|
       if (resp.base_uri.to_s != url)
-	return true
+        return true
       end
     end
   rescue => error
@@ -49,7 +49,8 @@ def redirection_detection(url)
     else
       puts "connection is lost or could not find manga, stopping programm"
       puts url
-      abort error.message
+      puts "message is : " + error.message
+      abort()
     end
   end
   return false
@@ -68,7 +69,7 @@ def get_page(link)
       sleep($failure_sleep)
       retry
     else
-      puts 'could not get ' + link + ' after ' + $nb_tries.to_s + ' tries'
+      puts 'could not get page ' + link + ' after ' + $nb_tries.to_s + ' tries'
       puts "message is : " + error.message
       return nil
     end
@@ -150,7 +151,7 @@ def get_mangas()
 end
 
 # get file name
-def file_name(dir, vol_value, chap_value, page_nb)
+def file_name(dir, vol_value, chap_value, page_value)
   chap_str = chap_value.to_s
   val = chap_str.index('.')
   if (val != nil)
@@ -161,13 +162,13 @@ def file_name(dir, vol_value, chap_value, page_nb)
   if vol_value == -1
     vol_buffer = "XXXX"
   elsif vol_value == -2
-    vol_buffer = "_VTB"
+    vol_buffer = "_TBD"
   else
-    vol_buffer = ((vol_value > 1000) ? "0" : ((vol_value > 100) ? "00" : ((vol_value > 10) ? "000" : "0000")))
+    vol_buffer = ((vol_value >= 1000) ? "" : ((vol_value >= 100) ? "0" : ((vol_value >= 10) ? "00" : "000")))
     vol_buffer += vol_value.to_s
   end
-  chap_buffer = ((chap_value > 1000) ? "0" : ((chap_value > 100) ? "00" : ((chap_value > 10) ? "000" : "0000")))
-  page_buffer = ((page_nb > 1000) ? "0" : ((page_nb > 100) ? "00" : ((page_nb > 10) ? "000" : "0000")))
-  name_buffer = dir + "manga_v" + vol_buffer + "_c" + chap_buffer + chap_str + "_p" + page_buffer + page_nb.to_s
+  chap_buffer = ((chap_value >= 1000) ? "" : ((chap_value >= 100) ? "0" : ((chap_value >= 10) ? "00" : "000")))
+  page_buffer = ((page_value >= 1000) ? "" : ((page_value >= 100) ? "0" : ((page_value >= 10) ? "00" : "000")))
+  name_buffer = dir + "manga_v" + vol_buffer + "_c" + chap_buffer + chap_str + "_p" + page_buffer + page_value.to_s
   return name_buffer
 end
