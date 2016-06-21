@@ -107,6 +107,15 @@ class Download_mf
     return page_link(link)
   end
 
+  def chapter_progression(i)
+    if (i % 10 == 0)
+      printf ','
+    else
+      printf '.'
+    end
+    STDOUT.flush
+  end
+
   def chapter_link(link)
     puts "link is : " + link
     data = data_extractor(link)
@@ -114,9 +123,12 @@ class Download_mf
     last_pos = link.rindex(/\//)
     link = link[0..last_pos].strip + "1.html"
     page = get_page(link)
+    chapter_progression(1)
     if (page == nil)
       puts "could not get data of " + link
       @db.add_todo(@manga_name, data[0], data[1], -1)
+      printf "\n"
+      STDOUT.flush
       return false
     end
     page_nb = 1
@@ -126,10 +138,13 @@ class Download_mf
         puts "error on " + ((data[0] != -1) ? "volume #{data[0]} /" : "") + " chapter #{data[1]} / page #{data[2]}"
         @db.add_todo(@manga_name, data[0], data[1], data[2])
       end
+      chapter_progression(page_nb)
       page_nb += 1
       last_pos = link.rindex(/\//)
       link = link[0..last_pos].strip + page_nb.to_s + ".html"
       if (redirection_detection(link) == true)
+        printf "\n"
+        STDOUT.flush
         puts "end of chapter with #{page_nb - 1} pages"
         next_ = false
       else

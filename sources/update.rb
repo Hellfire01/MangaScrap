@@ -1,6 +1,10 @@
 def update_manga(db, name)
   puts "updating " + name
   manga = db.get_manga(name)
+  if (manga == nil)
+    puts "error : " + name + " no such manga in database"
+    exit 5
+  end
   if (manga[3] == "http://mangafox.me/")
     MF_update(db, name)
   else

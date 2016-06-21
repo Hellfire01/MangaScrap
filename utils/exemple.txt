@@ -2,8 +2,8 @@ black_clover http://mangafox.me/
 crepuscule_yamchi
 doulou_dalu
 
-#this is a comment
 #comments MUST start with a '#' as the very first character of the line
+#this is a comment
 
 doupo_cangqiong
 gate_jietai_kare_no_chi_nite_kaku_tatakeri
