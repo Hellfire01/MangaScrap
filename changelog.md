@@ -46,3 +46,4 @@
 0.6.0 : added the -redl option + re-enabled the -dl opion + bub fixes<br />
 0.6.1 : the manga list files can now have empty lines and comments<br />
 0.6.2 : changed display to show chapter download progression<br />
+0.6.3 : exception handling test<br />

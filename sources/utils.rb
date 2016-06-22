@@ -41,7 +41,7 @@ def redirection_detection(url)
         return true
       end
     end
-  rescue => error
+  rescue Exception => error
     if tries > 0
 	tries -= 1
 	sleep($failure_sleep)
@@ -63,7 +63,7 @@ def get_page(link)
     page = Nokogiri::HTML(open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}")) do |noko|
       noko.noblanks.noerror
     end
-  rescue => error
+  rescue Exception => error
     if tries > 0
       tries -= 1
       sleep($failure_sleep)
@@ -89,7 +89,7 @@ def get_pic(link)
     puts link
     puts "message is : " + error.message
     return nil
-  rescue => error
+  rescue Exception => error
     if tries > 0
 	tries -= 1
 	sleep($failure_sleep)
