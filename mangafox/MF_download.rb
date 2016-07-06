@@ -55,6 +55,7 @@ class Download_mf
   end
 
   def write_pic(pic_buffer, data)
+    dir_create(@dir)
     name_buffer = file_name(@dir, data[0], data[1], data[2])
     if pic_buffer != nil
       File.open(name_buffer + ".jpg", 'wb') do |pic|
@@ -108,7 +109,7 @@ class Download_mf
   end
 
   def chapter_progression(i)
-    if (i % 10 == 0)
+    if (i > 1 && i % 10 == 0)
       printf ','
     else
       printf '.'
@@ -119,11 +120,11 @@ class Download_mf
   def chapter_link(link)
     puts "link is : " + link
     data = data_extractor(link)
-    next_ = true
     last_pos = link.rindex(/\//)
     link = link[0..last_pos].strip + "1.html"
     page = get_page(link)
-    chapter_progression(1)
+    tmp_number_of_pages = page.xpath('//div[@class="l"]')
+    number_of_pages = tmp_number_of_pages.text.split.last.to_i
     if (page == nil)
       puts "could not get data of " + link
       @db.add_todo(@manga_name, data[0], data[1], -1)
@@ -132,9 +133,11 @@ class Download_mf
       return false
     end
     page_nb = 1
-    while next_ == true
+    while page_nb - 1 < number_of_pages
       data = data_extractor(link)
       if (page_link(link) == false)
+        printf "\n"
+        STDOUT.flush
         puts "error on " + ((data[0] != -1) ? "volume #{data[0]} /" : "") + " chapter #{data[1]} / page #{data[2]}"
         @db.add_todo(@manga_name, data[0], data[1], data[2])
       end
@@ -142,16 +145,11 @@ class Download_mf
       page_nb += 1
       last_pos = link.rindex(/\//)
       link = link[0..last_pos].strip + page_nb.to_s + ".html"
-      if (redirection_detection(link) == true)
-        printf "\n"
-        STDOUT.flush
-        puts "end of chapter with #{page_nb - 1} pages"
-        next_ = false
-      else
-        page = get_page(link)
-      end
+      page = get_page(link)
     end
+    printf "\n"
     @db.add_trace(@manga_name, data[0], data[1])
+    puts "downloaded " + (page_nb - 1).to_s + " page" + (((page_nb - 1) > 1) ? "s" : "")
     return true
   end
 

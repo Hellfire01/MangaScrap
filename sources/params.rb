@@ -26,6 +26,9 @@ def param_list()
   puts ""
 end
 
+def param_check(param, value, min, max, float)
+end
+
 def param_set()
   db = Params.new()
   if (ARGV.size < 3)
@@ -35,70 +38,70 @@ def param_set()
     case ARGV[1]
     when 'mp'
       if (ARGV[2].size == 0)
-	puts "the manga path cannot be empty"
+        puts "the manga path cannot be empty"
       else
-	db.set_params_path(ARGV[2])
-	puts "updated manga path to '#{ARGV[2]}'"
+        db.set_params_path(ARGV[2])
+        puts "updated manga path to '#{ARGV[2]}'"
       end
     when 'bs'
       if (ARGV[2].size == 0)
-	puts "you need to give a value"
+        puts "you need to give a value"
       else
-	tmp = ARGV[2].to_f
-	if (tmp < 0.2)
-	  puts "the 'between sleep' value canot be < 0.2"
-	else
-	  db.set_params_between_sleep(tmp)
-	  puts "updated between sleep to " + ARGV[2]
-	end
+        tmp = ARGV[2].to_f
+        if (tmp < 0.2)
+          puts "the 'between sleep' value canot be < 0.2"
+        else
+          db.set_params_between_sleep(tmp)
+          puts "updated between sleep to " + ARGV[2]
+        end
       end
     when 'fs'
       if (ARGV[2].size == 0)
-	puts "you need to give a value"
+        puts "you need to give a value"
       else
-	tmp = ARGV[2].to_f
-	if (tmp < 0.2)
-	  puts "the 'failure sleep' value canot be < 0.2"
-	else
-	  db.set_params_failure_sleep(tmp)
-	  puts "updated failure sleep to " + ARGV[2]
-	end
+        tmp = ARGV[2].to_f
+        if (tmp < 0.2)
+          puts "the 'failure sleep' value canot be < 0.2"
+        else
+          db.set_params_failure_sleep(tmp)
+          puts "updated failure sleep to " + ARGV[2]
+        end
       end
     when 'nb'
       if (ARGV[2].size == 0)
-	puts "you need to give a value"
+        puts "you need to give a value"
       else
-	tmp = ARGV[2].to_i
-	if (tmp < 1)
-	  puts "the 'number of tries' value canot be < 1"
-	else
-	  db.set_params_nb_tries(tmp)
-	  puts "updated number of tries to " + ARGV[2]
-	end
+        tmp = ARGV[2].to_i
+        if (tmp < 1)
+          puts "the 'number of tries' value canot be < 1"
+        else
+          db.set_params_nb_tries(tmp)
+          puts "updated number of tries to " + ARGV[2]
+        end
       end
     when 'es'
       if (ARGV[2].size == 0)
-	puts "you need to give a value"
+        puts "you need to give a value"
       else
-	tmp = ARGV[2].to_f
-	if (tmp < 0.5)
-	  puts "the 'error sleep' value canot be < 0.5"
-	else
-	  db.set_params_error_sleep(tmp)
-	  puts "updated failure sleep to " + ARGV[2]
-	end
+        tmp = ARGV[2].to_f
+        if (tmp < 0.5)
+          puts "the 'error sleep' value canot be < 0.5"
+        else
+          db.set_params_error_sleep(tmp)
+          puts "updated failure sleep to " + ARGV[2]
+        end
       end
     when 'dd'
       if (ARGV[2].size == 0)
-	puts "you need to give a value"
+        puts "you need to give a value"
       else
-	tmp = ARGV[2]
-	if (tmp != "true" && tmp != "false")
+        tmp = ARGV[2]
+        if (tmp != "true" && tmp != "false")
           puts "argument must be 'true' or 'false'"
-	else
-	  db.set_params_delete_diff(tmp)
-	  puts "updated delete diff to " + ARGV[2]
-	end
+        else
+          db.set_params_delete_diff(tmp)
+          puts "updated delete diff to " + ARGV[2]
+        end
       end
     else
       puts "error, unknown parameter id : " + ARGV[1]

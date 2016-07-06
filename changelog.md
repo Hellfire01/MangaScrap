@@ -47,3 +47,4 @@
 0.6.1 : the manga list files can now have empty lines and comments<br />
 0.6.2 : changed display to show chapter download progression<br />
 0.6.3 : exception handling test<br />
+0.6.4 : increased performances of roughly 50% by limiting the number of interactions with the targeted server<br />

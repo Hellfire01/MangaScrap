@@ -6,7 +6,7 @@
 # 1 : fatal error ( ruby native code exceptions )
 # 2 : db error
 # 3 : connection error
-# 4 : unexpected error ( not yet managed stuff )
+ # 4 : unexpected error ( not yet managed stuff )
 # 5 : argument error
 
 require 'open-uri'

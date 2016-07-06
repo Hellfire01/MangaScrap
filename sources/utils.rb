@@ -163,7 +163,7 @@ def file_name(dir, vol_value, chap_value, page_value)
     chap_str += '0'
   end
   if vol_value == -1
-    vol_buffer = "XXXX"
+    vol_buffer = "####"
   elsif vol_value == -2
     vol_buffer = "_TBD"
   else
