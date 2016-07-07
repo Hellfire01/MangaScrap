@@ -6,7 +6,7 @@
 # 1 : fatal error ( ruby native code exceptions )
 # 2 : db error
 # 3 : connection error
- # 4 : unexpected error ( not yet managed stuff )
+# 4 : unexpected error ( not yet managed stuff )
 # 5 : argument error
 
 require 'open-uri'
@@ -20,7 +20,8 @@ require_relative 'mangafox/MF_download'
 require_relative 'mangafox/MF_update'
 require_relative 'mangafox/MF_redl'
 require_relative 'sources/download'
-require_relative 'sources/utils'
+require_relative 'sources/utils_co'
+require_relative 'sources/utils_manga'
 require_relative 'sources/update'
 require_relative 'sources/help'
 require_relative 'sources/add'

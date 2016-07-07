@@ -54,26 +54,6 @@ class Download_mf
     return @links
   end
 
-  def write_pic(pic_buffer, data)
-    dir_create(@dir)
-    name_buffer = file_name(@dir, data[0], data[1], data[2])
-    if pic_buffer != nil
-      File.open(name_buffer + ".jpg", 'wb') do |pic|
-        pic << pic_buffer.read
-      end
-      if (File.exists?(name_buffer + ".txt") == true)
-        File.delete(name_buffer + ".txt")
-      end
-    else
-      File.open(name_buffer + ".txt", 'w') do |pic|
-        pic << "could not be downloaded"
-      end
-      puts "Error : no picture to save"
-      return false
-    end
-    return true
-  end
-
   def page_link(link)
     page = get_page(link)
     if (page == nil)
@@ -92,7 +72,7 @@ class Download_mf
       @db.add_todo(@manga_name, data[0], data[1], data[2])
       return false
     end
-    if write_pic(pic_buffer, data) == false
+    if write_pic(pic_buffer, data, @dir) == false
       puts "added page #{data[2]}, chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ") + " to todo database"
       @db.add_todo(@manga_name, data[0], data[1], data[2])
       return false
@@ -106,15 +86,6 @@ class Download_mf
       return false
     end
     return page_link(link)
-  end
-
-  def chapter_progression(i)
-    if (i > 1 && i % 10 == 0)
-      printf ','
-    else
-      printf '.'
-    end
-    STDOUT.flush
   end
 
   def chapter_link(link)
@@ -187,11 +158,12 @@ class Download_mf
     author = ""
     artist = ""
     @doc.xpath('//td[@valign="top"]/a').each do |elem|
-      if i == 0
+      case i
+      when 0
         release = elem.text.to_i
-      elsif i == 1
+      when 1
         author = elem.text
-      elsif i == 2
+      when 2
         artist = elem.text
       else
         genres << elem
