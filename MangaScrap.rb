@@ -12,7 +12,6 @@
 require 'open-uri'
 require 'nokogiri'
 require 'sqlite3'
-require 'fileutils'
 
 require_relative 'DB/manga_db'
 require_relative 'DB/params_db'

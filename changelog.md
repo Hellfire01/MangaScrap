@@ -50,3 +50,4 @@
 0.6.4 : increased performances of roughly 50% by limiting the number of interactions with the targeted server<br />
 0.6.5 : code cleaning ( improved the quality of the code )<br />
 0.6.6 : deleted unused file<br />
+0.6.7 : changed exception handling<br />

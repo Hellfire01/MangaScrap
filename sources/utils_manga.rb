@@ -19,7 +19,7 @@ end
 
 # determines if directory exists
 def dir_create(directory)
-  if Dir.exists?(directory) == false
+  if Dir.exist?(directory) == false
     puts directory + " does not exist, creating it"
     FileUtils.mkdir_p(directory)
   end
@@ -99,7 +99,7 @@ def write_pic(pic_buffer, data, dir)
     File.open(name_buffer + ".jpg", 'wb') do |pic|
       pic << pic_buffer.read
     end
-    if (File.exists?(name_buffer + ".txt") == true)
+    if (File.exist?(name_buffer + ".txt") == true)
       File.delete(name_buffer + ".txt")
     end
   else

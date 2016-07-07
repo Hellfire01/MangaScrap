@@ -24,9 +24,9 @@ def redirection_detection(url)
     end
   rescue Exception => error
     if tries > 0
-	tries -= 1
-	sleep($failure_sleep)
-	retry
+      tries -= 1
+      sleep($failure_sleep)
+      retry
     else
       puts "connection is lost or could not find manga, stopping programm"
       puts url
@@ -37,6 +37,20 @@ def redirection_detection(url)
   return false
 end  
 
+def download_rescue(tries, link, error, message)
+  if tries > 0
+    tries -= 1
+    sleep($failure_sleep)
+    return tries
+  else
+    print '\n'
+    STDOUT.flush
+    puts message + ' ' + link + ' after ' + $nb_tries.to_s + ' tries'
+    puts "message is : " + error.message
+    return nil
+  end
+end
+
 # conect to link and download page
 def get_page(link)
   tries ||= $nb_tries
@@ -44,16 +58,23 @@ def get_page(link)
     page = Nokogiri::HTML(open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}")) do |noko|
       noko.noblanks.noerror
     end
-  rescue Exception => error
-    if tries > 0
-      tries -= 1
-      sleep($failure_sleep)
-      retry
-    else
-      puts 'could not get page ' + link + ' after ' + $nb_tries.to_s + ' tries'
-      puts "message is : " + error.message
+  rescue StandardError => error
+    tries = download_rescue(tries, link, error, 'could not download picture')
+    if (tries == nil)
       return nil
     end
+    retry
+  rescue Exception => error
+    print '\n'
+    STDOUT.flush
+    puts "Warning : exception occured, message is : " + error.message
+    puts "Exception class is : " + error.class
+    puts "Continuing"
+    tries = download_rescue(tries, link, error, 'could not download picture')
+    if (tries == nil)
+      return nil
+    end
+    retry
   end
   sleep($between_sleep)
   return page
@@ -70,16 +91,23 @@ def get_pic(link)
     puts link
     puts "message is : " + error.message
     return nil
-  rescue Exception => error
-    if tries > 0
-	tries -= 1
-	sleep($failure_sleep)
-	retry
-    else
-      puts 'could not get picture ' + safe_link + ' after ' + $nb_tries.to_s + ' tries'
-      puts "message is : " + error.message
+  rescue StandardError => error
+    tries = download_rescue(tries, link, error, 'could not download picture')
+    if (tries == nil)
       return nil
     end
+    retry
+  rescue Exception => error
+    print '\n'
+    STDOUT.flush
+    puts "Warning : exception occured, message is : " + error.message
+    puts "Exception class is : " + error.class
+    puts "Continuing"
+    tries = download_rescue(tries, link, error, 'could not download picture')
+    if (tries == nil)
+      return nil
+    end
+    retry
   end
   sleep($between_sleep)
   return page
