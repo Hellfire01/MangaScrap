@@ -65,16 +65,12 @@ def get_page(link)
     end
     retry
   rescue Exception => error
-    print '\n'
+    print "\n"
     STDOUT.flush
     puts "Warning : exception occured, message is : " + error.message
-    puts "Exception class is : " + error.class
-    puts "Continuing"
-    tries = download_rescue(tries, link, error, 'could not download picture')
-    if (tries == nil)
-      return nil
-    end
-    retry
+    puts "Exception class is : " + error.class.to_s
+    puts "leaving"
+    exit 6
   end
   sleep($between_sleep)
   return page
@@ -98,16 +94,12 @@ def get_pic(link)
     end
     retry
   rescue Exception => error
-    print '\n'
+    print "\n"
     STDOUT.flush
     puts "Warning : exception occured, message is : " + error.message
-    puts "Exception class is : " + error.class
-    puts "Continuing"
-    tries = download_rescue(tries, link, error, 'could not download picture')
-    if (tries == nil)
-      return nil
-    end
-    retry
+    puts "Exception class is : " + error.class.to_s
+    puts "leaving"
+    exit 6
   end
   sleep($between_sleep)
   return page
