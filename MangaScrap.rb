@@ -30,6 +30,8 @@ require_relative 'sources/params'
 require_relative 'sources/clear'
 require_relative 'sources/redl'
 
+
+dir_create(Dir.home + "/.MangaScrap")
 db = DB.new()
 init_utils()
 
@@ -40,7 +42,9 @@ else
   when "-u", "--update"
     update(db)
   when "-a", "--add"
-    add(db)
+    add(db, false)
+  when "-da", "--data"
+    add(db, true)
   when "-dl", "--download"
     download(db)
   when "-l", "--list"

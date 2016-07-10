@@ -4,6 +4,9 @@
  -a --add [-f 'name of file'] / 'manga name' [manga site (default is manga fox)]
     add manga to database
 
+ -da --data [-f 'name of file'] / 'manga name'
+    download data ( cover + details ) of targeted manga(s)
+
  -u --update [-f 'name of file'] / [manga name]
     update database / manga
 

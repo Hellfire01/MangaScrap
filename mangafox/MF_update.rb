@@ -86,6 +86,6 @@ def MF_update_dw(name, dw, db)
 end
 
 def MF_update(db, name)
-  dw = Download_mf.new(db, name)
+  dw = Download_mf.new(db, name, false)
   MF_update_dw(name, dw, db)
 end

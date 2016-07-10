@@ -76,6 +76,17 @@ class Params
     end
   end
 
+  def set_params_catch_exception(bool)
+    begin
+      prep = @db.prepare "UPDATE params SET catch_exception = ? WHERE Id = 1"
+      prep.bind_param 1, bool
+      prep.execute
+    rescue SQLite3::Exception => e
+      puts "could not update catch exception"
+      abort (e.message)
+    end
+  end
+
   def reset_parameters()
     begin
       prep = @db.prepare "UPDATE params SET
@@ -84,10 +95,12 @@ class Params
       failure_sleep = 0.2,
       nb_tries_on_fail = 20,
       error_sleep = 30,
-      delete_diff = ?
+      delete_diff = ?,
+      catch_exception = ?
       WHERE Id = 1"
       prep.bind_param 1, $default_manga_path
       prep.bind_param 2, "true"
+      prep.bind_param 3, "true"
       prep.execute
     rescue SQLite3::Exception => e
       puts "could not reset parameters"
@@ -96,7 +109,7 @@ class Params
   end
 
   def initialize()
-    @db = SQLite3::Database.new "DB/params.db"
+    @db = SQLite3::Database.new Dir.home + "/.MangaScrap/params.db"
     begin 
       @db.execute "CREATE TABLE IF NOT EXISTS params (
       Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -105,7 +118,8 @@ class Params
       failure_sleep FLOAT,
       nb_tries_on_fail INT,
       error_sleep FLOAT,
-      delete_diff TEXT)"
+      delete_diff TEXT,
+      catch_exception TEXT)"
     rescue SQLite3::Exception => e
       puts "Exception occurred when opening / creating params table"
       abort ("message is : '" + e.message + "'")
@@ -114,9 +128,10 @@ class Params
       ret = @db.execute "SELECT * FROM params"
       if (ret.size == 0)
         puts "initializing params './MangaScrap -pl' to list params"
-        prep = @db.prepare "INSERT INTO params VALUES (NULL, ?, 0.2, 0.2, 20, 30, ?)"
+        prep = @db.prepare "INSERT INTO params VALUES (NULL, ?, 0.2, 0.2, 20, 30, ?, ?)"
         prep.bind_param 1, $default_manga_path
         prep.bind_param 2, "true"
+        prep.bind_param 3, "true"
         prep.execute
       end
     rescue SQLite3::Exception => e

@@ -1,0 +1,9 @@
+1 - moving the databases :
+mkdir ~/.MangaScrap
+mv DB/params.bd ~/.MangaScrap/.
+mv DB/manga.bd ~/.MangaScrap/.
+
+2 - updating params.rb
+sqlite3 params.bd
+ALTER TABLE params ADD catch_exception TEXT;
+

@@ -191,7 +191,7 @@ class DB
   #init database
   def initialize()
     begin
-      @db = SQLite3::Database.new "DB/manga.db"
+      @db = SQLite3::Database.new Dir.home + "/.MangaScrap/manga.db"
       @db.execute "CREATE TABLE IF NOT EXISTS manga_list (
       Id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT,

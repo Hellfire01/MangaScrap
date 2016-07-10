@@ -19,9 +19,20 @@ end
 
 # determines if directory exists
 def dir_create(directory)
+  if directory[0, 1] == "~"
+    directory["~"] = Dir.home
+  end
   if Dir.exist?(directory) == false
     puts directory + " does not exist, creating it"
-    FileUtils.mkdir_p(directory)
+    list = directory.split('/')
+    build = "/"
+    list = list.reject {|elem| elem.empty?}
+    list.each do |elem|
+      build += elem + '/'
+      if Dir.exist?(build) == false
+        Dir.mkdir(build)
+      end
+    end
   end
 end
 

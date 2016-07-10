@@ -2,6 +2,7 @@ $nb_tries = -1
 $between_sleep = -1
 $failure_sleep = -1
 $error_sleep = -1
+$catch_fatal = "false"
 
 #inits the global variables
 def init_utils()
@@ -11,31 +12,8 @@ def init_utils()
   $failure_sleep = params[3]
   $nb_tries = params[4]
   $error_sleep = params[5]
+  $catch_fatal = params[7]
 end
-
-# detects if there whas a redirection on the required link
-def redirection_detection(url)
-  tries ||= $nb_tries
-  begin
-    open(url) do |resp|
-      if (resp.base_uri.to_s != url)
-        return true
-      end
-    end
-  rescue Exception => error
-    if tries > 0
-      tries -= 1
-      sleep($failure_sleep)
-      retry
-    else
-      puts "connection is lost or could not find manga, stopping programm"
-      puts url
-      puts "message is : " + error.message
-      abort()
-    end
-  end
-  return false
-end  
 
 def download_rescue(tries, link, error, message)
   if tries > 0
@@ -51,6 +29,48 @@ def download_rescue(tries, link, error, message)
   end
 end
 
+def recue_fatal(error)
+  if $catch_fatal == "false"
+    print "\n"
+    STDOUT.flush
+    puts "Warning : exception occured, message is : " + error.message
+    puts "Exception class is : " + error.class.to_s
+    puts "raising it again"
+    puts ""
+    raise error
+  else
+    if error.class.to_s != "fatal"
+      raise error
+    end
+  end
+end
+
+# detects if there whas a redirection on the required link
+def redirection_detection(url)
+  tries ||= $nb_tries
+  begin
+    open(url) do |resp|
+      if (resp.base_uri.to_s != url)
+        return true
+      end
+    end
+  rescue StandardError => error
+    if tries > 0
+      tries -= 1
+      sleep($failure_sleep)
+      retry
+    else
+      puts "connection is lost or could not find manga, stopping programm"
+      puts url
+      puts "message is : " + error.message
+      abort()
+    end
+  rescue Exception => error
+    rescue_fatal(error)
+  end
+  return false
+end  
+
 # conect to link and download page
 def get_page(link)
   tries ||= $nb_tries
@@ -65,12 +85,7 @@ def get_page(link)
     end
     retry
   rescue Exception => error
-    print "\n"
-    STDOUT.flush
-    puts "Warning : exception occured, message is : " + error.message
-    puts "Exception class is : " + error.class.to_s
-    puts "leaving"
-    exit 6
+    rescue_fatal(error)
   end
   sleep($between_sleep)
   return page
@@ -94,12 +109,7 @@ def get_pic(link)
     end
     retry
   rescue Exception => error
-    print "\n"
-    STDOUT.flush
-    puts "Warning : exception occured, message is : " + error.message
-    puts "Exception class is : " + error.class.to_s
-    puts "leaving"
-    exit 6
+    rescue_fatal(error)
   end
   sleep($between_sleep)
   return page

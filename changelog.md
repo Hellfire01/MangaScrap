@@ -51,3 +51,8 @@
 0.6.5 : code cleaning ( improved the quality of the code )<br />
 0.6.6 : deleted unused file<br />
 0.6.7 : changed exception handling<br />
+
+###### Warning : the database changes and is not compatible with the previous versions<br />
+###### Please look at the file migration/0.6.x_to_0.7.x.txt<br />
+
+0.7.0 : added the ce ( catch exception ) option + added the option -da --data to download data + placed covers in manga directory + multiple tweaks and optimisations<br/>

@@ -78,7 +78,7 @@ def MF_check_redl_options(volume, chapter, page)
 end
 
 def MF_redl_manager(db, manganame, volume, chapter, page)
-  dw = Download_mf.new(db, manganame)
+  dw = Download_mf.new(db, manganame, false)
   if (volume != nil)
     if (chapter != nil)
       if (page != nil)

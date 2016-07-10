@@ -178,9 +178,15 @@ class Download_mf
     cover_link = @doc.xpath('//div[@class="cover"]/img').map{ |cover_l| cover_l['src'] }
     cover_buffer = get_pic(cover_link[0])
     if cover_buffer != nil
-      open(@dir + 'cover.jpg', 'wb') do |pic|
-      	pic << cover_buffer.read()
+      cover1 = File.new(@dir + 'cover.jpg', 'wb')
+      cover2 = File.new(@params.get_params[1] + "mangafox" + "/" + @manga_name + ".jpg", 'wb')
+      until cover_buffer.eof?
+        chunk = cover_buffer.read(1024)
+        cover1.write(chunk)
+        cover2.write(chunk)
       end
+      cover1.close
+      cover2.close
     else
       puts "WARNING : cover could not download cover"
     end
@@ -209,7 +215,7 @@ class Download_mf
     end
   end
 
-  def initialize(db, manga_name)
+  def initialize(db, manga_name, data)
     @manga_name = manga_name
     @params = Params.new()
     @dir = @params.get_params[1] + "mangafox" + "/" + manga_name + "/"
@@ -223,7 +229,7 @@ class Download_mf
       abort("failed to get manga " + manga_name + " chapter index")
     end
     extract_links()
-    if db.manga_in_data?(manga_name) == false
+    if data == true || db.manga_in_data?(manga_name) == false
       data()
     end    
   end

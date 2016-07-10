@@ -18,7 +18,7 @@ def download_file(ret, db)
       end
       tab_update << false
     end
-    elem = Download_mf.new(db, manga[0])
+    elem = Download_mf.new(db, manga[0], false)
     tab_dw << elem
     tab_name << manga[0]
   end
@@ -28,7 +28,7 @@ def download_file(ret, db)
     if tab_update[i] == false
       tab_dw[i].download()
     else
-      update_manga(db, manga)
+      update_manga(db, manga, false)
     end
     i += 1
   end
@@ -54,7 +54,7 @@ def download(db)
       puts "sorry, sites other than mangafox are not yet managed"
       exit 4
     else
-      dw = Download_mf.new(db, ARGV[1])
+      dw = Download_mf.new(db, ARGV[1], false)
       dw.download()
     end
   else
