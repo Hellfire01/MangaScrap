@@ -78,7 +78,10 @@ def MF_check_redl_options(volume, chapter, page)
 end
 
 def MF_redl_manager(db, manganame, volume, chapter, page)
-  dw = Download_mf.new(db, manganame, false)
+  dw = get_mf_class(db, manganame, false)
+  if dw == nil
+    exit 3
+  end
   if (volume != nil)
     if (chapter != nil)
       if (page != nil)
@@ -111,7 +114,6 @@ def MF_redl(db, manganame)
   volume = nil
   chapter = nil
   page = nil
-
   ARGV.each do |elem|
     arg = elem.dup
     case arg[0]
@@ -132,8 +134,7 @@ def MF_redl(db, manganame)
       arg[0] = ''
       page = arg.to_i
     else
-      puts "argument error :"
-      puts "the first character of the values should be 'v', 'c', or 'p', not '" + arg[0] + "'"
+      puts "Erro : the first character of the values should be 'v', 'c', or 'p', not '" + arg[0] + "'"
       puts "./MangaScrap -h for help"
       exit 5
     end

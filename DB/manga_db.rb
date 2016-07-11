@@ -147,19 +147,23 @@ class DB
       puts "(manganame, volume, chapter, page)"
       exit 2
     end
+    found = false
     trace.each() do |elem|
       elem.shift
       if elem == insert
-        return # element is already in trace database
+        found = true
+        break
       end
     end
-    begin
-      prep = @db.prepare "INSERT INTO manga_trace VALUES (NULL, #{mangaId}, ?, ?)"
-      prep.bind_param 1, volume_value
-      prep.bind_param 2, chapter_value
-      prep.execute
-    rescue SQLite3::Exception => e
-      db_error_exit("could not insert chapter into trace database", e)
+    if found == false
+      begin
+        prep = @db.prepare "INSERT INTO manga_trace VALUES (NULL, #{mangaId}, ?, ?)"
+        prep.bind_param 1, volume_value
+        prep.bind_param 2, chapter_value
+        prep.execute
+      rescue SQLite3::Exception => e
+        db_error_exit("could not insert chapter into trace database", e)
+      end
     end
   end
   

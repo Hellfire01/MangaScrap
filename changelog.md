@@ -57,3 +57,4 @@
 
 0.7.0 : added the ce ( catch exception ) option + added the option -da --data to download data + placed covers in manga directory + multiple tweaks and optimisations<br />
 0.7.1 : code cleaning + optimisations<br />
+0.7.2 : code cleaning + better exception management<br />

@@ -18,7 +18,11 @@ def download_file(ret, db)
       end
       tab_update << false
     end
-    elem = Download_mf.new(db, manga[0], false)
+    elem = get_mf_class(db, manga[0], false)
+    if elem == nil
+      puts "error while downloading #{manga[0]}, going to next element"
+      next
+    end
     tab_dw << elem
     tab_name << manga[0]
   end
@@ -54,7 +58,10 @@ def download(db)
       puts "sorry, sites other than mangafox are not yet managed"
       exit 4
     else
-      dw = Download_mf.new(db, ARGV[1], false)
+      dw = get_mf_class(db, ARGV[1], false)
+      if dw == nil
+        exit 3
+      end
       dw.download()
     end
   else

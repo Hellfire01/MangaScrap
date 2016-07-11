@@ -6,7 +6,8 @@ def re_dl(db)
   end
   manga = db.get_manga(ARGV[1])
   if (manga == nil)
-    abort ("manga \"" + ARGV[1] + "\" whas not found in database")
+    puts "manga \"" + ARGV[1] + "\" whas not found in database"
+    exit 5
   end
   if (manga[3] == "http://mangafox.me/")
     ARGV.delete_at(1)

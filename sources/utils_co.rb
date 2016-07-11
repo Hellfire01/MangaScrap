@@ -63,7 +63,7 @@ def redirection_detection(url)
       puts "connection is lost or could not find manga, stopping programm"
       puts url
       puts "message is : " + error.message
-      abort()
+      exit 3
     end
   rescue Exception => error
     rescue_fatal(error)

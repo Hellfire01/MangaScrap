@@ -44,7 +44,8 @@ def get_mangas()
     begin
       text = File.open(ARGV[2]).read
     rescue => e
-      abort(e.message)
+      puts e.message
+      exit 5
     end
     text.gsub!(/\r\n?/, "\n")
     text.each_line do |line|

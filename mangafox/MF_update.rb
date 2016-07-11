@@ -86,6 +86,10 @@ def MF_update_dw(name, dw, db)
 end
 
 def MF_update(db, name)
-  dw = Download_mf.new(db, name, false)
+  dw = get_mf_class(db, name, false)
+  if dw == nil
+    return false
+  end
   MF_update_dw(name, dw, db)
+  return true
 end

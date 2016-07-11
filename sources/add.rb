@@ -11,7 +11,9 @@ def add_file(ret, db, data)
         puts "sorry, MangaScrap does not deal with other sites than mangafox ( yet )"
         exit 4
       else
-        Download_mf.new(db, name[0], data)
+        if get_mf_class(db, name[0], data) == nil
+          puts "adding next element"
+        end
       end
     end
   end
@@ -41,10 +43,13 @@ def add(db, data)
         puts "sorry, MangaScrap does not deal with other sites than mangafox ( yet )"
         exit 4
       else
-        Download_mf.new(db, manga_name, data)
+        if get_mf_class(db, name[0], data) == nil
+          exit 3
+        end
       end
     end
   else
     add_file(ret, db, data)
   end
+  puts "done"
 end
