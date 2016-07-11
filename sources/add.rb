@@ -43,7 +43,7 @@ def add(db, data)
         puts "sorry, MangaScrap does not deal with other sites than mangafox ( yet )"
         exit 4
       else
-        if get_mf_class(db, name[0], data) == nil
+        if get_mf_class(db, manga_name, data) == nil
           exit 3
         end
       end
