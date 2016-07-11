@@ -20,6 +20,7 @@ require_relative 'mangafox/MF_update'
 require_relative 'mangafox/MF_redl'
 require_relative 'sources/download'
 require_relative 'sources/utils_co'
+require_relative 'sources/utils_db'
 require_relative 'sources/utils_manga'
 require_relative 'sources/update'
 require_relative 'sources/help'
@@ -31,7 +32,14 @@ require_relative 'sources/clear'
 require_relative 'sources/redl'
 
 
-dir_create(Dir.home + "/.MangaScrap")
+begin
+  dir_create(Dir.home + "/.MangaScrap")
+rescue StandardError => error
+  puts "could not create db folder ( " + Dir.home + "/.MangaScrap )"
+  puts "error message is : '" + error.message + "'"
+  exit 5
+end
+
 db = DB.new()
 init_utils()
 

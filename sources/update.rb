@@ -37,7 +37,8 @@ def update(db)
         update_manga(db, name[0])
       end
     else
-      abort("error while trying to get content of file ( -f option )")
+      puts "error while trying to get content of file ( -f option )"
+      exit 5
     end
   else
     abort('bad number of arguments for update, --help for help')

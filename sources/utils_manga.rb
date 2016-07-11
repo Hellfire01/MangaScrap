@@ -53,7 +53,8 @@ def get_mangas()
       end
       elems = line.split(" ")
       if (elems.size > 2)
-        abort("there is more than one space on line #{line_num} this should not be possible, ./MangaScrap -h for help")
+        puts "there is more than one space on line #{line_num} this should not be possible, ./MangaScrap -h for help"
+        exit 5
       end
       if (elems.size == 1)
         elems << "http://mangafox.me/"
@@ -94,8 +95,14 @@ end
 
 # used to display the progression of the downloads
 def chapter_progression(i)
-  if (i > 1 && i % 10 == 0)
-    printf ','
+  if i > 1
+    if i % 50 == 0
+      printf ';'
+    elsif i % 10 == 0
+      printf ','
+    else
+      printf '.'
+    end
   else
     printf '.'
   end

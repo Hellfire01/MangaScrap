@@ -211,7 +211,7 @@ class Download_mf
       tries -= 1
     end
     if @links == nil || @links.size == 0
-      abort("failed to get manga " + @manga_name + " chapter index")
+      raise "failed to get manga " + @manga_name + " chapter index"
     end
   end
 
@@ -222,11 +222,12 @@ class Download_mf
     @db = db
     @site = "http://mangafox.me/"
     if (redirection_detection(@site + "/manga/" + manga_name) == true)
-      abort ("could not find manga #{manga_name} at " + @site + "/manga/" + manga_name)
+      puts "could not find manga #{manga_name} at " + @site + "/manga/" + manga_name
+      exit 3
     end
     @doc = get_page(@site + "/manga/" + manga_name)
     if @doc == nil
-      abort("failed to get manga " + manga_name + " chapter index")
+      raise "failed to get manga " + manga_name + " chapter index"
     end
     extract_links()
     if data == true || db.manga_in_data?(manga_name) == false

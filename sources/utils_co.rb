@@ -29,7 +29,7 @@ def download_rescue(tries, link, error, message)
   end
 end
 
-def recue_fatal(error)
+def rescue_fatal(error)
   if $catch_fatal == "false"
     print "\n"
     STDOUT.flush

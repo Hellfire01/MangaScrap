@@ -46,13 +46,13 @@ def param_check_nb(db, param, disp, value, min_value)
   end
   case param
   when 'bs'
-    db.set_params_between_sleep(value)
+    db.set_param("between_sleep", value)
   when 'fs'
-    db.set_params_failure_sleep(value)
+    db.set_param("failure_sleep", value)
   when 'es'
-    db.set_params_error_sleep(value)
+    db.set_param("error_sleep", value)
   when 'nb'
-    db.set_params_nb_tries(value)
+    db.set_param("nb_tries_on_fail", value)
   else
     param_critical_error(param, "param_check_nb")
   end
@@ -66,9 +66,9 @@ def param_check_bool(db, param, disp, value)
   end
   case param
   when 'dd'
-    db.set_params_delete_diff(value)
+    db.set_param("delete_diff", value)
   when 'ce'
-    db.set_params_catch_exception(value)
+    db.set_param("catch_exception", value)
   else
     param_critical_error(param, "param_check_bool")
   end
@@ -82,7 +82,14 @@ def param_check_string(db, param, disp, value)
       puts "cannot create local directory"
       exit 5
     end
-    db.set_params_path(value)
+    begin
+      dir_create(value)
+    rescue StandardError => error
+      puts "could not create requested path"
+      puts "error message is : '" + error.message + "'"
+      exit 5
+    end
+    db.set_param("manga_path", value)
   else
     param_critical_error(param, "param_check_string")
   end

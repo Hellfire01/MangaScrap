@@ -5,85 +5,18 @@ class Params
     begin
       ret = @db.execute "SELECT * FROM params"
     rescue SQLite3::Exception => e
-      puts "could not get params"
-      abort (e.message)
+      db_error_exit("could not get params", e)
     end
     return ret[0]
   end
 
-  def set_params_path(path)
-    if (path == nil || path.size == 0)
-      puts "you need to input a path"
-      exit 5
-    end
-    if (path[path.size - 1] != '/')
-      path += '/'
-    end
+  def set_param(param, value)
     begin
-      prep = @db.prepare "UPDATE params SET manga_path = ? WHERE Id = 1"
-      prep.bind_param 1, path
+      prep = @db.prepare "UPDATE params SET #{param} = ? WHERE Id = 1"
+      prep.bind_param 1, value
       prep.execute
     rescue SQLite3::Exception => e
-      puts "could not update manga path"
-      abort (e.message)
-    end
-  end
-
-  def set_params_failure_sleep(sleep)
-    begin
-      @db.execute "UPDATE params SET failure_sleep = #{sleep} WHERE Id = 1"
-    rescue SQLite3::Exception => e
-      puts "could not update failure sleep"
-      abort (e.message)
-    end
-  end
-
-  def set_params_between_sleep(sleep)
-    begin
-      @db.execute "UPDATE params SET between_sleep = #{sleep} WHERE Id = 1"
-    rescue SQLite3::Exception => e
-      puts "could not update between sleep"
-      abort (e.message)
-    end
-  end
-
-  def set_params_nb_tries(nb)
-    begin
-      @db.execute "UPDATE params SET nb_tries_on_fail = #{nb} WHERE Id = 1"
-    rescue SQLite3::Exception => e
-      puts "could not update number of tries"
-      abort (e.message)
-    end
-  end
-
-  def set_params_error_sleep(sleep)
-    begin
-      @db.execute "UPDATE params SET error_sleep = #{sleep} WHERE Id = 1"
-    rescue SQLite3::Exception => e
-      puts "could not update error sleep"
-      abort (e.message)
-    end
-  end
-
-  def set_params_delete_diff(bool)
-    begin
-      prep = @db.prepare "UPDATE params SET delete_diff = ? WHERE Id = 1"
-      prep.bind_param 1, bool
-      prep.execute
-    rescue SQLite3::Exception => e
-      puts "could not update error sleep"
-      abort (e.message)
-    end
-  end
-
-  def set_params_catch_exception(bool)
-    begin
-      prep = @db.prepare "UPDATE params SET catch_exception = ? WHERE Id = 1"
-      prep.bind_param 1, bool
-      prep.execute
-    rescue SQLite3::Exception => e
-      puts "could not update catch exception"
-      abort (e.message)
+      db_error_exit("could not update failure sleep", e)
     end
   end
 
@@ -103,8 +36,7 @@ class Params
       prep.bind_param 3, "true"
       prep.execute
     rescue SQLite3::Exception => e
-      puts "could not reset parameters"
-      abort (e.message)
+      db_error_exit("could not reset parameters", e)
     end
   end
 
@@ -121,8 +53,7 @@ class Params
       delete_diff TEXT,
       catch_exception TEXT)"
     rescue SQLite3::Exception => e
-      puts "Exception occurred when opening / creating params table"
-      abort ("message is : '" + e.message + "'")
+      db_error_exit("Exception occurred when opening / creating params table", e)
     end
     begin
       ret = @db.execute "SELECT * FROM params"
@@ -135,8 +66,7 @@ class Params
         prep.execute
       end
     rescue SQLite3::Exception => e
-      puts "exception while retrieving params"
-      abort ("message is : '" + e.message + "'")  
+      db_error_exit("exception while retrieving params", e)
     end
   end
 end
