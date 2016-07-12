@@ -9,7 +9,7 @@ def get_mf_class(db, manga_name, data)
     ret = Download_mf.new(db, manga_name, data)
     return ret
   rescue => e
-    puts "error while trying to add #{name[0]}"
+    puts "error while trying to add #{manga_name}"
     puts "reason is : " + e.message
     return nil
   end
