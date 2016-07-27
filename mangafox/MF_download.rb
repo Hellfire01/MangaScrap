@@ -6,6 +6,10 @@ class Download_mf
       link += "v" + vol_buffer + volume.to_s + "/"
     elsif (volume == -2)
       link += "vTBD/"
+    elsif (volume == -3)
+      link += "vNA/"
+    elsif (volume == -4)
+      link += "vANT/"
     end
     chap_buffer = ((chapter < 10) ? "00" : ((chapter < 100) ? "0" : ""))
     link += "c" + chap_buffer
@@ -37,13 +41,21 @@ class Download_mf
     end
     if link_split.size == 8
       link_split[link_split.size - 3][0] = ''
-      if link_split[link_split.size - 3] == "TBD"
-        volume = -2
-      else
+      if link_split[link_split.size - 3] =~ /\A\d+\z/
         volume = link_split[link_split.size - 3].to_i
+      else
+        if link_split[link_split.size - 3] == "NA"
+          volume = -3
+        elsif link_split[link_split.size - 3] == "TBD"
+          volume = -2
+        elsif link_split[link_split.size - 3] == "ANT"
+          volume = -4
+        else
+          volume = -42 # error value
+        end
       end
     else
-      volume = -1
+      volume = -1 # no volume
     end
     ret = Array.new
     ret << volume << chapter << page
@@ -54,28 +66,25 @@ class Download_mf
     return @links
   end
 
+  def page_link_err(data)
+    puts "added page #{data[2]}, chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ") + " to todo database"
+    @db.add_todo(@manga_name, data[0], data[1], data[2])
+    return false
+  end
+
   def page_link(link)
     page = get_page(link)
     if (page == nil)
       return false
     end
     data = data_extractor(link)
-    pic_link = page.xpath('//img[@id="image"]').map{ |img| img['src']}
+    pic_link = page.xpath('//img[@id="image"]').map{|img| img['src']}
     if pic_link[0] == nil
-      puts "added page #{data[2]}, chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ") + " to todo database"
-      @db.add_todo(@manga_name, data[0], data[1], data[2])
-      return false
+      return page_link_err(data)
     end
     pic_buffer = get_pic(pic_link[0])
-    if pic_buffer == nil
-      puts "added page #{data[2]}, chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ") + " to todo database"
-      @db.add_todo(@manga_name, data[0], data[1], data[2])
-      return false
-    end
-    if write_pic(pic_buffer, data, @dir) == false
-      puts "added page #{data[2]}, chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ") + " to todo database"
-      @db.add_todo(@manga_name, data[0], data[1], data[2])
-      return false
+    if pic_buffer == nil || write_pic(pic_buffer, data, @dir) == false
+      return page_link_err(data)
     end
     return true
   end
@@ -89,27 +98,28 @@ class Download_mf
   end
 
   def chapter_link(link)
-    puts "link is : " + link
     data = data_extractor(link)
+    if data[0] == -42
+      puts "unmanaged link values : " + link
+      return false
+    end
     last_pos = link.rindex(/\//)
     link = link[0..last_pos].strip + "1.html"
     page = get_page(link)
-    tmp_number_of_pages = page.xpath('//div[@class="l"]')
-    number_of_pages = tmp_number_of_pages.text.split.last.to_i
     if (page == nil)
-      puts "could not get data of " + link
+      puts "downloaded an empty page " + link
+      puts "adding it to the todo database"
       @db.add_todo(@manga_name, data[0], data[1], -1)
-      printf "\n"
-      STDOUT.flush
+      puts ""
       return false
     end
+    number_of_pages = page.xpath('//div[@class="l"]').text.split.last.to_i
     page_nb = 1
-    while page_nb - 1 < number_of_pages
-      data = data_extractor(link)
+    while page_nb <= number_of_pages
       if (page_link(link) == false)
         printf "\n"
         STDOUT.flush
-        puts "error on " + ((data[0] != -1) ? "volume #{data[0]} /" : "") + " chapter #{data[1]} / page #{data[2]}"
+        puts "error on " + ((data[0] != -1) ? "volume #{data[0]} /" : "") + " chapter #{data[1]} / page #{page_nb}"
         @db.add_todo(@manga_name, data[0], data[1], data[2])
       end
       chapter_progression(page_nb)
@@ -150,13 +160,29 @@ class Download_mf
     end
   end
 
+  def write_cover()
+    cover_link = @doc.xpath('//div[@class="cover"]/img').map{ |cover_l| cover_l['src'] }
+    cover_buffer = get_pic(cover_link[0])
+    if cover_buffer != nil
+      cover1 = File.new(@dir + 'cover.jpg', 'wb')
+      cover2 = File.new(@params.get_params[1] + "mangafox" + "/" + @manga_name + ".jpg", 'wb')
+      until cover_buffer.eof?
+        chunk = cover_buffer.read(1024)
+        cover1.write(chunk)
+        cover2.write(chunk)
+      end
+      cover1.close
+      cover2.close
+    else
+      puts "WARNING : cover could not download cover"
+    end
+  end
+
   def data()
     puts "downloading data for " + @manga_name
-    i = 0
+    i, release = 0
+    author, artist = ""
     genres = []
-    release = 0
-    author = ""
-    artist = ""
     @doc.xpath('//td[@valign="top"]/a').each do |elem|
       case i
       when 0
@@ -175,21 +201,7 @@ class Download_mf
     tmp_type = @doc.xpath('//div[@id="title"]/h1')[0].text.split(' ')
     type = tmp_type[tmp_type.size - 1]
     dir_create(@dir)
-    cover_link = @doc.xpath('//div[@class="cover"]/img').map{ |cover_l| cover_l['src'] }
-    cover_buffer = get_pic(cover_link[0])
-    if cover_buffer != nil
-      cover1 = File.new(@dir + 'cover.jpg', 'wb')
-      cover2 = File.new(@params.get_params[1] + "mangafox" + "/" + @manga_name + ".jpg", 'wb')
-      until cover_buffer.eof?
-        chunk = cover_buffer.read(1024)
-        cover1.write(chunk)
-        cover2.write(chunk)
-      end
-      cover1.close
-      cover2.close
-    else
-      puts "WARNING : cover could not download cover"
-    end
+    write_cover()
     File.open(@dir + "description.txt", 'w') do |txt|
       txt << data_conc(@manga_name, @description, @site, @site + @manga_name, author, artist, type, status, genres, release)
     end

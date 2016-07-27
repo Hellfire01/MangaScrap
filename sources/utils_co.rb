@@ -21,7 +21,7 @@ def download_rescue(tries, link, error, message)
     sleep($failure_sleep)
     return tries
   else
-    print '\n'
+    print "\n"
     STDOUT.flush
     puts message + ' ' + link + ' after ' + $nb_tries.to_s + ' tries'
     puts "message is : " + error.message

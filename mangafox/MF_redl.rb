@@ -121,6 +121,8 @@ def MF_redl(db, manganame)
       arg[0] = ''
       if (arg == "TBD")
         volume = -2
+      elsif (arg == "NA")
+        volume = -3
       else
         volume = arg.to_i
       end

@@ -4,6 +4,9 @@ def MF_volume_string(value)
     volume_string = " of volume TBD"
   elsif (value >= 0)
     volume_string = " of volume #{value}"
+    if value % 1 == 0
+      volume_string += ' '
+    end
   end
   return volume_string
 end
@@ -12,7 +15,7 @@ def MF_manga_todo(name, db, dw)
   todo = db.get_todo(name)
   if todo.size != 0
     puts ""
-    puts "atempting download of pages of todo database"
+    puts "downloading todo pages"
     todo.each do |elem|
       volume_nb = elem[2]
       chapter_nb = elem[3]
@@ -35,8 +38,6 @@ def MF_manga_todo(name, db, dw)
       end
     end
     puts "done"
-  else
-    puts "no element in todo database"
   end
 end
 
@@ -47,7 +48,7 @@ def MF_manga_missing_chapters(name, db, dw)
   i = 0
   links.reverse_each do |link|
     data = dw.data_extractor(link)
-    if (traces.count{|id, manga_name, vol_value, chap_value| vol_value == data[0] && chap_value == data[1]} == 0)
+    if (traces.count{|_id, _manga_name, vol_value, chap_value| vol_value == data[0] && chap_value == data[1]} == 0)
       if (miss == false)
         puts ""
         puts "updating chapters"
@@ -56,16 +57,15 @@ def MF_manga_missing_chapters(name, db, dw)
       end
       volume_string = MF_volume_string(data[0])
       puts ""
-      puts "did not find chapter #{data[1]}" + volume_string + " in #{name}'s trace database"
+      puts "downloading #{data[1]}" + volume_string + " of #{name}"
       puts "downloading chapter #{data[1]}" + volume_string + " ( link #{i + 1} / #{links.size} )"
-      if (dw.chapter(data[0], data[1]) == false)
-        puts "failed to download chapter ( put it in database )"
-      end
+      dw.chapter_link(link)
     end
     i += 1
   end
   if (miss == true)
     puts "downloaded missing chapters for #{name}"
+    puts ""
   else
     puts "no missing chapters for #{name}"
   end

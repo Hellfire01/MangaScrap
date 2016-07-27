@@ -21,7 +21,10 @@
     ./MangaScrap -redl toriko v2 p3 c4
         will download the volume 2, chapter 4, page 3 of toriko
     ./MangaScrap -redl fairy_tail vTBD c56
-        will download the chapter 56 of the to be declared ( TBD ) volume
+        will download the chapter 56 of the To Be Declared ( TBD ) volume
+    ./MangaScrap -redl koi_to_uso vNA c56
+        will download the chapter 56 of the Not Available ( NA ) volume
+		note : check file names and / or links to know if TBD or NA must be used
 
  -l --list [manga name / manga site]
     shows content of database
