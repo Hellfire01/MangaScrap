@@ -15,10 +15,18 @@ def init_utils()
   $catch_fatal = params[7]
 end
 
+def sleep_manager(error)
+  if error.class.to_s == "SocketError" # connection error
+    sleep($error_sleep)
+  else
+    sleep($failure_sleep)
+  end
+end
+
 def download_rescue(tries, link, error, message)
   if tries > 0
     tries -= 1
-    sleep($failure_sleep)
+    sleep_manager(error)
     return tries
   else
     print "\n"
@@ -57,7 +65,7 @@ def redirection_detection(url)
   rescue StandardError => error
     if tries > 0
       tries -= 1
-      sleep($failure_sleep)
+      sleep_manager(error)
       retry
     else
       puts "connection is lost or could not find manga, stopping programm"

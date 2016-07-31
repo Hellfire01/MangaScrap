@@ -100,7 +100,7 @@ class Download_mf
   def chapter_link(link)
     data = data_extractor(link)
     if data[0] == -42
-      puts "unmanaged link values : " + link
+      puts "unmanaged volume value in link : " + link
       return false
     end
     last_pos = link.rindex(/\//)
@@ -180,33 +180,22 @@ class Download_mf
 
   def data()
     puts "downloading data for " + @manga_name
-    i, release = 0
-    author, artist = ""
-    genres = []
-    @doc.xpath('//td[@valign="top"]/a').each do |elem|
-      case i
-      when 0
-        release = elem.text.to_i
-      when 1
-        author = elem.text
-      when 2
-        artist = elem.text
-      else
-        genres << elem
-      end
-      i += 1
-    end
-    @description = @doc.xpath('//p[@class="summary"]').text
+    raag_data = @doc.xpath('//td[@valign="top"]')
+    release = raag_data[0].text.to_i
+    author = raag_data[1].text.gsub(/\s+/, "").gsub(',', ", ")
+    artist = raag_data[2].text.gsub(/\s+/, "").gsub(',', ", ")
+    genres = raag_data[3].text.gsub(/\s+/, "").gsub(',', ", ")
+    description = description_manipulation(@doc.xpath('//p[@class="summary"]').text)
     status = @doc.xpath('//div[@class="data"]/span')[0].text.gsub(/\s+/, "").split(',')[0]
     tmp_type = @doc.xpath('//div[@id="title"]/h1')[0].text.split(' ')
     type = tmp_type[tmp_type.size - 1]
     dir_create(@dir)
     write_cover()
     File.open(@dir + "description.txt", 'w') do |txt|
-      txt << data_conc(@manga_name, @description, @site, @site + @manga_name, author, artist, type, status, genres, release)
+      txt << data_conc(@manga_name, description, @site, @site + @manga_name, author, artist, type, status, genres, release)
     end
     if @db.manga_in_data?(@manga_name) == false
-      @db.add_manga(@manga_name, @description, @site, @site + "manga/" + @manga_name, author, artist, type, status, genres, release)
+      @db.add_manga(@manga_name, description, @site, @site + "manga/" + @manga_name, author, artist, type, status, genres, release)
       puts "added #{@manga_name} to database"
     end
   end

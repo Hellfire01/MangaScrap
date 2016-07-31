@@ -11,7 +11,7 @@ class DB
       prep.bind_param 6, artist
       prep.bind_param 7, type
       prep.bind_param 8, status
-      prep.bind_param 9, genres.join(", ")
+      prep.bind_param 9, genres
       prep.bind_param 10, release
       prep.execute
     rescue SQLite3::Exception => e

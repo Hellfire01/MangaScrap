@@ -60,3 +60,4 @@
 0.7.2 : code cleaning + better exception management<br />
 0.7.3 : code cleaning + small optimisation<br />
 0.7.4 : better descriptions in the description.txt files<br />
+0.7.5 : bug fixes<br />

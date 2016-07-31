@@ -29,7 +29,7 @@ def MF_manga_todo(name, db, dw)
           puts "failed to download page #{page_nb} of chapter #{chapter_nb}" + volume_string
         end
       else
-        puts "downloading chapter #{data[1]}" + ((data[0] == -1) ? "" : ", volume #{data[0]} ")
+        puts "downloading chapter #{chapter_nb}" + ((volume_nb == -1) ? "" : ", volume #{volume_nb} ")
         if (dw.chapter(volume_nb, chapter_nb) == true)
           db.delete_todo(elem[0])
         else
@@ -57,8 +57,7 @@ def MF_manga_missing_chapters(name, db, dw)
       end
       volume_string = MF_volume_string(data[0])
       puts ""
-      puts "downloading #{data[1]}" + volume_string + " of #{name}"
-      puts "downloading chapter #{data[1]}" + volume_string + " ( link #{i + 1} / #{links.size} )"
+      puts "downloading chapter #{data[1]}" + volume_string + " of #{name} ( link #{i + 1} / #{links.size} )"
       dw.chapter_link(link)
     end
     i += 1
@@ -72,6 +71,7 @@ def MF_manga_missing_chapters(name, db, dw)
 end
 
 def MF_manga_extra_chapters(name, db, dw)
+  # à remplacer avec le scan
 end
 
 #used by Download_mf to avoid creating a second instance of the same class

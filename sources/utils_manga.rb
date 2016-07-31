@@ -6,12 +6,13 @@ def data_conc(manga_name, description, site, link, author, artist, type, status,
   ret += "release year = " + release.to_s + "\n"
   ret += "type         = " + type + "\n"
   ret += "status       = " + status + "\n"
-  ret += "genres       = " + genres.join(", ") + "\n"
+  ret += "genres       = " + genres + "\n"
   ret += "\n"
   ret += "site = " + site + "\n"
   ret += "link = " + link + "\n"
   ret += "\n"
   ret += "description :\n"
+  ret += "\n"
   ret += description
   ret += "\n"
   return ret
@@ -135,4 +136,33 @@ def write_pic(pic_buffer, data, dir)
     return false
   end
   return true
+end
+
+# transforms the raw text into a more lisible format
+def description_manipulation(description)
+  ret = ""
+  description.delete!("\C-M")
+  description.tr("\t", '')
+  description = description.squeeze(" ")
+  description.each_line do |line|
+    lock = true
+    tmp_line = ""
+    count = 0
+    line.split(" ").each do |word|
+      count += word.length
+      if count > 120
+        tmp_line += "\n"
+        count = 0
+      end
+      if lock == true
+        lock = false
+      elsif count != 0
+        tmp_line += " "
+        count += 1
+      end
+      tmp_line += word
+    end
+    ret += tmp_line.strip() + "\n"
+  end
+  return ret
 end
