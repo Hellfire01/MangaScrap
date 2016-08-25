@@ -23,7 +23,6 @@ def param_list()
   puts "delete diff     (dd) = #{params[6]}"
   puts "if ever durring an update a chapter is in the traces database but not in the chapter list, it is deleted ( or not )"
   puts "this can happen when a chapter is mistankingly uploaded to the wrong manga or the chapter list / organisation changed"
-  puts "WARNING : not yet implemented"
   puts ""
   puts "catch exception (ce) = #{params[7]}"
   puts "While downloading pages, there is a very very low possibility of Ruby raising a exception. This only happens 1 / 1500"

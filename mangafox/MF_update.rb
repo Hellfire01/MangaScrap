@@ -47,7 +47,7 @@ def MF_manga_missing_chapters(name, db, dw)
   links = dw.get_links()
   i = 0
   links.reverse_each do |link|
-    data = dw.data_extractor(link)
+    data = data_extractor_MF(link)
     if (traces.count{|_id, _manga_name, vol_value, chap_value| vol_value == data[0] && chap_value == data[1]} == 0)
       if (miss == false)
         puts ""
@@ -70,10 +70,6 @@ def MF_manga_missing_chapters(name, db, dw)
   end
 end
 
-def MF_manga_extra_chapters(name, db, dw)
-  # à remplacer avec le scan
-end
-
 #used by Download_mf to avoid creating a second instance of the same class
 def MF_update_dw(name, dw, db)
   pdb = Params.new()
@@ -81,7 +77,7 @@ def MF_update_dw(name, dw, db)
   MF_manga_todo(name, db, dw)
   MF_manga_missing_chapters(name, db, dw)
   if (params[6] == "true")
-    MF_manga_extra_chapters(name, db, dw)
+    delete_diff(db, dw.get_links(), params[1] + "mangafox/" + name + "/", name)
   end
 end
 

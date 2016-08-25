@@ -2,7 +2,7 @@ def MF_redl_volume(dw, volume)
   failure = true
   links = dw.get_links()
   links.each do |link|
-    data = dw.data_extractor(link)
+    data = data_extractor_MF(link)
     if data[0] == volume
       if failure == true
         failure = false
@@ -23,7 +23,7 @@ def MF_redl_chapter(dw, chapter, volume)
   failure = true
   links = dw.get_links()
   links.each do |link|
-    data = dw.data_extractor(link)
+    data = data_extractor_MF(link)
     if data[0] == volume && data[1] == chapter
       failure = false
       puts "downloading chapter " + chapter.to_s
@@ -43,7 +43,7 @@ def MF_redl_page(dw, page, chapter, volume)
   failure = true
   links = dw.get_links()
   links.each do |link|
-    data = dw.data_extractor(link)
+    data = data_extractor_MF(link)
     if data[0] == volume && data[1] == chapter
       new_link = dw.link_generator(volume, chapter, page)
       if redirection_detection(new_link) == true

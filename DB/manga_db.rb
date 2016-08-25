@@ -177,6 +177,15 @@ class DB
     return ret
   end
 
+  def delete_trace(manganame, chapter)
+    mangaId = get_manga(manganame)[0]
+    begin
+      @db.execute "DELETE FROM manga_trace WHERE mangaId=#{mangaId} AND volume=#{chapter[0]} and chapter=#{chapter[1].to_i}"
+    rescue SQLite3::Exception => e
+      db_error_exit("could not erase element from trace database", e)
+    end
+  end
+
   #init database
   def initialize()
     begin

@@ -27,41 +27,6 @@ class Download_mf
     return link
   end
 
-  def data_extractor(link)
-    if (link[link.size - 1] == '/')
-      page = 1
-    end
-    link += "1.html"
-    link_split = link.split('/')
-    page = link_split[link_split.size - 1].chomp(".html").to_i
-    link_split[link_split.size - 2][0] = ''
-    chapter = link_split[link_split.size - 2].to_f
-    if (chapter % 1 == 0)
-      chapter = chapter.to_i
-    end
-    if link_split.size == 8
-      link_split[link_split.size - 3][0] = ''
-      if link_split[link_split.size - 3] =~ /\A\d+\z/
-        volume = link_split[link_split.size - 3].to_i
-      else
-        if link_split[link_split.size - 3] == "NA"
-          volume = -3
-        elsif link_split[link_split.size - 3] == "TBD"
-          volume = -2
-        elsif link_split[link_split.size - 3] == "ANT"
-          volume = -4
-        else
-          volume = -42 # error value
-        end
-      end
-    else
-      volume = -1 # no volume
-    end
-    ret = Array.new
-    ret << volume << chapter << page
-    return ret
-  end
-
   def get_links()
     return @links
   end
@@ -77,7 +42,7 @@ class Download_mf
     if (page == nil)
       return false
     end
-    data = data_extractor(link)
+    data = data_extractor_MF(link)
     pic_link = page.xpath('//img[@id="image"]').map{|img| img['src']}
     if pic_link[0] == nil
       return page_link_err(data)
@@ -98,7 +63,7 @@ class Download_mf
   end
 
   def chapter_link(link)
-    data = data_extractor(link)
+    data = data_extractor_MF(link)
     if data[0] == -42
       puts "unmanaged volume value in link : " + link
       return false
@@ -148,7 +113,7 @@ class Download_mf
   def download()
     if @db.manga_in_data?(@manga_name) == false
       @links.reverse_each do |link|
-        data = data_extractor(link)
+        data = data_extractor_MF(link)
         puts link
         puts "downloading " + ((data[0] != -1) ? "volume #{data[0]} /" : "") + " chapter #{data[1]} / page #{data[2]}"
         chapter_link(link)
@@ -219,7 +184,7 @@ class Download_mf
   def initialize(db, manga_name, data)
     @manga_name = manga_name
     @params = Params.new()
-    @dir = @params.get_params[1] + "mangafox" + "/" + manga_name + "/"
+    @dir = @params.get_params()[1] + "mangafox" + "/" + manga_name + "/"
     @db = db
     @site = "http://mangafox.me/"
     if (redirection_detection(@site + "/manga/" + manga_name) == true)

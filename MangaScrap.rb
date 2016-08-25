@@ -18,11 +18,14 @@ require_relative 'DB/params_db'
 require_relative 'mangafox/MF_download'
 require_relative 'mangafox/MF_update'
 require_relative 'mangafox/MF_redl'
+require_relative 'sources/scan/scan'
+require_relative 'sources/scan/scan_utils'
+require_relative 'sources/utils/utils_co'
+require_relative 'sources/utils/utils_db'
+require_relative 'sources/utils/utils_manga'
 require_relative 'sources/download'
-require_relative 'sources/utils_co'
-require_relative 'sources/utils_db'
-require_relative 'sources/utils_manga'
 require_relative 'sources/update'
+require_relative 'sources/delete_diff'
 require_relative 'sources/help'
 require_relative 'sources/add'
 require_relative 'sources/list'
@@ -69,6 +72,10 @@ else
     clear(db)
   when "-redl", "--re-download"
     re_dl(db)
+  #when "-sca", "--scan-add"
+  #  scan(db, "add")
+  #when "-scc", "--scan-correct"
+  #  scan(db, "correct")
   when "-h", "--help"
     help()
   else
