@@ -130,7 +130,7 @@ class Download_mf
     cover_buffer = get_pic(cover_link[0])
     if cover_buffer != nil
       cover1 = File.new(@dir + 'cover.jpg', 'wb')
-      cover2 = File.new(@params.get_params[1] + "mangafox" + "/" + @manga_name + ".jpg", 'wb')
+      cover2 = File.new(@params.get_params[1] + "mangafox/mangas/" + @manga_name + ".jpg", 'wb')
       until cover_buffer.eof?
         chunk = cover_buffer.read(1024)
         cover1.write(chunk)
@@ -150,18 +150,20 @@ class Download_mf
     author = raag_data[1].text.gsub(/\s+/, "").gsub(',', ", ")
     artist = raag_data[2].text.gsub(/\s+/, "").gsub(',', ", ")
     genres = raag_data[3].text.gsub(/\s+/, "").gsub(',', ", ")
-    description = description_manipulation(@doc.xpath('//p[@class="summary"]').text)
+    description = @doc.xpath('//p[@class="summary"]').text
     status = @doc.xpath('//div[@class="data"]/span')[0].text.gsub(/\s+/, "").split(',')[0]
     tmp_type = @doc.xpath('//div[@id="title"]/h1')[0].text.split(' ')
     type = tmp_type[tmp_type.size - 1]
     dir_create(@dir)
     write_cover()
     File.open(@dir + "description.txt", 'w') do |txt|
-      txt << data_conc(@manga_name, description, @site, @site + @manga_name, author, artist, type, status, genres, release)
+      txt << data_conc(@manga_name, description_manipulation(description), @site, @site + @manga_name, author, artist, type, status, genres, release)
     end
     if @db.manga_in_data?(@manga_name) == false
       @db.add_manga(@manga_name, description, @site, @site + "manga/" + @manga_name, author, artist, type, status, genres, release)
       puts "added #{@manga_name} to database"
+    else
+      @db.update_manga(@manga_name, description, author, artist, genres)
     end
   end
 
@@ -184,7 +186,7 @@ class Download_mf
   def initialize(db, manga_name, data)
     @manga_name = manga_name
     @params = Params.new()
-    @dir = @params.get_params()[1] + "mangafox" + "/" + manga_name + "/"
+    @dir = @params.get_params()[1] + "mangafox/mangas/" + manga_name + "/"
     @db = db
     @site = "http://mangafox.me/"
     if (redirection_detection(@site + "/manga/" + manga_name) == true)

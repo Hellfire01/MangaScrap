@@ -16,7 +16,7 @@ class Params
       prep.bind_param 1, value
       prep.execute
     rescue SQLite3::Exception => e
-      db_error_exit("could not update failure sleep", e)
+      db_error_exit("could not update " + param, e)
     end
   end
 
@@ -24,8 +24,8 @@ class Params
     begin
       prep = @db.prepare "UPDATE params SET
       manga_path = ?,
-      between_sleep = 0.2,
-      failure_sleep = 0.2,
+      between_sleep = 0.1,
+      failure_sleep = 0.1,
       nb_tries_on_fail = 20,
       error_sleep = 30,
       delete_diff = ?,
@@ -59,7 +59,7 @@ class Params
       ret = @db.execute "SELECT * FROM params"
       if (ret.size == 0)
         puts "initializing params './MangaScrap -pl' to list params"
-        prep = @db.prepare "INSERT INTO params VALUES (NULL, ?, 0.2, 0.2, 20, 30, ?, ?)"
+        prep = @db.prepare "INSERT INTO params VALUES (NULL, ?, 0.1, 0.1, 20, 30, ?, ?)"
         prep.bind_param 1, $default_manga_path
         prep.bind_param 2, "true"
         prep.bind_param 3, "true"

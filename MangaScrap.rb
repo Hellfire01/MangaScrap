@@ -20,31 +20,27 @@ require_relative 'mangafox/MF_update'
 require_relative 'mangafox/MF_redl'
 require_relative 'sources/scan/scan'
 require_relative 'sources/scan/scan_utils'
+require_relative 'sources/utils/utils_file'
 require_relative 'sources/utils/utils_co'
 require_relative 'sources/utils/utils_db'
 require_relative 'sources/utils/utils_manga'
+require_relative 'sources/html_generator/html_manager'
+require_relative 'sources/html_generator/chapter_index'
+require_relative 'sources/html_generator/chapter'
+require_relative 'sources/html_generator/manga_index'
 require_relative 'sources/download'
 require_relative 'sources/update'
 require_relative 'sources/delete_diff'
 require_relative 'sources/help'
 require_relative 'sources/add'
+require_relative 'sources/init'
 require_relative 'sources/list'
 require_relative 'sources/delete'
 require_relative 'sources/params'
 require_relative 'sources/clear'
 require_relative 'sources/redl'
 
-
-begin
-  dir_create(Dir.home + "/.MangaScrap")
-rescue StandardError => error
-  puts "could not create db folder ( " + Dir.home + "/.MangaScrap )"
-  puts "error message is : '" + error.message + "'"
-  exit 5
-end
-
-db = DB.new()
-init_utils()
+db = initialize_mangascrap(__dir__)
 
 if ARGV.size == 0
   update(db)
@@ -52,10 +48,14 @@ else
   case ARGV[0]
   when "-u", "--update"
     update(db)
+  when "-uf", "--update-fast"
+    update(db, true)
   when "-a", "--add"
     add(db, false)
   when "-da", "--data"
     add(db, true)
+  when "-h", "--html"
+    html_manager(db)
   when "-dl", "--download"
     download(db)
   when "-l", "--list"

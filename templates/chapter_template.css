@@ -1,0 +1,37 @@
+div.container {
+	width: 100%;
+	border: 1px solid gray;
+}
+
+div.header, div.footer {
+	padding: 1em;
+	color: white;
+	background-color: black;
+	clear: left;
+	text-align: center;
+}
+
+a {
+	text-decoration: none;
+}
+
+.chapter {
+	text-align: center;
+}
+
+.frame {
+	height: 100%;
+	white-space: nowrap;
+	text-align: center;
+	margin: 1em 0;
+}
+
+.helper {
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+}
+
+html {
+	background-color: #F2F2F2;	
+}

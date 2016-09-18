@@ -1,0 +1,47 @@
+html {
+	background-color: #F2F2F2;	
+}
+
+div.container {
+	width: 100%;
+	border: 1px solid gray;
+}
+
+div.header, div.footer {
+	padding: 1em;
+	color: white;
+	background-color: black;
+	clear: left;
+	text-align: center;
+}
+
+div.nav {
+	position: absolute;
+	right: 0;
+	width: 450px;
+	margin: 0;
+	padding: 1em;
+}
+
+div.nav ul {
+	list-style-type: none;
+	padding: 0;
+}
+
+a {
+	text-decoration: none;
+}
+
+ul li a {
+	text-decoration: none;
+}
+
+div.details {
+	margin-left: 400px;
+	margin-right: 500px;
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	padding: 1em;
+	overflow: hidden;
+	min-height: 650px;
+}

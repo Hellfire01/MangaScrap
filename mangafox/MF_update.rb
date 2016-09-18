@@ -64,6 +64,7 @@ def MF_manga_missing_chapters(name, db, dw)
   end
   if (miss == true)
     puts "downloaded missing chapters for #{name}"
+    html_chapter_index(db, db.get_manga(name), Params.new().get_params())
     puts ""
   else
     puts "no missing chapters for #{name}"
@@ -77,7 +78,7 @@ def MF_update_dw(name, dw, db)
   MF_manga_todo(name, db, dw)
   MF_manga_missing_chapters(name, db, dw)
   if (params[6] == "true")
-    delete_diff(db, dw.get_links(), params[1] + "mangafox/" + name + "/", name)
+    delete_diff(db, dw.get_links(), params[1] + "mangafox/mangas/" + name + "/", name)
   end
 end
 

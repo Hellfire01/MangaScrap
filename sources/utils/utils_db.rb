@@ -14,3 +14,11 @@ def get_mf_class(db, manga_name, data)
     return nil
   end
 end
+
+# used to get only the chapter and volumes values from db
+def db_to_trace(db, name)
+  trace = db.get_trace(name)
+  trace = trace.each {|elem| elem.shift} # delete id of each chapter
+  trace = trace.each {|elem| elem.shift} # delete if of manga
+  return trace
+end

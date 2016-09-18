@@ -54,6 +54,9 @@
  -c --clear [-f 'name of file'] / [manga name]
     clears the todo database from the manga
 
+ -h --html [-f 'name of file'] / [manga name]
+    regenerates the manga index + the chapter index and chapters of the required mangas
+
  -h --help
     displays help
 

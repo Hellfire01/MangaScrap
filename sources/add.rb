@@ -14,13 +14,14 @@ def add_file(ret, db, data)
         if get_mf_class(db, name[0], data) == nil
           puts "adding next element"
         end
+        html_chapter_index(db, db.get_manga(name[0]), Params.new().get_params())
       end
     end
   end
 end
 
 def add(db, data)
-  if ARGV.size < 2
+  if ARGV.size == 1
     puts 'not enough arguments'
     exit 5
   end
@@ -46,10 +47,12 @@ def add(db, data)
         if get_mf_class(db, manga_name, data) == nil
           exit 3
         end
+        html_chapter_index(db, db.get_manga(manga_name), Params.new().get_params())
       end
     end
   else
     add_file(ret, db, data)
   end
+  html_manga_index(db, Params.new().get_params())
   puts "done"
 end

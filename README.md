@@ -11,6 +11,9 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 
 ### Changelog :
 
+0.8.0 : added prototype html ( it needs tweaking ) : it is now possible to read the mangas with the web browser + added the -h --html option<br />
+<br />
+
 0.7.6 : activated the "delete diff" option<br />
 0.7.5 : bug fixes<br />
 0.7.4 : better descriptions in the description.txt files<br />
@@ -19,8 +22,7 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 0.7.1 : code cleaning + optimisations<br />
 0.7.0 : added the ce ( catch exception ) option + added the option -da --data to download data + placed covers in manga directory + multiple tweaks and optimisations<br />
 
-###### Warning : the database changes and is not compatible with the previous versions<br />
-###### Please look at the file migration/0.6.x_to_0.7.x.txt<br />
+###### Warning : the database changes and is not compatible with the previous versions<br />Please look at the file migration/0.6.x_to_0.7.x.txt<br />
 
 0.6.7 : changed exception handling<br />
 0.6.6 : deleted unused file<br />
@@ -29,8 +31,8 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 0.6.3 : exception handling test<br />
 0.6.2 : changed display to show chapter download progression<br />
 0.6.1 : the manga list files can now have empty lines and comments<br />
-0.6.0 : added the -redl option + re-enabled the -dl opion + bub fixes<br />
-
+0.6.0 : added the -redl option + re-enabled the -dl opion + bug fixes<br />
+<br />
 
 0.5.5 : fixed a bad link generation if a chapter in the todo database whas a float and not an int<br />
 0.5.4 : bug fixes + optimisation : it is now possible to set the bs and the fs sleep at 0.2 ( instead of 0.25 and 0.5 )<br />
@@ -39,8 +41,7 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 0.5.1 : bug fixes + updated the help option<br />
 0.5.0 : Changed the code architecture to fix a few bugs and make the code easier to update and maintain + added a few parameters options and getting ready for multiple sites<br />
 
-###### Warning : the manga database what moved ( new path is DB/manga.db ), move the file if you wish to keep all your traces
-###### Warning : the parameters where reset ( new db file and more options )
+###### Warning : the manga database what moved ( new path is DB/manga.db ), move the file if you wish to keep all your tracesWarning : the parameters where reset ( new db file and more options )
 
 0.4.4 : optimisation and code cleaning<br />
 0.4.3 : stability and optimisation<br />

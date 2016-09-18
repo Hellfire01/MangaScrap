@@ -1,0 +1,51 @@
+html {
+	background-color: #F2F2F2;	
+}
+
+div.container {
+	width: 100%;
+	border: 1px solid gray;
+}
+
+div.header, div.footer {
+	padding: 1em;
+	color: white;
+	background-color: black;
+	clear: left;
+	text-align: center;
+}
+
+a {
+	text-decoration: none;
+}
+
+div.list {
+	margin-left: 400px;
+	margin-right: 400px;
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	padding: 1em;
+	overflow: hidden;
+	min-height: 650px;
+}
+
+.manga {
+	display: inline-block;
+	text-align: center;
+	margin: 5px auto;
+	min-height: 180px;
+	overflow: hidden;
+}
+
+.manga img {
+	height: 300px;
+	width: auto;
+}
+
+.manga-list {
+	width: 100%;
+}
+
+a {
+	width: 100px;
+}

@@ -113,9 +113,9 @@ def param_set()
     when 'mp'
       param_check_string(db, ARGV[1], "manga path", ARGV[2])
     when 'bs'
-      param_check_nb(db, ARGV[1], "between sleep", ARGV[2].to_f, 0.2)
+      param_check_nb(db, ARGV[1], "between sleep", ARGV[2].to_f, 0.1)
     when 'fs'
-      param_check_nb(db, ARGV[1], "failure sleep", ARGV[2].to_f, 0.2)
+      param_check_nb(db, ARGV[1], "failure sleep", ARGV[2].to_f, 0.1)
     when 'es'
       param_check_nb(db, ARGV[1], "error sleep", ARGV[2].to_f, 0.5)
     when 'nb'
@@ -134,8 +134,8 @@ def param_reset()
   puts "WARNING ! You are about to reset your parameters !"
   puts "the parameters will be set to :"
   puts "manga path      = " + Dir.home + "/Documents/mangas/"
-  puts "between sleep   = 0.2"
-  puts "failure sleep   = 0.2"
+  puts "between sleep   = 0.1"
+  puts "failure sleep   = 0.1"
   puts "number of tries = 20"
   puts "error sleep     = 30"
   puts "delete diff     = true"

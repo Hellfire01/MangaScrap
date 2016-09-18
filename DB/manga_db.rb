@@ -19,11 +19,14 @@ class DB
     end
   end
 
-  def update_manga(manganame, description)
+  def update_manga(manganame, description, author, artist, genres)
     begin
-      prep = @db.prepare "UPDATE manga_list SET description=? WHERE name=?"
+      prep = @db.prepare "UPDATE manga_list SET description=?, author=?, artist=?, genres=? WHERE name=?"
       prep.bind_param 1, description
-      prep.bind_param 2, manganame
+      prep.bind_param 2, author
+      prep.bind_param 3, artist
+      prep.bind_param 4, genres
+      prep.bind_param 5, manganame
       prep.execute
     rescue SQLite3::Exception => e
       db_error_exit("Error while trying to update data of #{manganame}", e)

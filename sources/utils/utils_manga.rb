@@ -18,25 +18,6 @@ def data_conc(manga_name, description, site, link, author, artist, type, status,
   return ret
 end
 
-# determines if directory exists
-def dir_create(directory)
-  if directory[0, 1] == "~"
-    directory["~"] = Dir.home
-  end
-  if Dir.exist?(directory) == false
-    puts directory + " does not exist, creating it"
-    list = directory.split('/')
-    build = "/"
-    list = list.reject {|elem| elem.empty?}
-    list.each do |elem|
-      build += elem + '/'
-      if Dir.exist?(build) == false
-        Dir.mkdir(build)
-      end
-    end
-  end
-end
-
 # open -f option file and return array
 def get_mangas()
   ret = Array.new
@@ -73,31 +54,29 @@ def get_mangas()
 end
 
 # function used to get the string equivalent of the volume value
-def volume_int_to_string(vol_value)
+def volume_int_to_string(vol_value, html = false)
   vol_buffer = ""
   if vol_value == -1
-    vol_buffer = "####"
+    vol_buffer = (html == false) ? "####" : ""
   elsif vol_value == -2
-    vol_buffer = "_TBD"
+    vol_buffer = (html == false) ? "_TBD" : "Volume TBD"
   elsif vol_value == -3
-    vol_buffer = "__NA"
+    vol_buffer = (html == false) ? "__NA" : "Volume NA"
   elsif vol_value == -4
-    vol_buffer = "_ANT"
+    vol_buffer = (html == false) ? "_ANT" : "Volume ANT"
   else
-    vol_buffer = vol_value.to_s
+    if html == false
+      vol_buffer = vol_value.to_s
+    else
+      buffer = ((vol_value >= 1000) ? "" : ((vol_value >= 100) ? "&nbsp;" : ((vol_value >= 10) ? "&nbsp;&nbsp;" : "&nbsp;&nbsp;&nbsp;")))
+      vol_buffer = "Volume " + vol_value.to_s + buffer
+    end
   end
   return vol_buffer
 end
 
-# get file name
-def file_name(dir, vol_value, chap_value, page_value, correction = false)
-  chap_str = chap_value.to_s
-  val = chap_str.index('.')
-  if (val != nil)
-    chap_str[val] = ''
-  else
-    chap_str += '0'
-  end
+# utilisé pour obtenir la valeur du volume en string
+def vol_buffer_string(vol_value)
   if vol_value != -42
     if vol_value < 0
       vol_buffer = volume_int_to_string(vol_value)
@@ -106,12 +85,31 @@ def file_name(dir, vol_value, chap_value, page_value, correction = false)
       vol_buffer += vol_value.to_s
     end
   end
-  chap_buffer = ((chap_value >= 1000) ? "" : ((chap_value >= 100) ? "0" : ((chap_value >= 10) ? "00" : "000")))
-  if correction == false
-    page_buffer = ((page_value >= 1000) ? "" : ((page_value >= 100) ? "0" : ((page_value >= 10) ? "00" : "000")))
-    name_buffer = dir + "manga_v" + vol_buffer + "_c" + chap_buffer + chap_str + "_p" + page_buffer + page_value.to_s
+  return vol_buffer
+end
+
+# utilisé pour obtenir la valeur du chapitre en string
+def chap_buffer_string(chap_value)
+  chap_str = chap_value.to_s
+  val = chap_str.index('.')
+  if (val != nil)
+    chap_str[val] = ''
   else
-    name_buffer = dir + "manga_v" + vol_buffer + "_c" + chap_buffer + chap_str + "_p*"
+    chap_str += '0'
+  end
+  chap_str = ((chap_value >= 1000) ? "" : ((chap_value >= 100) ? "0" : ((chap_value >= 10) ? "00" : "000"))) + chap_str
+  return chap_str
+end
+
+# get file name
+def file_name(dir, vol_value, chap_value, page_value, chapter = false)
+  vol_buffer = vol_buffer_string(vol_value)
+  chap_buffer = chap_buffer_string(chap_value)
+  if chapter == false
+    page_buffer = ((page_value >= 1000) ? "" : ((page_value >= 100) ? "0" : ((page_value >= 10) ? "00" : "000")))
+    name_buffer = dir + "manga_v" + vol_buffer + "_c" + chap_buffer + "_p" + page_buffer + page_value.to_s
+  else
+    name_buffer = dir + "manga_v" + vol_buffer + "_c" + chap_buffer + "_p*"
   end
   return name_buffer
 end
@@ -133,7 +131,7 @@ def chapter_progression(i)
 end
 
 # transforms the raw text into a more lisible format
-def description_manipulation(description)
+def description_manipulation(description, line_size = 120)
   ret = ""
   description.delete!("\C-M")
   description.tr("\t", '')
@@ -144,7 +142,7 @@ def description_manipulation(description)
     count = 0
     line.split(" ").each do |word|
       count += word.length
-      if count > 120
+      if count > line_size
         tmp_line += "\n"
         count = 0
       end
@@ -159,33 +157,4 @@ def description_manipulation(description)
     ret += tmp_line.strip() + "\n"
   end
   return ret
-end
-
-# used to write the downloaded picture
-def write_pic(pic_buffer, data, dir)
-  dir_create(dir)  
-  name_buffer = file_name(@dir, data[0], data[1], data[2])
-  if pic_buffer != nil
-    File.open(name_buffer + ".jpg", 'wb') do |pic|
-      pic << pic_buffer.read
-    end
-    if (File.exist?(name_buffer + ".txt") == true)
-      File.delete(name_buffer + ".txt")
-    end
-  else
-    File.open(name_buffer + ".txt", 'w') do |pic|
-      pic << "could not be downloaded"
-    end
-    puts "Error : no picture to save"
-    return false
-  end
-  return true
-end
-
-# used to get only the chapter and volumes values from db
-def db_to_trace(db, name)
-  trace = db.get_trace(name)
-  trace = trace.each {|elem| elem.shift} # delete id of each chapter
-  trace = trace.each {|elem| elem.shift} # delete if of manga
-  return trace
 end

@@ -6,8 +6,10 @@ def confirm_delete (db, name)
     if (ret == "YES")
       db.delete_manga(name)
       puts "deleted #{name} from database"
+      return true
     else
       puts "did not delete #{name}"
+      return false
     end
 end
 
@@ -15,12 +17,16 @@ def delete (db)
   if (ARGV.size < 2)
     puts "need a manga's name to delete"
   elsif (ARGV.size == 2)
-    confirm_delete(db, ARGV[1])
+    if confirm_delete(db, ARGV[1]) == true
+      html_manga_index(db, Params.new().get_params())
+    end
   else
     ret = get_mangas()
     if (ret != nil)
       ret.each do |name|
-        confirm_delete(db, name[0])
+        if confirm_delete(db, ARGV[1]) == true
+          html_manga_index(db, Params.new().get_params())
+        end
       end
     else
       puts "error while trying to get content of file ( -f option )"
