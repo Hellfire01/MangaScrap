@@ -14,18 +14,21 @@ def confirm_delete (db, name)
 end
 
 def delete (db)
+  html = HTML.new(db)
   if (ARGV.size < 2)
     puts "need a manga's name to delete"
   elsif (ARGV.size == 2)
     if confirm_delete(db, ARGV[1]) == true
-      html_manga_index(db, Params.new().get_params())
+      #todo => supprimer les fichiers html devenus inutiles
+      html.generate_index()
     end
   else
     ret = get_mangas()
     if (ret != nil)
       ret.each do |name|
         if confirm_delete(db, ARGV[1]) == true
-          html_manga_index(db, Params.new().get_params())
+          #todo => supprimer les fichiers html devenus inutiles
+          html.generate_index()
         end
       end
     else

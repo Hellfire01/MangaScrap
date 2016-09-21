@@ -27,6 +27,7 @@ div.list {
 	padding: 1em;
 	overflow: hidden;
 	min-height: 650px;
+	text-align: justify;
 }
 
 .manga {

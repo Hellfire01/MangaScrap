@@ -1,4 +1,4 @@
-def add_file(ret, db, data)
+def add_file(ret, db, data, html)
   ret.each do |name|
     site = "http://mangafox.me/"
     if (name.size != 1)
@@ -14,13 +14,14 @@ def add_file(ret, db, data)
         if get_mf_class(db, name[0], data) == nil
           puts "adding next element"
         end
-        html_chapter_index(db, db.get_manga(name[0]), Params.new().get_params())
+        html.generate_chapter_index(name[0])
       end
     end
   end
 end
 
 def add(db, data)
+  html = HTML.new(db)
   if ARGV.size == 1
     puts 'not enough arguments'
     exit 5
@@ -47,12 +48,12 @@ def add(db, data)
         if get_mf_class(db, manga_name, data) == nil
           exit 3
         end
-        html_chapter_index(db, db.get_manga(manga_name), Params.new().get_params())
+        html.generate_chapter_index(manga_name)
       end
     end
   else
-    add_file(ret, db, data)
+    add_file(ret, db, data, html)
   end
-  html_manga_index(db, Params.new().get_params())
+  html.generate_index()
   puts "done"
 end

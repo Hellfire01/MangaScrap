@@ -46,6 +46,7 @@ def MF_manga_missing_chapters(name, db, dw)
   traces = db.get_trace(name)
   links = dw.get_links()
   i = 0
+  html = HTML.new(db)
   links.reverse_each do |link|
     data = data_extractor_MF(link)
     if (traces.count{|_id, _manga_name, vol_value, chap_value| vol_value == data[0] && chap_value == data[1]} == 0)
@@ -64,7 +65,7 @@ def MF_manga_missing_chapters(name, db, dw)
   end
   if (miss == true)
     puts "downloaded missing chapters for #{name}"
-    html_chapter_index(db, db.get_manga(name), Params.new().get_params())
+    html.generate_chapter_index(name)
     puts ""
   else
     puts "no missing chapters for #{name}"

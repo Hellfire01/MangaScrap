@@ -18,16 +18,14 @@ require_relative 'DB/params_db'
 require_relative 'mangafox/MF_download'
 require_relative 'mangafox/MF_update'
 require_relative 'mangafox/MF_redl'
+require_relative 'html/html'
 require_relative 'sources/scan/scan'
 require_relative 'sources/scan/scan_utils'
 require_relative 'sources/utils/utils_file'
 require_relative 'sources/utils/utils_co'
 require_relative 'sources/utils/utils_db'
 require_relative 'sources/utils/utils_manga'
-require_relative 'sources/html_generator/html_manager'
-require_relative 'sources/html_generator/chapter_index'
-require_relative 'sources/html_generator/chapter'
-require_relative 'sources/html_generator/manga_index'
+require_relative 'sources/utils/utils_html'
 require_relative 'sources/download'
 require_relative 'sources/update'
 require_relative 'sources/delete_diff'
@@ -39,6 +37,7 @@ require_relative 'sources/delete'
 require_relative 'sources/params'
 require_relative 'sources/clear'
 require_relative 'sources/redl'
+require_relative 'sources/html_manager'
 
 db = initialize_mangascrap(__dir__)
 
@@ -54,7 +53,7 @@ else
     add(db, false)
   when "-da", "--data"
     add(db, true)
-  when "-h", "--html"
+  when "-ht", "--html"
     html_manager(db)
   when "-dl", "--download"
     download(db)

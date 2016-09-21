@@ -130,12 +130,13 @@ def chapter_progression(i)
   STDOUT.flush
 end
 
-# transforms the raw text into a more lisible format
-def description_manipulation(description, line_size = 120)
-  ret = ""
+# transforms the raw text into a more readable format
+def description_manipulation(description, line_size = 120, min_nb_lines = 0)
   description.delete!("\C-M")
   description.tr("\t", '')
   description = description.squeeze(" ")
+  lines = 0
+  ret = ""
   description.each_line do |line|
     lock = true
     tmp_line = ""
@@ -145,6 +146,7 @@ def description_manipulation(description, line_size = 120)
       if count > line_size
         tmp_line += "\n"
         count = 0
+        lines += 1
       end
       if lock == true
         lock = false
@@ -155,6 +157,10 @@ def description_manipulation(description, line_size = 120)
       tmp_line += word
     end
     ret += tmp_line.strip() + "\n"
+  end
+  while lines < min_nb_lines
+    ret += "\n"
+    lines += 1
   end
   return ret
 end
