@@ -63,8 +63,8 @@ class HTML
     template = File.open(Dir.home + "/.MangaScrap/chapter_template.html").read
     template = template.gsub("#####index#####", @path_html + ".html")
     template = template.gsub("#####name#####", @manganame)
-    template = template.gsub("#####prev#####", (arr[0] != nil) ? arr[0][4].gsub("#####elem#####", "prev") : "")
-    template = template.gsub("#####next#####", (arr[2] != nil) ? arr[2][4].gsub("#####elem#####", "next") : "")
+    template = template.gsub("#####prev#####", (arr[2] != nil) ? arr[2][4].gsub("#####elem#####", "prev") : "")
+    template = template.gsub("#####next#####", (arr[0] != nil) ? arr[0][4].gsub("#####elem#####", "next") : "")
     template = template.gsub("#####pictures#####", get_pictures_of_chapter(arr[1])).gsub("#", "%23")
     File.open(chapter_filename(arr[1]), "w") {|f| f.write(template) }
   end
@@ -79,8 +79,8 @@ class HTML
       else
         arr = [nil, traces[0], traces[1]]
         html_chapter(arr)
-        traces.each_cons(3) do |prev, current, nxt|
-          arr = [prev, current, nxt]
+        traces.each_cons(3) do |nxt, current, prev|
+          arr = [nxt, current, prev]
           html_chapter(arr)
         end
         arr = [traces[traces.size - 2], traces[traces.size - 1], nil]
@@ -106,7 +106,7 @@ class HTML
     template = File.open(Dir.home + "/.MangaScrap/chapter_index_template.html")
     template = template.read
     template = template.gsub("#####name#####", manganame)
-    template = template.gsub("#####description#####", description_manipulation(manga_data[2], 100).gsub("\n", "<br />"))
+    template = template.gsub("#####description#####", manga_data[2].gsub("\n", "<br />"))
     template = template.gsub("#####site#####", manga_data[4])
     template = template.gsub("#####author#####", html_a_buffer(manga_data[5]))
     template = template.gsub("#####artist#####", html_a_buffer(manga_data[6]))
@@ -114,6 +114,7 @@ class HTML
     template = template.gsub("#####genres#####", html_a_buffer(manga_data[9]))
     template = template.gsub("#####date#####", manga_data[10].to_s)
     template = template.gsub("#####cover#####", @path_to_cover)
+    template = template.gsub("#####index_path#####", @dir + "/index.html")
     template = chapter_list_to_a_list(template).gsub("#", "%23")
     File.open(@path_html + ".html", "w") {|f| f.write(template)}
     html_generate_chapters(manganame) if index == true

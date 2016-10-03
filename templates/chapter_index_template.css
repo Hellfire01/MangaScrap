@@ -23,6 +23,14 @@ div.nav {
 	padding: 1em;
 }
 
+div.index {
+	position: absolute;
+	left: 100px;
+	width: 450px;
+	margin: 0;
+	padding: 1em;
+}
+
 div.nav ul {
 	list-style-type: none;
 	padding: 0;

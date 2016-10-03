@@ -1,8 +1,13 @@
 ## MangaScrap
 
-MangaScrap is a ruby programm that allows you to download your favorite mangas on your computer automaticaly !<br />
-The programm has a batabase that allows it to keep track of the downloaded mangas to update them when ever a new chapter is published<br />
-MangaScrap is only compatiple with mangafox at the moment but it is planned to be compatible with others sutch as mangareader and light novels<br />
+MangaScrap is a Ruby based script that will allow you to download your mangas and save them on your computer<br />
+It possese a database that allows it to know what chapters where not downloaded yet<br />
+Unlike other manga downloaders, it creates a local website on your computer allowing you to browse your mangas offline !<br />
+
+##### basic usage :
+./MangaScrap -a [manganame] => will add a manga to follow to the database<br />
+./MangaScrap => will update all mangas within the database<br />
+./MangaScrap -dl [manganame] => will add to the database and download the manga<br />
 
 ##### notes :
 ./MangaScrap -h => displays instructions<br />
@@ -11,6 +16,7 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 
 ### Changelog :
 
+0.8.2 : corrections de code + optimisations<br />
 0.8.1 : code factoring + optimisations<br />
 0.8.0 : added prototype html ( it needs tweaking ) : it is now possible to read the mangas with the web browser + added the -h --html option<br />
 <br />
