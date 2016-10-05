@@ -15,10 +15,9 @@ require 'sqlite3'
 
 require_relative 'DB/manga_db'
 require_relative 'DB/params_db'
-require_relative 'mangafox/MF_download'
-require_relative 'mangafox/MF_update'
 require_relative 'mangafox/MF_redl'
 require_relative 'html/html'
+require_relative 'Download/mangafox'
 require_relative 'sources/scan/scan'
 require_relative 'sources/scan/scan_utils'
 require_relative 'sources/utils/utils_file'
@@ -61,6 +60,8 @@ else
     list(db)
   when "-d", "--delete"
     delete(db)
+  when "-df", "--delete-files"
+    delete(db, true)
   when "-pl", "--param_list"
     param_list()
   when "-ps", "--param_set"

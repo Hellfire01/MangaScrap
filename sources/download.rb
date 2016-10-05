@@ -1,7 +1,6 @@
 def download_file(ret, db)
   tab_dw = []
   tab_name = []
-  tab_update = []
   ret.each do |manga|
     if (manga.size == 1)
       site = "http://mangafox.me/"
@@ -10,13 +9,11 @@ def download_file(ret, db)
     end      
     if db.manga_in_data?(manga[0]) == true
       puts manga[0] + " is already in database"
-      tab_update << true
     else
       if (site != "http://mangafox.me/")
         puts "sorry, MangaScrap does not deal with other sites than mangafox ( yet )"
         exit 4
       end
-      tab_update << false
     end
     elem = get_mf_class(db, manga[0], false)
     if elem == nil
@@ -29,11 +26,7 @@ def download_file(ret, db)
   i = 0
   tab_name.each do |manga|
     puts "downloading " + manga
-    if tab_update[i] == false
-      tab_dw[i].download()
-    else
-      update_manga(db, manga, false)
-    end
+    tab_dw[i].update()
     i += 1
   end
 end
@@ -62,7 +55,7 @@ def download(db)
       if dw == nil
         exit 3
       end
-      dw.download()
+      dw.update()
     end
   else
     download_file(ret, db)

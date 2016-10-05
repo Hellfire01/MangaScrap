@@ -1,5 +1,4 @@
 def update_manga(db, name, fast)
-  puts "updating " + name
   manga = db.get_manga(name)
   if (manga == nil)
     puts "error : " + name + " no such manga in database"
@@ -8,10 +7,14 @@ def update_manga(db, name, fast)
   if (manga[3] == "http://mangafox.me/")
     if (fast == true)
       if (manga[8] == "Ongoing")
-        MF_update(db, name)
+        puts "updating " + name
+        dw = get_mf_class(db, name, false)
+        dw.update() if dw != nil
       end
     else
-      MF_update(db, name)
+      puts "updating " + name
+      dw = get_mf_class(db, name, false)
+      dw.update() if dw != nil
     end
   else
     puts "did not find " + manga[3] + " in available site list, leaving"

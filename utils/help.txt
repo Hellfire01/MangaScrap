@@ -3,12 +3,19 @@
 
  -a --add [-f 'name of file'] / 'manga name' [manga site (default is manga fox)]
     add manga to database
+		also updates the manga index ( html )
 
  -da --data [-f 'name of file'] / 'manga name'
     download data ( cover + details ) of targeted manga(s)
+		also updates the manga index ( html )
 
  -u --update [-f 'name of file'] / [manga name]
     update database / manga
+		will update the index ( html ) of each manga when it finished updating them
+
+ -uf --update-fast [-f 'name of file'] / [manga name]
+    only update mangas witch are tagged as "Ongoing" in database
+		will update the index ( html ) of each manga when it finished updating them
 
  -dl --download [-f 'name of file'] 'manga name' [manga site (default is manga fox)]
     add manga and then download
@@ -30,7 +37,12 @@
     shows content of database
 
  -d --delete [-f 'name of file'] / [manga name]
-    deletes manga from database ( not the files )
+    deletes manga from database ( not the files !!! )
+		also updates the manga index ( html )
+
+ -df --delete-files [-f 'name of file'] / [manga name]
+    deletes manga from database and also the files
+		also updates the manga index ( html )
 
  -pl --param_list
     lists actual settings
@@ -52,7 +64,7 @@
     resets the parameters to default, will ask for confirmation
 
  -c --clear [-f 'name of file'] / [manga name]
-    clears the todo database from the manga
+    clears the todo database from the manga ( to be used when trying to update an unexisting chapter )
 
  -ht --html [-f 'name of file'] / [manga name]
     regenerates the manga index + the chapter index and chapters of the required mangas

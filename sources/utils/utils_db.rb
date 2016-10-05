@@ -6,7 +6,7 @@ end
 
 def get_mf_class(db, manga_name, data)
   begin
-    ret = Download_mf.new(db, manga_name, data)
+    ret = Download_Mangafox.new(db, manga_name, data)
     return ret
   rescue => e
     puts "error while trying to add #{manga_name}"

@@ -16,6 +16,7 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 
 ### Changelog :
 
+0.8.3 : refactoring + optimisations + added the -df an -uf options<br />
 0.8.2 : corrections de code + optimisations<br />
 0.8.1 : code factoring + optimisations<br />
 0.8.0 : added prototype html ( it needs tweaking ) : it is now possible to read the mangas with the web browser + added the -h --html option<br />

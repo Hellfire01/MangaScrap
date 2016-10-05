@@ -4,7 +4,7 @@ $failure_sleep = -1
 $error_sleep = -1
 $catch_fatal = "false"
 
-#inits the global variables
+# inits the global variables
 def init_utils()
   db = Params.new()
   params = db.get_params()
@@ -15,6 +15,7 @@ def init_utils()
   $catch_fatal = params[7]
 end
 
+# used to know hom much sleep time is needed
 def sleep_manager(error)
   if error.class.to_s == "SocketError" # connection error
     sleep($error_sleep)
@@ -23,6 +24,7 @@ def sleep_manager(error)
   end
 end
 
+# exception manager for the utils_co.rb functions
 def download_rescue(tries, link, error, message)
   if tries > 0
     tries -= 1
@@ -37,6 +39,7 @@ def download_rescue(tries, link, error, message)
   end
 end
 
+# exception manager for the utils_co.rb functions
 def rescue_fatal(error)
   if $catch_fatal == "false"
     print "\n"
@@ -123,6 +126,7 @@ def get_pic(link)
   return page
 end
 
+# gets the link and returns the values in an array
 def data_extractor_MF(link)
   if (link[link.size - 1] == '/')
     page = 1
@@ -157,3 +161,41 @@ def data_extractor_MF(link)
   ret << volume << chapter << page
   return ret
 end
+
+# from the index page of a manga, extracts the links
+def extract_links(doc, manga_name, xpath)
+  tries = $nb_tries
+  links = doc.xpath(xpath).map{ |link| link['href'] }
+  while (links == nil || links.size == 0) && tries > 0
+    puts "error while retreiving chapter index of " + manga_name
+    doc = get_page(site + manga_name)
+    if (doc != nil)
+      links = doc.xpath(xpath).map{ |link| link['href'] }
+    end
+    tries -= 1
+  end
+  if links == nil || links.size == 0
+    raise "failed to get manga " + manga_name + " chapter index"
+  end
+  return links
+end
+
+# extracts the cover link, downloads it and writes it twice
+def write_cover(doc, manga_name, xpath, path1, path2)
+  cover_link = doc.xpath(xpath).map{ |cover_l| cover_l['src'] }
+  cover_buffer = get_pic(cover_link[0])
+  if cover_buffer != nil
+    cover1 = File.new(path1, 'wb')
+    cover2 = File.new(path2, 'wb')
+    until cover_buffer.eof?
+      chunk = cover_buffer.read(1024)
+      cover1.write(chunk)
+      cover2.write(chunk)
+    end
+    cover1.close
+    cover2.close
+  else
+    puts "WARNING : cover could not download cover"
+  end
+end
+

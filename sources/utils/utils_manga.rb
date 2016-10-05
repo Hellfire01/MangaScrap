@@ -75,6 +75,24 @@ def volume_int_to_string(vol_value, html = false)
   return vol_buffer
 end
 
+# takes the volume value to return it's string value
+def MF_volume_string(value)
+  volume_string = ""
+  if (value == -2)
+    volume_string = " of volume TBD"
+  elsif (value == -3)
+    volume_string = " of volume NA"
+  elsif (value == -4)
+    volume_string = " of volume ANT"
+  elsif (value >= 0)
+    volume_string = " of volume #{value}"
+    if value % 1 == 0
+      volume_string += ' '
+    end
+  end
+  return volume_string
+end
+
 # utilisé pour obtenir la valeur du volume en string
 def vol_buffer_string(vol_value)
   if vol_value != -42
