@@ -126,7 +126,7 @@ def get_pic(link)
   return page
 end
 
-# gets the link and returns the values in an array
+# mangafox only => gets the link and returns the values in an array
 def data_extractor_MF(link)
   if (link[link.size - 1] == '/')
     page = 1

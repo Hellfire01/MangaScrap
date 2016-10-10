@@ -1,4 +1,8 @@
 class Download_Mangafox
+  def get_links()
+    return @links
+  end
+
   def link_generator(volume, chapter, page)
     chapter = chapter.to_i if chapter % 1 == 0
     link = @site + "manga/" + @manga_name + "/"

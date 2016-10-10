@@ -182,3 +182,17 @@ def description_manipulation(description, line_size = 120, min_nb_lines = 0)
   end
   return ret
 end
+
+# for mangafox only => transforms the string value of the volumes to an int
+def mangafox_volume_string_to_int(string)
+  if (string == "TBD")
+    volume = -2
+  elsif (string == "NA")
+    volume = -3
+  elsif (string == "ANT")
+    volume = -4
+  else
+    volume = string.to_i
+  end
+  return volume
+end

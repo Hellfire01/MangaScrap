@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
+# hello
+
 # return values :
 # 0 : good
 # 1 : fatal error ( ruby native code exceptions )
@@ -15,7 +17,6 @@ require 'sqlite3'
 
 require_relative 'DB/manga_db'
 require_relative 'DB/params_db'
-require_relative 'mangafox/MF_redl'
 require_relative 'html/html'
 require_relative 'Download/mangafox'
 require_relative 'sources/scan/scan'

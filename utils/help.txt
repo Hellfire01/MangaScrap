@@ -21,17 +21,7 @@
     add manga and then download
 
  -redl --redownload 'manga name' [volume] [chapter] [page]
-    will download the specified volume / chapter / page ( the order doesn't matter )
-    each value must be preceded by a 'v' for the volume, 'c' for the chapter and 'p' for the page
-    ./MangaScrap -redl bleach v30
-        will download the volume 30 of bleach
-    ./MangaScrap -redl toriko v2 p3 c4
-        will download the volume 2, chapter 4, page 3 of toriko
-    ./MangaScrap -redl fairy_tail vTBD c56
-        will download the chapter 56 of the To Be Declared ( TBD ) volume
-    ./MangaScrap -redl koi_to_uso vNA c56
-        will download the chapter 56 of the Not Available ( NA ) volume
-		note : check file names and / or links to know if TBD or NA must be used
+    deletes the volume / chapter(s) / page(s) from the trace databe and then updates the manga
 
  -l --list [manga name / manga site]
     shows content of database
