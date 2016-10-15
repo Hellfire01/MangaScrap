@@ -6,8 +6,7 @@ $catch_fatal = "false"
 
 # inits the global variables
 def init_utils()
-  db = Params.new()
-  params = db.get_params()
+  params = Params.new().get_params()
   $between_sleep = params[2]
   $failure_sleep = params[3]
   $nb_tries = params[4]
@@ -184,6 +183,9 @@ end
 def write_cover(doc, manga_name, xpath, path1, path2)
   cover_link = doc.xpath(xpath).map{ |cover_l| cover_l['src'] }
   cover_buffer = get_pic(cover_link[0])
+  if cover_buffer == nil
+    cover_buffer = File.open(Dir.home + "/.MangaScrap/pictures/other/404.png")
+  end
   if cover_buffer != nil
     cover1 = File.new(path1, 'wb')
     cover2 = File.new(path2, 'wb')

@@ -55,6 +55,8 @@ else
     add(db, true)
   when "-ht", "--html"
     html_manager(db)
+  when "-hti", "--html-index"
+    HTML.new(db).generate_index()
   when "-dl", "--download"
     download(db)
   when "-l", "--list"

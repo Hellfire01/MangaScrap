@@ -16,11 +16,16 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 
 ### Changelog :
 
+0.9.0 : implemented 3 new options ( params ) for the html management + added the hti option ( shell ) + small optimisation<br />
+
+###### Warning : the database changes and is not compatible with the previous versions<br />Please look at the file migration/0.8.x_to_0.9.x.txt<br />
+
 0.8.4 : fixed the -redl option<br />
 0.8.3 : refactoring + optimisations + added the -df an -uf options<br />
 0.8.2 : corrections de code + optimisations<br />
 0.8.1 : code factoring + optimisations<br />
 0.8.0 : added prototype html ( it needs tweaking ) : it is now possible to read the mangas with the web browser + added the -h --html option<br />
+
 <br />
 
 0.7.6 : activated the "delete diff" option<br />
@@ -41,6 +46,7 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 0.6.2 : changed display to show chapter download progression<br />
 0.6.1 : the manga list files can now have empty lines and comments<br />
 0.6.0 : added the -redl option + re-enabled the -dl opion + bug fixes<br />
+
 <br />
 
 0.5.5 : fixed a bad link generation if a chapter in the todo database whas a float and not an int<br />

@@ -41,7 +41,18 @@ class HTML
     mangas.sort.each do |manga|
       ret << "  <div class=\"manga\">"
       ret << "    <a href=\"" + @dir + "html/" + manga[0] + ".html" + "\">"
-      ret << "      <img src=\"" +  @dir + "mangas/" + manga[0] + ".jpg" + "\">"
+      source_buffer = "      <img src=\"" +  @dir + "mangas/" + manga[0] + ".jpg" + "\">"
+      if @params[9] == "false"
+        manga_genres = @db.get_manga(manga[0])[9].split(", ")
+        if ((@params[10].split(", ") & manga_genres).empty?)
+          ret << source_buffer
+        else
+          # warning : sites must be managed
+          ret << "      <img src=\"" + Dir.home + "/.MangaScrap/pictures/logos/mangafox.png" + "\">"
+        end
+      else
+        ret << source_buffer
+      end
       ret << "      <p>" + description_manipulation(manga[0].gsub("_", " "), 25, 3).gsub("\n", "<br />") + "</p>"
       ret << "    </a>"
       ret << "  </div>"
@@ -60,7 +71,7 @@ class HTML
   end
 
   def html_chapter(arr)
-    template = File.open(Dir.home + "/.MangaScrap/chapter_template.html").read
+    template = File.open(Dir.home + "/.MangaScrap/templates/chapter_template.html").read
     template = template.gsub("#####index#####", @path_html + ".html")
     template = template.gsub("#####name#####", @manganame)
     template = template.gsub("#####prev#####", (arr[2] != nil) ? arr[2][4].gsub("#####elem#####", "prev") : "")
@@ -92,50 +103,56 @@ class HTML
   end
 
   def generate_chapter_index(manganame, index = true)
-    puts "updating chapter index of " + manganame
-    @mangaInit = true
-    manga_data = @db.get_manga(manganame)
-    @dir = @params[1] + manga_data[4].split("/")[2].split(".")[0];
-    @path_to_cover = @dir + "/mangas/" + manga_data[1] + ".jpg"
-    @path_pictures = @dir + "/mangas/" + manga_data[1] + "/"
-    @path_html = @dir + "/html/" + manga_data[1]
-    @manganame = get_html_manga_name(manga_data[1])
-    @traces = @db.get_trace(manga_data[1])
-    add_data_to_traces()
-    dir_create(@path_html)
-    template = File.open(Dir.home + "/.MangaScrap/chapter_index_template.html")
-    template = template.read
-    template = template.gsub("#####name#####", manganame)
-    template = template.gsub("#####description#####", manga_data[2].gsub("\n", "<br />"))
-    template = template.gsub("#####site#####", manga_data[4])
-    template = template.gsub("#####author#####", html_a_buffer(manga_data[5]))
-    template = template.gsub("#####artist#####", html_a_buffer(manga_data[6]))
-    template = template.gsub("#####status#####", html_a_buffer(manga_data[8]))
-    template = template.gsub("#####genres#####", html_a_buffer(manga_data[9]))
-    template = template.gsub("#####date#####", manga_data[10].to_s)
-    template = template.gsub("#####cover#####", @path_to_cover)
-    template = template.gsub("#####index_path#####", @dir + "/index.html")
-    template = chapter_list_to_a_list(template).gsub("#", "%23")
-    File.open(@path_html + ".html", "w") {|f| f.write(template)}
-    html_generate_chapters(manganame) if index == true
+    if @params[8] == "true" || @force_html == true
+      puts "updating chapter index of " + manganame
+      @mangaInit = true
+      manga_data = @db.get_manga(manganame)
+      @dir = @params[1] + manga_data[4].split("/")[2].split(".")[0];
+      @path_to_cover = @dir + "/mangas/" + manga_data[1] + ".jpg"
+      @path_pictures = @dir + "/mangas/" + manga_data[1] + "/"
+      @path_html = @dir + "/html/" + manga_data[1]
+      @manganame = get_html_manga_name(manga_data[1])
+      @traces = @db.get_trace(manga_data[1])
+      add_data_to_traces()
+      dir_create(@path_html)
+      template = File.open(Dir.home + "/.MangaScrap/templates/chapter_index_template.html")
+      template = template.read
+      template = template.gsub("#####name#####", manganame)
+      template = template.gsub("#####description#####", manga_data[2].gsub("\n", "<br />"))
+      template = template.gsub("#####site#####", manga_data[4])
+      template = template.gsub("#####author#####", html_a_buffer(manga_data[5]))
+      template = template.gsub("#####artist#####", html_a_buffer(manga_data[6]))
+      template = template.gsub("#####status#####", html_a_buffer(manga_data[8]))
+      template = template.gsub("#####genres#####", html_a_buffer(manga_data[9]))
+      template = template.gsub("#####date#####", manga_data[10].to_s)
+      template = template.gsub("#####cover#####", @path_to_cover)
+      template = template.gsub("#####index_path#####", @dir + "/index.html")
+      template = chapter_list_to_a_list(template).gsub("#", "%23")
+      File.open(@path_html + ".html", "w") {|f| f.write(template)}
+      html_generate_chapters(manganame) if index == true
+    end
   end
 
   def generate_index()
-    puts "updating html of manga index"
-    @dir = @params[1] + "mangafox/"
-    template = File.open(Dir.home + "/.MangaScrap/manga_index_template.html").read
-    template = template.gsub("#####list#####", html_get_data())
-    File.open(@dir + "index.html", "w") {|f| f.write(template)}
+    if @params[8] == "true" || @force_html == true
+      puts "updating html of manga index"
+      @dir = @params[1] + "mangafox/"
+      template = File.open(Dir.home + "/.MangaScrap/templates/manga_index_template.html").read
+      template = template.gsub("#####list#####", html_get_data())
+      File.open(@dir + "index.html", "w") {|f| f.write(template)}
+    end
   end
   
-  def initialize(db)
+  def initialize(db, force_html = false)
+    @force_html = force_html
     @params = Params.new().get_params()
+    @nsfw_genres = @params[10].split(", ")
     dir_create(@params[1] + "mangafox/html/css")
-    template_css = File.open(Dir.home + "/.MangaScrap/chapter_index_template.css").read
+    template_css = File.open(Dir.home + "/.MangaScrap/templates/chapter_index_template.css").read
     File.open(@params[1] + "mangafox/html/css/chapter_index.css", "w") {|f| f.write(template_css) }
-    template_css = File.open(Dir.home + "/.MangaScrap/chapter_template.css").read
+    template_css = File.open(Dir.home + "/.MangaScrap/templates/chapter_template.css").read
     File.open(@params[1] + "mangafox/html/css/chapter.css", "w") {|f| f.write(template_css) }
-    template_css = File.open(Dir.home + "/.MangaScrap/manga_index_template.css").read
+    template_css = File.open(Dir.home + "/.MangaScrap/templates/manga_index_template.css").read
     File.open(@params[1] + "mangafox/html/css/manga_index.css", "w") {|f| f.write(template_css) }
     @mangaInit = false
     @db = db

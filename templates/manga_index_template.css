@@ -39,8 +39,10 @@ div.list {
 }
 
 .manga img {
-	height: 300px;
+	max-height: 300px;
+	max-width: 200px;
 	width: auto;
+	height: auto;
 }
 
 .manga-list {

@@ -1,34 +1,18 @@
 def param_list()
   db = Params.new()
   params = db.get_params()
-  puts ""
-  puts "list of paramaters and values :"
-  puts ""
-  puts "manga path      (mp) = #{params[1]}"
-  puts "folder where you would like your mangas downloaded"
-  puts ""
-  puts "between sleep   (bs) = #{params[2]}"
-  puts "time between 2 requests on the site of the manga ( seconds )"
-  puts ""
-  puts "failure sleep   (fs) = #{params[3]}"
-  puts "time between 2 request failures ( seconds )"
-  puts ""
-  puts "nb tries        (nb) = #{params[4]}"
-  puts "the number of tries MangaScrap will do before putting the page in the todo database"
-  puts ""
-  puts "error sleep     (es) = #{params[5]}"
-  puts "time between 2 errors - such as a conection loss - ( seconds )"
-  puts "30 seconds or more is advised"
-  puts ""
-  puts "delete diff     (dd) = #{params[6]}"
-  puts "if ever durring an update a chapter is in the traces database but not in the chapter list, it is deleted ( or not )"
-  puts "this can happen when a chapter is mistankingly uploaded to the wrong manga or the chapter list / organisation changed"
-  puts ""
-  puts "catch exception (ce) = #{params[7]}"
-  puts "While downloading pages, there is a very very low possibility of Ruby raising a exception. This only happens 1 / 1500"
-  puts "pages and only on old machines. This option is to be set at true if you had a deadlock exception ( default value ) and"
-  puts "false if you think this may cause stability issues"
-  puts ""
+  params_template = File.open(Dir.home + "/.MangaScrap/templates/params.txt").read
+  params_template = params_template.gsub('#{params[1]}', params[1])
+  params_template = params_template.gsub('#{params[2]}', params[2].to_s)
+  params_template = params_template.gsub('#{params[3]}', params[3].to_s)
+  params_template = params_template.gsub('#{params[4]}', params[4].to_s)
+  params_template = params_template.gsub('#{params[5]}', params[5].to_s)
+  params_template = params_template.gsub('#{params[6]}', params[6])
+  params_template = params_template.gsub('#{params[7]}', params[7])
+  params_template = params_template.gsub('#{params[8]}', params[8])
+  params_template = params_template.gsub('#{params[9]}', params[9])
+  params_template = params_template.gsub('#{params[10]}', params[10])
+  puts params_template
 end
 
 def param_critical_error(param, func)
@@ -40,22 +24,11 @@ end
 
 def param_check_nb(db, param, disp, value, min_value)
   if (value < min_value)
-    puts "the '" + disp + "' value canot be < " + min_value.to_s
+    puts "the '" + disp[0] + "' value canot be < " + min_value.to_s
     exit(5)
   end
-  case param
-  when 'bs'
-    db.set_param("between_sleep", value)
-  when 'fs'
-    db.set_param("failure_sleep", value)
-  when 'es'
-    db.set_param("error_sleep", value)
-  when 'nb'
-    db.set_param("nb_tries_on_fail", value)
-  else
-    param_critical_error(param, "param_check_nb")
-  end
-  puts "updated " + disp + " param to " + value.to_s
+  db.set_param(disp[1], value)
+  puts "updated " + disp[0] + " param to " + value.to_s
 end
 
 def param_check_bool(db, param, disp, value)
@@ -63,15 +36,8 @@ def param_check_bool(db, param, disp, value)
     puts "argument must be 'true' or 'false'"
     exit 5
   end
-  case param
-  when 'dd'
-    db.set_param("delete_diff", value)
-  when 'ce'
-    db.set_param("catch_exception", value)
-  else
-    param_critical_error(param, "param_check_bool")
-  end
-  puts "updated " + disp + " to " + value
+  db.set_param(disp[1], value)
+  puts "updated " + disp[0] + " to " + value
 end
 
 def param_check_string(db, param, disp, value)
@@ -88,43 +54,64 @@ def param_check_string(db, param, disp, value)
       puts "error message is : '" + error.message + "'"
       exit 5
     end
-    db.set_param("manga_path", value)
+    db.set_param(disp[1], value)
+  when 'nd'
+    puts "nsfw genres are : \n\n" + value.split(", ").join("\n") + "\n\n"
+    puts "Write 'YES' to continue"
+    ret = STDIN.gets.chomp
+    puts ""
+    if (ret == "YES")
+      db.set_param(disp[1], value)
+    else
+      puts "did not updtate"
+      return
+    end
   else
     param_critical_error(param, "param_check_string")
   end
-  puts "updated " + disp + " to " + value
+  puts "updated " + disp[0] + " to " + value
+end
+
+def args_check()
+  if (ARGV.size < 3)
+    puts "not enought arguments for parameter set"
+    puts "--help for help"
+    exit 5
+  end
+  if ARGV[2].size == 0
+    puts "you cannot give an empty argument"
+    exit 5
+  end
 end
 
 def param_set()
   db = Params.new()
-  if (ARGV.size < 3)
-    puts "not enought arguments for parameter set"
-    puts "--help for help"
+  args_check()
+  case ARGV[1]
+  when 'dd'
+    param_check_bool(db, ARGV[1], ["delete diff", "delete_diff"], ARGV[2])
+  when 'ce'
+    param_check_bool(db, ARGV[1], ["catch exception", "catch_execption"], ARGV[2])
+  when 'mp'
+    param_check_string(db, ARGV[1], ["manga path", "manga_path"], ARGV[2])
+  when 'bs'
+    param_check_nb(db, ARGV[1], ["between sleep", "between_sleep"], ARGV[2].to_f, 0.1)
+  when 'fs'
+    param_check_nb(db, ARGV[1], ["failure sleep", "failure_sleep"], ARGV[2].to_f, 0.1)
+  when 'es'
+    param_check_nb(db, ARGV[1], ["error sleep", "error_sleep"], ARGV[2].to_f, 0.5)
+  when 'nb'
+    param_check_nb(db, ARGV[1], ["number of tries", "nb_tries_on_fail"], ARGV[2].to_i, 1)
+  when 'gh'
+    param_check_bool(db, ARGV[1], ["generate html", "generate_html"], ARGV[2])
+  when 'hn'
+    param_check_bool(db, ARGV[1], ["html nsfw", "html_nsfw"], ARGV[2])
+  when 'nd'
+    param_check_string(db, ARGV[1], ["nsfw data", "html_nsfw_data"], ARGV[2])
   else
-    if ARGV[2].size == 0
-      puts "you cannot give an empty argument"
-      exit 5
-    end
-    case ARGV[1]
-    when 'dd'
-      param_check_bool(db, ARGV[1], "delete diff", ARGV[2])
-    when 'ce'
-      param_check_bool(db, ARGV[1], "catch exception", ARGV[2])
-    when 'mp'
-      param_check_string(db, ARGV[1], "manga path", ARGV[2])
-    when 'bs'
-      param_check_nb(db, ARGV[1], "between sleep", ARGV[2].to_f, 0.1)
-    when 'fs'
-      param_check_nb(db, ARGV[1], "failure sleep", ARGV[2].to_f, 0.1)
-    when 'es'
-      param_check_nb(db, ARGV[1], "error sleep", ARGV[2].to_f, 0.5)
-    when 'nb'
-      param_check_nb(db, ARGV[1], "number of tries", ARGV[2].to_i, 1)
-    else
-      puts "error, unknown parameter id : " + ARGV[1]
-      puts "--help for help"
-      exit 5
-    end
+    puts "error, unknown parameter id : " + ARGV[1]
+    puts "--help for help"
+    exit 5
   end
 end
 
@@ -140,6 +127,9 @@ def param_reset()
   puts "error sleep     = 30"
   puts "delete diff     = true"
   puts "catch ecxeption = true"
+  puts "generate html   = true"
+  puts "html nsfw       = true"
+  puts "html nsfw data  = Ecchi, Mature, Smut, Adult"
   puts ""
   puts "Write 'YES' to continue"
   ret = STDIN.gets.chomp

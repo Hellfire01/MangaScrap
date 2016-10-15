@@ -57,7 +57,10 @@
     clears the todo database from the manga ( to be used when trying to update an unexisting chapter )
 
  -ht --html [-f 'name of file'] / [manga name]
-    regenerates the manga index + the chapter index and chapters of the required mangas
+    generates the manga index + the chapter index and chapters of the required mangas
+
+ -hti --html-index
+    regenerates the manga index only
 
  -h --help
     displays help

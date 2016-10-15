@@ -97,10 +97,13 @@ class Download_Mangafox
     if todo.size != 0
       puts ""
       puts "downloading todo pages"
+      biggest = todo.map { |a| [a[2], 0].max }.max
+      todo = todo.sort_by! { |a| [(a[2] < 0) ? (biggest + a[2] * -1) : a[2], -a[3]] }
       todo.each do |elem|
         volume_string = MF_volume_string(elem[2])
         if (elem[4] != -1)
           puts "downloading page #{elem[4]}, chapter #{elem[3]}" + ((elem[2] == -1) ? "" : ", volume #{elem[2]} ")
+          data = []
           data << elem[2] << elem[3] << elem[4]
           if ((link = link_generator(elem[2], elem[3], elem[4])) != nil && page_link(link, data) == true)
             db.delete_todo(elem[0])

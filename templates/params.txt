@@ -1,0 +1,44 @@
+
+list of paramaters and values :
+
+manga path      (mp) = #{params[1]}
+folder where you would like your mangas downloaded
+
+between sleep   (bs) = #{params[2]}
+time between 2 requests on the site of the manga ( seconds )
+
+failure sleep   (fs) = #{params[3]}
+time between 2 request failures ( seconds )
+
+nb tries        (nb) = #{params[4]}
+the number of tries MangaScrap will do before putting the page in the todo database
+
+error sleep     (es) = #{params[5]}
+time between 2 errors - such as a conection loss - ( seconds )
+30 seconds or more is advised
+
+delete diff     (dd) = #{params[6]}
+if ever durring an update a chapter is in the traces database but not in the chapter list, it is deleted ( or not )
+this can happen when a chapter is mistankingly uploaded to the wrong manga or the chapter list / organisation changed
+
+catch exception (ce) = #{params[7]}
+While downloading pages, there is a very very low possibility of Ruby raising a exception. This only happens 1 / 1500
+pages and only on old machines. This option is to be set at true if you had a deadlock exception ( default value ) and
+false if you think this may cause stability issues
+
+generate html   (gh) = #{params[8]}
+allows you to choose if you whant the html to be generated automaticaly or not
+
+html nsfw       (hn) = #{params[9]}
+allows you to choose if you wish to have the covers of NSFW ( Not Safe For Work ) displayed in the manga index ( if
+nsfw is enabled, the covers will be replaced by the site's logo )
+use the nsfw data (nd) to choose yourself witch are the genres that are NSFW
+true = display cover
+false = display logo
+
+nsfw data       (nd) = #{params[10]}
+determines witch genres you determine as being NSFW, default is Mature, Ecchi, Smut and Adult
+syntax is : write all the genres you wish to add at once separating them by a comma and a space ( ", " )
+be carefull to respect the capital letters
+this option is only used when the html nsfw (hn) option is set to true
+

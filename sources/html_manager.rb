@@ -4,7 +4,7 @@ def html_manager(db)
   case ARGV.size
   when 2
     if (db.manga_in_data?(ARGV[1]) == true)
-      html.generate_chapter_index(ARGV[1])
+      html.generate_chapter_index(ARGV[1], true)
     else
       puts 'could not find ' + ARGV[1] + ' in database'
       exit 5
@@ -13,7 +13,7 @@ def html_manager(db)
     ret = get_mangas()
     if (ret != nil)
       ret.each do |name|
-        html.generate_chapter_index(name[0])
+        html.generate_chapter_index(name[0], true)
       end
     else
       puts "error while trying to get content of file ( -f option )"

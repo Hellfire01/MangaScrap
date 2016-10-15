@@ -35,20 +35,16 @@ class DB
 
   def delete_manga(manganame)
     mangaid = get_manga(manganame)[0]
-    begin
-      @db.execute "DELETE FROM manga_list WHERE name = '#{manganame}'"
-    rescue SQLite3::Exception => e
-      db_error_exit("Exception while deleting #{manganame} from database", e)
-    end
-    begin
-      @db.execute "DELETE FROM manga_todo WHERE mangaId=#{mangaid}"
-    rescue SQLite3::Exception => e
-      db_error_exit("Exception while deleting #{manganame} from todo database", e)
-    end
+    delete_todo(id)
     begin
       @db.execute "DELETE FROM manga_trace WHERE mangaId=#{mangaid}"
     rescue SQLite3::Exception => e
       db_error_exit("Exception while deleting #{manganame} from trace database", e)
+    end
+    begin
+      @db.execute "DELETE FROM manga_list WHERE name = '#{manganame}'"
+    rescue SQLite3::Exception => e
+      db_error_exit("Exception while deleting #{manganame} from database", e)
     end
   end
 
@@ -192,7 +188,7 @@ class DB
   #init database
   def initialize()
     begin
-      @db = SQLite3::Database.new Dir.home + "/.MangaScrap/manga.db"
+      @db = SQLite3::Database.new Dir.home + "/.MangaScrap/db/manga.db"
       @db.execute "CREATE TABLE IF NOT EXISTS manga_list (
       Id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, site TEXT,
       link TEXT, author TEXT, artist TEXT, type TEXT, status BOOL, genres TEXT,
