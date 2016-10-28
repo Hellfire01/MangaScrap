@@ -119,7 +119,7 @@ def chap_buffer_string(chap_value)
   return chap_str
 end
 
-# get file name
+# generates a filename, the chapter value is used to determin if it returns a chapter ( for Dir.glob ) or a specific page
 def file_name(dir, vol_value, chap_value, page_value, chapter = false)
   vol_buffer = vol_buffer_string(vol_value)
   chap_buffer = chap_buffer_string(chap_value)

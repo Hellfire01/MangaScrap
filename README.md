@@ -4,19 +4,20 @@ MangaScrap is a Ruby based script that will allow you to download your mangas an
 It possese a database that allows it to know what chapters where not downloaded yet<br />
 Unlike other manga downloaders, it creates a local website on your computer allowing you to browse your mangas offline !<br />
 
-##### basic usage :
+#### basic usage :
 ./MangaScrap -a [manganame] => will add a manga to follow to the database<br />
 ./MangaScrap => will update all mangas within the database<br />
 ./MangaScrap -dl [manganame] => will add to the database and download the manga<br />
 
-##### notes :
+#### notes :
 ./MangaScrap -h => displays instructions<br />
 The programm will download all mangas in Documents/mangas/ by default<br />
 ( it will create the mangas folder automaticaly )<br />
 
 ### Changelog :
 
-0.9.0 : implemented 3 new options ( params ) for the html management + added the hti option ( shell ) + small optimisation<br />
+0.9.1 : improved the html : it is now fully portable and can be copyed ( with the pictures ) to any destination and remain readable / usable<br />
+0.9.0 : implemented 3 new options ( params ) for the html management + added the hti option ( shell )<br />
 
 ###### Warning : the database changes and is not compatible with the previous versions<br />Please look at the file migration/0.8.x_to_0.9.x.txt<br />
 

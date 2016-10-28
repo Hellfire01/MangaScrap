@@ -15,12 +15,8 @@ def html_manager(db)
       ret.each do |name|
         html.generate_chapter_index(name[0], true)
       end
-    else
-      puts "error while trying to get content of file ( -f option )"
-      exit 5
     end
   else
-    puts "bad number of arguments for html, --help for help"
-    exit 5
+    return
   end
 end
