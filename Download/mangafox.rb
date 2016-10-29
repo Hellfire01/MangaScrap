@@ -106,7 +106,7 @@ class Download_Mangafox
           data = []
           data << elem[2] << elem[3] << elem[4]
           if ((link = link_generator(elem[2], elem[3], elem[4])) != nil && page_link(link, data) == true)
-            db.delete_todo(elem[0])
+            @db.delete_todo(elem[0])
           else
             puts "failed to download page #{elem[4]} of chapter #{elem[3]}" + volume_string
           end
