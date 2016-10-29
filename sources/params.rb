@@ -1,5 +1,5 @@
 def param_list()
-  db = Params.new()
+  db = Params.instance()
   params = db.get_params()
   params_template = File.open(Dir.home + "/.MangaScrap/templates/params.txt").read
   params_template = params_template.gsub('#{params[1]}', params[1])
@@ -85,7 +85,7 @@ def args_check()
 end
 
 def param_set()
-  db = Params.new()
+  db = Params.instance()
   args_check()
   case ARGV[1]
   when 'dd'
@@ -116,7 +116,7 @@ def param_set()
 end
 
 def param_reset()
-  db = Params.new
+  db = Params.instance
   puts ""
   puts "WARNING ! You are about to reset your parameters !"
   puts "the parameters will be set to :"

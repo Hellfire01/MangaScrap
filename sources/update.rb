@@ -1,12 +1,11 @@
 def update_exec(name, db, params)
   puts "updating " + name
+  # todo : site needs to be managed
   dw = get_mf_class(db, name, false)
   if dw != nil
     dw.update()
     if params[6] == "true"
-      # todo : site needs to be managed
-      site = "mangafox"
-      delete_diff(db, dw.get_links(), params[1] + site + "/" + name + "/", name)
+      delete_diff(db, dw.get_links(), name)
     end
   end
 end
@@ -42,7 +41,7 @@ def update_all(db, fast, params)
 end
 
 def update(db, fast = false)
-  params = Params.new.get_params
+  params = Params.instance.get_params
   case ARGV.size
   when 0, 1
     update_all(db, fast, params)

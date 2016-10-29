@@ -6,7 +6,7 @@ $catch_fatal = "false"
 
 # inits the global variables
 def init_utils()
-  params = Params.new().get_params()
+  params = Params.instance().get_params()
   $between_sleep = params[2]
   $failure_sleep = params[3]
   $nb_tries = params[4]

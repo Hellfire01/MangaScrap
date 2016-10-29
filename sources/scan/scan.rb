@@ -18,7 +18,7 @@ end
 # entry point => argv scan
 def scan(db, mode) # todo => must be able to use files ( -f option )
   puts "preparing"
-  params = Params.new
+  params = Params.instance
   if ARGV.size != 3
     puts "wrong number of arguments : expected 2"
     exit 5

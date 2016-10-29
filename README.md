@@ -16,6 +16,7 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 
 ### Changelog :
 
+0.9.2 : reimplemented the delete diff, fixed a db error when trying to remove certain chapters from the traces and optimised the usage of the params<br />
 0.9.1 : improved the html : it is now fully portable and can be copyed ( with the pictures ) to any destination and remain readable / usable<br />
 0.9.0 : implemented 3 new options ( params ) for the html management + added the hti option ( shell )<br />
 

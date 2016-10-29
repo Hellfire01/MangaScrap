@@ -39,6 +39,30 @@ require_relative 'sources/clear'
 require_relative 'sources/redl'
 require_relative 'sources/html_manager'
 
+#class Logger
+#  def initialize
+#    puts "got initialized"
+#    @log = "hello"
+#  end
+#
+#  @@instance = Logger.new
+#
+#  def self.instance
+#    return @@instance
+#  end
+#
+#  def log(msg)
+#    puts msg + " " + @log
+#  end
+#
+#  private_class_method :new
+#end
+#
+#Logger.instance.log('message 1')
+#log = Logger.new
+#
+#abort
+
 db = initialize_mangascrap(__dir__)
 
 if ARGV.size == 0

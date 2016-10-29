@@ -184,7 +184,7 @@ class Download_Mangafox
 
   def initialize(db, manga_name, data)
     @manga_name = manga_name
-    @params = Params.new().get_params()
+    @params = Params.instance().get_params()
     @dir = @params[1] + "mangafox/mangas/" + manga_name + "/"
     @db = db
     @site = "http://mangafox.me/"

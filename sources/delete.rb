@@ -16,7 +16,7 @@ end
 
 def erase_files(db, name)
   data = db.get_manga(name)
-  params = Params.new().get_params()
+  params = Params.instance().get_params()
   if data[3] == "http://mangafox.me/"
     path_site = "mangafox/"
   else

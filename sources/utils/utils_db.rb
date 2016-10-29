@@ -1,9 +1,11 @@
+# displays an error message and exits
 def db_error_exit(message, error)
   puts message
   puts "message is : '" + error.message + "'"
   exit 2
 end
 
+# returns the mangafox class on success or displays an error message and returns nil
 def get_mf_class(db, manga_name, data)
   begin
     ret = Download_Mangafox.new(db, manga_name, data)
@@ -13,12 +15,4 @@ def get_mf_class(db, manga_name, data)
     puts "reason is : " + e.message
     return nil
   end
-end
-
-# used to get only the chapter and volumes values from db
-def db_to_trace(db, name)
-  trace = db.get_trace(name)
-  trace = trace.each {|elem| elem.shift} # delete id of each chapter
-  trace = trace.each {|elem| elem.shift} # delete if of manga
-  return trace
 end

@@ -151,7 +151,7 @@ class HTML
   
   def initialize(db, force_html = false)
     @force_html = force_html
-    @params = Params.new().get_params()
+    @params = Params.instance().get_params()
     @nsfw_genres = @params[10].split(", ")
     dir_create(@params[1] + "mangafox/html/css")
     template_css = File.open(Dir.home + "/.MangaScrap/templates/chapter_index_template.css").read
