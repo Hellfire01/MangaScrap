@@ -9,12 +9,6 @@ def html_a_buffer(data)
 end
 
 # gets the html filename of the chapter ( works nearly the same way as the jpg names )
-def html_chapter_filename(chapter, local = false)
-  filename = "v" + vol_buffer_string(chapter[2]) + "c" + chap_buffer_string(chapter[3]) + ".html"
-  if local == false
-    return "/" + filename
-  else
-    return "./" + @manga_data[1] + "/" + filename
-  end
+def html_chapter_filename(chapter, volume)
+  return "/v" + vol_buffer_string(volume) + "c" + chap_buffer_string(chapter) + ".html"
 end
-

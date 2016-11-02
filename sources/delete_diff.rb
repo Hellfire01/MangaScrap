@@ -24,11 +24,8 @@ def delete_diff(db, chap_list, name)
       puts "deleting file : " + file
       File.delete(file)
     end
-    # besoin d'optimiser
-    tmp = []
-    tmp << 0 << 0 << chap[0] << chap[1]
     # todo : manage site
-    Dir.glob(params[1] + "mangafox/html/" + name + html_chapter_filename(tmp)).each do |file|
+    Dir.glob(params[1] + "mangafox/html/" + name + html_chapter_filename(chap[1], chap[0])).each do |file|
       puts "deleting file : " + file
       File.delete(file)
     end

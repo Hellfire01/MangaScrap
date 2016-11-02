@@ -2,60 +2,16 @@ class HTML
   # adds collums to @traces in order to sort / check
   def add_data_to_traces()
     @traces.each do |chap|
-      chap << "<a href=\"" + @path_html + html_chapter_filename(chap) + "\">#####elem#####</a>"
+      chap << "<a href=\"#####html_path#####" + html_chapter_filename(chap[3], chap[2]) + "\">#####elem#####</a>"
       chap << Dir.glob(file_name(@dir + @path_pictures, chap[2], chap[3], -1, true)).size
     end
   end
 
+  # translates the link name into something more readable
   def get_html_manga_name(name)
     ret = name.gsub("_", " ")
     ret = ret.slice(0,1).capitalize + ret.slice(1..-1)
     return ret
-  end
-
-  # converts the array of traces to an array of html code - the chapter index -
-  def chapter_list_to_a_list(template)
-    ret = ""
-    buff = ""
-    biggest = @traces.map { |a| [a[2], 0].max }.max
-    @traces = @traces.sort_by { |a| [(a[2] < 0) ? (biggest + a[2] * -1) * -1 : a[2] * -1, -a[3]] }
-    @traces.each do |chapter|
-      ret += "<li>\n"
-      chapter_buff = (chapter[3] % 1 == 0) ? chapter[3].to_i.to_s : chapter[3].to_s
-      volume_buff = volume_int_to_string(chapter[2], true)
-      buff = '  <a href="' + html_chapter_filename(chapter, true) + '">' + volume_buff + " Chapter " + chapter_buff + "</a>\n"
-      ret += buff
-      ret += "</li>\n"
-    end
-    template = template.gsub("#####list#####", ret)
-    template = template.gsub("#####first#####", buff)
-    return template
-  end
-
-  # generates the links for each manga ( cover + name )
-  def html_get_data()
-    mangas = @db.get_manga_list()
-    ret = []
-    mangas.sort.each do |manga|
-      ret << "  <div class=\"manga\">"
-      ret << "    <a href=\"" + "./html/" + manga[0] + ".html" + "\">"
-      source_buffer = "      <img src=\"./mangas/" + manga[0] + ".jpg" + "\">"
-      if @params[9] == "false"
-        manga_genres = @db.get_manga(manga[0])[9].split(", ")
-        if ((@params[10].split(", ") & manga_genres).empty?)
-          ret << source_buffer
-        else
-          # warning : sites must be managed
-          ret << "      <img src=\"" + Dir.home + "/.MangaScrap/pictures/logos/mangafox.png" + "\">"
-        end
-      else
-        ret << source_buffer
-      end
-      ret << "      <p>" + description_manipulation(manga[0].gsub("_", " "), 25, 3).gsub("\n", "<br />") + "</p>"
-      ret << "    </a>"
-      ret << "  </div>"
-    end
-    return ret.join("\n")
   end
 
   # gets all the pictures for each chapter
@@ -77,10 +33,10 @@ class HTML
     template = File.open(Dir.home + "/.MangaScrap/templates/chapter_template.html").read
     template = template.gsub("#####index#####", "../" + @manga_data[1] + ".html")
     template = template.gsub("#####name#####", @manganame)
-    template = template.gsub("#####prev#####", (arr[2] != nil) ? arr[2][4].gsub("#####elem#####", "prev") : "")
-    template = template.gsub("#####next#####", (arr[0] != nil) ? arr[0][4].gsub("#####elem#####", "next") : "")
+    template = template.gsub("#####prev#####", (arr[2] != nil) ? (arr[2][4]).gsub("#####html_path#####", ".").gsub("#####elem#####", "prev").gsub("#", "%23") : "")
+    template = template.gsub("#####next#####", (arr[0] != nil) ? (arr[0][4]).gsub("#####html_path#####", ".").gsub("#####elem#####", "next").gsub("#", "%23") : "")
     template = template.gsub("#####pictures#####", get_pictures_of_chapter(arr[1])).gsub("#", "%23")
-    File.open(@dir + @path_html + html_chapter_filename(arr[1]), "w") {|f| f.write(template) }
+        File.open(@dir + @path_html + html_chapter_filename(arr[1][3], arr[1][2]), "w") {|f| f.write(template) }
   end
 
   # generates html for all the chapters and links them ( prev and next buttons )
@@ -106,6 +62,26 @@ class HTML
     end
   end
 
+  # converts the array of traces to an array of html code - the chapter index -
+  # used by the chapter index of each manga
+  def chapter_list_to_a_list(template)
+    ret = ""
+    buff = ""
+    biggest = @traces.map { |a| [a[2], 0].max }.max
+    @traces = @traces.sort_by { |a| [(a[2] < 0) ? (biggest + a[2] * -1) * -1 : a[2] * -1, -a[3]] }
+    @traces.each do |chapter|
+      ret += "<li>\n"
+      chapter_buff = (chapter[3] % 1 == 0) ? chapter[3].to_i.to_s : chapter[3].to_s
+      volume_buff = volume_int_to_string(chapter[2], true)
+      buff = chapter[4].gsub("#####html_path#####", @manga_data[1]).gsub("#####elem#####", volume_buff + " Chapter " + chapter_buff).gsub("#", "%23")
+      ret += buff
+      ret += "</li>\n"
+    end
+    template = template.gsub("#####list#####", ret)
+    template = template.gsub("#####first#####", buff)
+    return template
+  end
+
   # generates the chapter index, includs description, cover, names of artist and author, ...
   def generate_chapter_index(manganame, index = true)
     if @params[8] == "true" || @force_html == true
@@ -122,7 +98,7 @@ class HTML
       dir_create(@dir + @path_html)
       template = File.open(Dir.home + "/.MangaScrap/templates/chapter_index_template.html")
       template = template.read
-      template = template.gsub("#####name#####", manganame)
+      template = template.gsub("#####name#####", get_html_manga_name(manganame))
       template = template.gsub("#####description#####", @manga_data[2].gsub("\n", "<br />"))
       template = template.gsub("#####site#####", @manga_data[4])
       template = template.gsub("#####author#####", html_a_buffer(@manga_data[5]))
@@ -138,10 +114,37 @@ class HTML
     end
   end
 
+  # generates the links for each manga ( cover + name ), used for the manga index
+  def html_get_data()
+    mangas = @db.get_manga_list()
+    ret = []
+    mangas.sort.each do |manga|
+      ret << "  <div class=\"manga\">"
+      ret << "    <a href=\"" + "./html/" + manga[0] + ".html" + "\">"
+      source_buffer = "      <img src=\"./mangas/" + manga[0] + ".jpg" + "\">"
+      if @params[9] == "false"
+        manga_genres = @db.get_manga(manga[0])[9].split(", ")
+        if ((@params[10].split(", ") & manga_genres).empty?)
+          ret << source_buffer
+        else
+          # warning : sites must be managed
+          ret << "      <img src=\"" + Dir.home + "/.MangaScrap/pictures/logos/mangafox.png" + "\">"
+        end
+      else
+        ret << source_buffer
+      end
+      ret << "      <p>" + description_manipulation(manga[0].gsub("_", " "), 25, 3).gsub("\n", "<br />") + "</p>"
+      ret << "    </a>"
+      ret << "  </div>"
+    end
+    return ret.join("\n")
+  end
+
+  # generates the manga index ( the page containing the links to all mangas )
   def generate_index()
     if @params[8] == "true" || @force_html == true
       puts "updating html of manga index"
-      #manage sites
+      # tofo : manage sites
       @dir = @params[1] + "mangafox/"
       template = File.open(Dir.home + "/.MangaScrap/templates/manga_index_template.html").read
       template = template.gsub("#####list#####", html_get_data())
@@ -149,6 +152,7 @@ class HTML
     end
   end
   
+  # the constructor copies all the css and places them in the html dir
   def initialize(db, force_html = false)
     @force_html = force_html
     @params = Params.instance().get_params()
