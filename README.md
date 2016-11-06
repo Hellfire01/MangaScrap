@@ -5,8 +5,8 @@ It possese a database that allows it to know what chapters where not downloaded 
 Unlike other manga downloaders, it creates a local website on your computer allowing you to browse your mangas offline !<br />
 
 #### basic usage :
-./MangaScrap -a [manganame] => will add a manga to follow to the database<br />
-./MangaScrap => will update all mangas within the database<br />
+./MangaScrap -a [manganame]  => will add a manga to follow to the database<br />
+./MangaScrap                 => will update all mangas within the database<br />
 ./MangaScrap -dl [manganame] => will add to the database and download the manga<br />
 
 #### notes :
@@ -16,6 +16,7 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 
 ### Changelog :
 
+0.9.4 : fixed an error preventing the program to be lanched correctly the very first time<br />
 0.9.3 : fixed a few bugs on the html generation<br />
 0.9.2 : reimplemented the delete diff, fixed a db error when trying to remove certain chapters from the traces and optimised the usage of the params<br />
 0.9.1 : improved the html : it is now fully portable and can be copyed ( with the pictures ) to any destination and remain readable / usable<br />

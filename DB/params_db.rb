@@ -2,37 +2,6 @@ $default_manga_path = Dir.home + "/Documents/mangas/"
 
 # warning, Params is a Singleton type class
 class Params  
-  def initialize()
-    @db = SQLite3::Database.new(Dir.home + "/.MangaScrap/db/params.db")
-    begin
-      @db.execute "CREATE TABLE IF NOT EXISTS params (
-      Id INTEGER PRIMARY KEY AUTOINCREMENT,
-      manga_path TEXT,
-      between_sleep FLOAT,
-      failure_sleep FLOAT,
-      nb_tries_on_fail INT,
-      error_sleep FLOAT,
-      delete_diff TEXT,
-      catch_exception TEXT,
-      generate_html TEXT,
-      html_nsfw TEXT,
-      html_nsfw_data TEXT)"
-      ret = @db.execute "SELECT * FROM params"
-      if (ret.size == 0)
-        puts "initializing params './MangaScrap -pl' to list params\n\n"
-        reset_parameters(true)
-      end
-    rescue SQLite3::Exception => e
-      db_error_exit("exception while retrieving params / initializing params", e)
-    end
-  end
-
-  @@instance = Params.new
-
-  def self.instance
-    return @@instance
-  end
-
   def get_params()
     begin
       ret = @db.execute "SELECT * FROM params"
@@ -76,6 +45,40 @@ class Params
     rescue SQLite3::Exception => e
       db_error_exit("could not set / reset parameters", e)
     end
+  end
+
+  def initialize()
+    if Dir.exists?(Dir.home + "/.MangaScrap/db/") == false
+      dir_create(Dir.home + "/.MangaScrap/db/")
+    end
+    @db = SQLite3::Database.new(Dir.home + "/.MangaScrap/db/params.db")
+    begin
+      @db.execute "CREATE TABLE IF NOT EXISTS params (
+      Id INTEGER PRIMARY KEY AUTOINCREMENT,
+      manga_path TEXT,
+      between_sleep FLOAT,
+      failure_sleep FLOAT,
+      nb_tries_on_fail INT,
+      error_sleep FLOAT,
+      delete_diff TEXT,
+      catch_exception TEXT,
+      generate_html TEXT,
+      html_nsfw TEXT,
+      html_nsfw_data TEXT)"
+      ret = @db.execute "SELECT * FROM params"
+      if (ret.size == 0)
+        puts "initializing params './MangaScrap -pl' to list params\n\n"
+        reset_parameters(true)
+      end
+    rescue SQLite3::Exception => e
+      db_error_exit("exception while retrieving params / initializing params", e)
+    end
+  end
+
+  @@instance = Params.new
+
+  def self.instance
+    return @@instance
   end
 
   private_class_method :new

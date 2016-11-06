@@ -15,17 +15,10 @@ require 'open-uri'
 require 'nokogiri'
 require 'sqlite3'
 
-require_relative 'DB/manga_db'
-require_relative 'DB/params_db'
 require_relative 'html/html'
 require_relative 'Download/mangafox'
 require_relative 'sources/scan/scan'
 require_relative 'sources/scan/scan_utils'
-require_relative 'sources/utils/utils_file'
-require_relative 'sources/utils/utils_co'
-require_relative 'sources/utils/utils_db'
-require_relative 'sources/utils/utils_manga'
-require_relative 'sources/utils/utils_html'
 require_relative 'sources/download'
 require_relative 'sources/update'
 require_relative 'sources/delete_diff'
@@ -38,30 +31,13 @@ require_relative 'sources/params'
 require_relative 'sources/clear'
 require_relative 'sources/redl'
 require_relative 'sources/html_manager'
-
-#class Logger
-#  def initialize
-#    puts "got initialized"
-#    @log = "hello"
-#  end
-#
-#  @@instance = Logger.new
-#
-#  def self.instance
-#    return @@instance
-#  end
-#
-#  def log(msg)
-#    puts msg + " " + @log
-#  end
-#
-#  private_class_method :new
-#end
-#
-#Logger.instance.log('message 1')
-#log = Logger.new
-#
-#abort
+require_relative 'sources/utils/utils_file'
+require_relative 'sources/utils/utils_co'
+require_relative 'sources/utils/utils_db'
+require_relative 'sources/utils/utils_manga'
+require_relative 'sources/utils/utils_html'
+require_relative 'DB/manga_db'
+require_relative 'DB/params_db'
 
 db = initialize_mangascrap(__dir__)
 
