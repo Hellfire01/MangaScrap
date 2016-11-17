@@ -1,0 +1,10 @@
+please execute the following instructions in a terminal to install MangaScrap's dependencies for debian based systems
+
+sudo apt-add-repository ppa:brightbox/ruby-ng
+sudo apt-get update
+sudo apt-get install ruby2.3 ruby2.3-dev
+sudo apt-get install libsqlite3-dev
+sudo gem install sqlite3
+sudo apt-get install build-essential patch
+sudo apt-get install ruby-dev zlib1g-dev liblzma-dev
+sudo gem install nokogiri
