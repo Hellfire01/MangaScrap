@@ -96,4 +96,9 @@
  ex : "black clover" => http://mangafox.me/manga/black_clover/ => "black_clover"
  ex : "crepuscule" => http://mangafox.me/manga/crepuscule_yamchi/ => "crepuscule_yamchi"
 
-
+ information concerning the display of the download :
+ . => downloaded a page
+ , => downloaded a page ( multiple of 10 )
+ ; => downloaded a page ( pultiple of 50 )
+ ? => could not download a page ( 404 not found )
+ X => could not download a page ( other error )

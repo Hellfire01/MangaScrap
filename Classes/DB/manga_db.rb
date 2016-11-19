@@ -92,7 +92,6 @@ class DB
     todo.each() do |elem|
       elem.shift
       if elem == insert
-        puts "manga #{manganame}, volume #{volume_value}, chapter #{chapter_value}, page #{page_nb} is already in todo database"
         return false
       end
     end

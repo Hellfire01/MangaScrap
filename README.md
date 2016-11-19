@@ -16,6 +16,7 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 
 ### Changelog :
 
+0.9.6 : drastically impoved the terminal display, it is now far easier to read<br />
 0.9.5 : added instructions to install the dependencies on debain<br />
 0.9.4 : fixed an error preventing the program to be lanched correctly the very first time<br />
 0.9.3 : fixed a few bugs on the html generation<br />

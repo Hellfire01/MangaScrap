@@ -1,9 +1,11 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-# hello
-
-# return values :
+# thanks for downloadnig MangaScrap !
+# if you have a question, please go here :
+# https://github.com/Hellfire01/MangaScrap
+#
+# MangaScrap's return values :
 # 0 : good
 # 1 : fatal error ( ruby native code exceptions )
 # 2 : db error
@@ -15,8 +17,9 @@ require 'open-uri'
 require 'nokogiri'
 require 'sqlite3'
 
-require_relative 'html/html'
-require_relative 'Download/mangafox'
+require_relative 'Classes/html/html'
+require_relative 'Classes/Download/mangafox'
+require_relative 'Classes/DownloadDisplay'
 require_relative 'sources/scan/scan'
 require_relative 'sources/scan/scan_utils'
 require_relative 'sources/download'
@@ -36,8 +39,8 @@ require_relative 'sources/utils/utils_co'
 require_relative 'sources/utils/utils_db'
 require_relative 'sources/utils/utils_manga'
 require_relative 'sources/utils/utils_html'
-require_relative 'DB/manga_db'
-require_relative 'DB/params_db'
+require_relative 'Classes/DB/manga_db'
+require_relative 'Classes/DB/params_db'
 
 db = initialize_mangascrap(__dir__)
 

@@ -1,5 +1,4 @@
 def update_exec(name, db, params)
-  puts "updating " + name
   # todo : site needs to be managed
   dw = get_mf_class(db, name, false)
   if dw != nil

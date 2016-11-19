@@ -132,22 +132,6 @@ def file_name(dir, vol_value, chap_value, page_value, chapter = false)
   return name_buffer
 end
 
-# used to display the progression of the downloads
-def chapter_progression(i)
-  if i > 1
-    if i % 50 == 0
-      printf ';'
-    elsif i % 10 == 0
-      printf ','
-    else
-      printf '.'
-    end
-  else
-    printf '.'
-  end
-  STDOUT.flush
-end
-
 # transforms the raw text into a more readable format
 def description_manipulation(description, line_size = 120, min_nb_lines = 0)
   description.delete!("\C-M")
