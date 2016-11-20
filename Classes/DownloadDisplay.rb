@@ -123,6 +123,10 @@ class DownloadDisplay
   # called as a chapter is about to be downloaded, DownloadDisplay them chooses to display it or not  
   def prepare_chapter(string)
     @prepare_chapter = string
+    if @introduced == true
+      puts ""
+      puts string
+    end
   end
 
   # calls all the introduction functions

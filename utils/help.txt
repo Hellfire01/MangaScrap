@@ -102,3 +102,5 @@
  ; => downloaded a page ( pultiple of 50 )
  ? => could not download a page ( 404 not found )
  X => could not download a page ( other error )
+
+
