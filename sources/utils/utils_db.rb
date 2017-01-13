@@ -11,8 +11,8 @@ def get_mf_class(db, manga_name, data)
     ret = Download_Mangafox.new(db, manga_name, data)
     return ret
   rescue => e
-    puts "error while trying to add #{manga_name}"
-    puts "reason is : " + e.message
+    puts ("error while trying to get #{manga_name}").red
+    puts 'reason is : '.yellow + e.message
     return nil
   end
 end

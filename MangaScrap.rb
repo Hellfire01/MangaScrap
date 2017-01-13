@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-# thanks for downloadnig MangaScrap !
+# thanks for downloading MangaScrap !
 # if you have a question, please go here :
 # https://github.com/Hellfire01/MangaScrap
 #
@@ -13,13 +13,20 @@
 # 4 : unexpected error ( not yet managed stuff )
 # 5 : argument error
 
+require 'singleton'
 require 'open-uri'
+
+# gems
+require 'colorize'
 require 'nokogiri'
 require 'sqlite3'
 
 require_relative 'Classes/html/html'
+require_relative 'Classes/html/html_buffer'
 require_relative 'Classes/Download/mangafox'
 require_relative 'Classes/DownloadDisplay'
+require_relative 'Classes/arguments/query'
+require_relative 'Classes/arguments/argument_manager'
 require_relative 'sources/scan/scan'
 require_relative 'sources/scan/scan_utils'
 require_relative 'sources/download'
@@ -39,6 +46,7 @@ require_relative 'sources/utils/utils_co'
 require_relative 'sources/utils/utils_db'
 require_relative 'sources/utils/utils_manga'
 require_relative 'sources/utils/utils_html'
+require_relative 'sources/utils/utils_debug'
 require_relative 'Classes/DB/manga_db'
 require_relative 'Classes/DB/params_db'
 
@@ -48,44 +56,44 @@ if ARGV.size == 0
   update(db)
 else
   case ARGV[0]
-  when "-u", "--update"
+  when '-u', '--update'
     update(db)
-  when "-uf", "--update-fast"
+  when '-uf', '--update-fast'
     update(db, true)
-  when "-a", "--add"
+  when '-a', '--add'
     add(db, false)
-  when "-da", "--data"
+  when '-da', '--data'
     add(db, true)
-  when "-ht", "--html"
+  when '-ht', '--html'
     html_manager(db)
-  when "-hti", "--html-index"
-    HTML.new(db).generate_index()
-  when "-dl", "--download"
+  when '-hti', '--html-index'
+    HTML.new(db).generate_index
+  when '-dl', '--download'
     download(db)
-  when "-l", "--list"
+  when '-l', '--list'
     list(db)
-  when "-d", "--delete"
+  when '-d', '--delete'
     delete(db)
-  when "-df", "--delete-files"
+  when '-df', '--delete-files'
     delete(db, true)
-  when "-pl", "--param_list"
-    param_list()
-  when "-ps", "--param_set"
-    param_set()
-  when "-pr", "--param_reset"
-    param_reset()
-  when "-c", "--clear"
+  when '-pl', '--param_list'
+    param_list
+  when '-ps', '--param_set'
+    param_set
+  when '-pr', '--param_reset'
+    param_reset
+  when '-c', '--clear'
     clear(db)
-  when "-redl", "--re-download"
+  when '-redl', '--re-download'
     re_dl(db)
-  #when "-sca", "--scan-add"
-  #  scan(db, "add")
-  #when "-scc", "--scan-correct"
-  #  scan(db, "correct")
-  when "-h", "--help"
-    help()
+  #when '-sca', '--scan-add'
+  #  scan(db, 'add')
+  #when '-scc', '--scan-correct'
+  #  scan(db, 'correct')
+  when '-h', '--help'
+    help
   else
-    puts "error, unknown instruction : " + ARGV[0]
-    puts "--help for help"
+    puts 'error, unknown instruction : ' + ARGV[0]
+    puts '--help for help'
   end
 end

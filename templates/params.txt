@@ -1,8 +1,18 @@
 
 list of paramaters and values :
 
+
+[data]
+
 manga path      (mp) = #{params[1]}
 folder where you would like your mangas downloaded
+
+delete diff     (dd) = #{params[6]}
+if ever durring an update a chapter is in the traces database but not in the chapter list, it is deleted ( or not )
+this can happen when a chapter is mistankingly uploaded to the wrong manga or the chapter list / organisation changed
+
+
+[internet]
 
 between sleep   (bs) = #{params[2]}
 time between 2 requests on the site of the manga ( seconds )
@@ -17,14 +27,17 @@ error sleep     (es) = #{params[5]}
 time between 2 errors - such as a conection loss - ( seconds )
 30 seconds or more is advised
 
-delete diff     (dd) = #{params[6]}
-if ever durring an update a chapter is in the traces database but not in the chapter list, it is deleted ( or not )
-this can happen when a chapter is mistankingly uploaded to the wrong manga or the chapter list / organisation changed
+
+[internal]
 
 catch exception (ce) = #{params[7]}
-While downloading pages, there is a very very low possibility of Ruby raising a exception. This only happens 1 / 1500
-pages and only on old machines. This option is to be set at true if you had a deadlock exception ( default value ) and
-false if you think this may cause stability issues
+While downloading pages, there is a very very low possibility of Ruby raising a exception. This only happens once every 1500
+pages downloaded and only on old machines.
+This option is to be set at true if you had a deadlock exception ( default value ) and false if you think this may cause
+stability issues
+
+
+[html]
 
 generate html   (gh) = #{params[8]}
 allows you to choose if you whant the html to be generated automaticaly or not
@@ -41,4 +54,10 @@ determines witch genres you determine as being NSFW, default is Mature, Ecchi, S
 syntax is : write all the genres you wish to add at once separating them by a comma and a space ( ", " )
 be carefull to respect the capital letters
 this option is only used when the html nsfw (hn) option is set to true
+
+
+[term output]
+
+color text      (ct) = #{params[11]}
+allows you to choose between your default bold text output ( false ) and a very colored one ( true )
 

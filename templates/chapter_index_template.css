@@ -23,12 +23,12 @@ div.nav {
 	padding: 1em;
 }
 
-div.index {
-	position: absolute;
+div#index {
 	left: 100px;
 	width: 450px;
 	margin: 0;
 	padding: 1em;
+	position: absolute;
 }
 
 div.nav ul {
@@ -50,6 +50,5 @@ div.details {
 	border-left: 1px solid gray;
 	border-right: 1px solid gray;
 	padding: 1em;
-	overflow: hidden;
-	min-height: 650px;
+	min-height: 850px;
 }

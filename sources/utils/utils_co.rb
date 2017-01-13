@@ -2,11 +2,11 @@ $nb_tries = -1
 $between_sleep = -1
 $failure_sleep = -1
 $error_sleep = -1
-$catch_fatal = "false"
+$catch_fatal = 'false'
 
-# inits the global variables
-def init_utils()
-  params = Params.instance().get_params()
+# initialises the global variables
+def init_utils
+  params = Params.instance.get_params
   $between_sleep = params[2]
   $failure_sleep = params[3]
   $nb_tries = params[4]
@@ -16,7 +16,7 @@ end
 
 # used to know hom much sleep time is needed
 def sleep_manager(error)
-  if error.class.to_s == "SocketError" # connection error
+  if error.class.to_s == 'SocketError' # connection error
     sleep($error_sleep)
   else
     sleep($failure_sleep)
@@ -30,11 +30,11 @@ def download_rescue(tries, link, error, message, silent = false)
     sleep_manager(error)
     return tries
   else
-    if silent == false
+    unless silent
       print "\n"
       STDOUT.flush
       puts message + ' ' + link + ' after ' + $nb_tries.to_s + ' tries'
-      puts "message is : " + error.message
+      puts 'message is : ' + error.message
       return nil
     end
   end
@@ -42,29 +42,29 @@ end
 
 # exception manager for the utils_co.rb functions
 def rescue_fatal(error, silent = false)
-  if $catch_fatal == "false"
-    if silent == false
+  if $catch_fatal == 'false'
+    unless silent
       print "\n"
       STDOUT.flush
-      puts "Warning : exception occured, message is : " + error.message
-      puts "Exception class is : " + error.class.to_s
-      puts "raising it again"
-      puts ""
+      puts 'Warning : exception occured, message is : ' + error.message
+      puts 'Exception class is : ' + error.class.to_s
+      puts 'raising it again'
+      puts ''
     end
     raise error
   else
-    if error.class.to_s != "fatal"
+    if error.class.to_s != 'fatal'
       raise error
     end
   end
 end
 
-# detects if there whas a redirection on the required link
+# detects if there was a redirection on the required link
 def redirection_detection(url)
   tries ||= $nb_tries
   begin
     open(url) do |resp|
-      if (resp.base_uri.to_s != url)
+      if resp.base_uri.to_s != url
         return true
       end
     end
@@ -74,27 +74,27 @@ def redirection_detection(url)
       sleep_manager(error)
       retry
     else
-      puts "connection is lost or could not find manga, stopping programm"
+      puts 'connection is lost or could not find manga, stopping programm'
       puts url
-      puts "message is : " + error.message
+      puts 'message is : ' + error.message
       exit 3
     end
   rescue Exception => error
     rescue_fatal(error)
   end
-  return false
+  false
 end  
 
-# conect to link and download page
+# connects to link and download page
 def get_page(link, silent = false)
   tries ||= $nb_tries
   begin
-    page = Nokogiri::HTML(open(link, "User-Agent" => "Ruby/#{RUBY_VERSION}")) do |noko|
+    page = Nokogiri::HTML(open(link, 'User-Agent' => "Ruby/#{RUBY_VERSION}")) do |noko|
       noko.noblanks.noerror
     end
   rescue StandardError => error
     tries = download_rescue(tries, link, error, 'could not download picture', silent)
-    if (tries == nil)
+    if tries == nil
       return nil
     end
     retry
@@ -102,25 +102,25 @@ def get_page(link, silent = false)
     rescue_fatal(error)
   end
   sleep($between_sleep)
-  return page
+  page
 end
 
-# conect to link and download picture
+# connects to link and download picture
 def get_pic(link, silent = false)
   safe_link = link.gsub(/[\[\]]/) { '%%%s' % $&.ord.to_s(16) }
   tries ||= $nb_tries
   begin
-    page = open(safe_link, "User-Agent" => "Ruby/#{RUBY_VERSION}")
+    page = open(safe_link, 'User-Agent' => "Ruby/#{RUBY_VERSION}")
   rescue URI::InvalidURIError => error
-    if silent == false
-      puts "Warning : bad url"
+    unless silent
+      puts 'Warning : bad url'
       puts link
-      puts "message is : " + error.message
+      puts 'message is : ' + error.message
     end
     return nil
   rescue StandardError => error
     tries = download_rescue(tries, link, error, 'could not download picture', silent)
-    if (tries == nil)
+    if tries == nil
       return nil
     end
     retry
@@ -128,20 +128,20 @@ def get_pic(link, silent = false)
     rescue_fatal(error, silent)
   end
   sleep($between_sleep)
-  return page
+  page
 end
 
 # mangafox only => gets the link and returns the values in an array
 def data_extractor_MF(link)
-  if (link[link.size - 1] == '/')
+  if link[link.size - 1] == '/'
     page = 1
   end
-  link += "1.html"
+  link += '1.html'
   link_split = link.split('/')
-  page = link_split[link_split.size - 1].chomp(".html").to_i
+  page = link_split[link_split.size - 1].chomp('.html').to_i
   link_split[link_split.size - 2][0] = ''
   chapter = link_split[link_split.size - 2].to_f
-  if (chapter % 1 == 0)
+  if chapter % 1 == 0
     chapter = chapter.to_i
   end
   if link_split.size == 8
@@ -149,11 +149,11 @@ def data_extractor_MF(link)
     if link_split[link_split.size - 3] =~ /\A\d+\z/
       volume = link_split[link_split.size - 3].to_i
     else
-      if link_split[link_split.size - 3] == "NA"
+      if link_split[link_split.size - 3] == 'NA'
         volume = -3
-      elsif link_split[link_split.size - 3] == "TBD"
+      elsif link_split[link_split.size - 3] == 'TBD'
         volume = -2
-      elsif link_split[link_split.size - 3] == "ANT"
+      elsif link_split[link_split.size - 3] == 'ANT'
         volume = -4
       else
         volume = -42 # error value
@@ -164,7 +164,7 @@ def data_extractor_MF(link)
   end
   ret = Array.new
   ret << volume << chapter << page
-  return ret
+  ret
 end
 
 # from the index page of a manga, extracts the links
@@ -172,25 +172,25 @@ def extract_links(doc, manga_name, xpath, page_link)
   tries = $nb_tries
   links = doc.xpath(xpath).map{ |link| link['href'] }
   while (links == nil || links.size == 0) && tries > 0
-    puts "error while retreiving chapter index of " + manga_name
+    puts ('error while retrieving chapter index of ' + manga_name).yellow
     doc = get_page(page_link)
-    if (doc != nil)
+    if doc != nil
       links = doc.xpath(xpath).map{ |link| link['href'] }
     end
     tries -= 1
   end
   if links == nil || links.size == 0
-    raise "failed to get manga " + manga_name + " chapter index"
+    raise ('failed to get manga ' + manga_name + ' chapter index').red
   end  
-  return links
+  links
 end
 
 # extracts the cover link, downloads it and writes it twice
-def write_cover(doc, manga_name, xpath, path1, path2)
+def write_cover(doc, xpath, path1, path2)
   cover_link = doc.xpath(xpath).map{ |cover_l| cover_l['src'] }
   cover_buffer = get_pic(cover_link[0], true)
   if cover_buffer == nil
-    cover_buffer = File.open(Dir.home + "/.MangaScrap/pictures/other/404.png")
+    cover_buffer = File.open(Dir.home + '/.MangaScrap/pictures/other/404.png')
   end
   if cover_buffer != nil
     cover1 = File.new(path1, 'wb')
@@ -203,7 +203,6 @@ def write_cover(doc, manga_name, xpath, path1, path2)
     cover1.close
     cover2.close
   else
-    puts "WARNING : cover could not download cover"
+    puts 'WARNING : cover could not download cover'
   end
 end
-

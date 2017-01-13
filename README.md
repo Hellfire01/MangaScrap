@@ -16,6 +16,10 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 
 ### Changelog :
 
+0.10.0 : big performance improvement, added JS to the HTML, many additions to the database to display more informations and text coloration<br />
+
+###### Warning : the database changes and is not compatible with the previous versions<br />Please look at the file migration/0.9.x_to_0.10.x.txt<br />
+
 0.9.6 : drastically impoved the terminal display, it is now far easier to read<br />
 0.9.5 : added instructions to install the dependencies on debain<br />
 0.9.4 : fixed an error preventing the program to be lanched correctly the very first time<br />

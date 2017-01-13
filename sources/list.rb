@@ -1,11 +1,11 @@
 def list(db)
-  if (ARGV.size == 1)
-    list = db.get_manga_list()
+  if ARGV.size == 1
+    list = db.get_manga_list
     list.each do |elem|
       puts elem
-      # mettre nombre de chapitres téléchargés et infos supp
+      # todo mettre nombre de chapitres téléchargés et infos supp
     end
   else
-    #lits mangas in site
+    # todo lits mangas in site
   end
 end
