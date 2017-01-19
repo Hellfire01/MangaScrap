@@ -1,5 +1,5 @@
 #manga database
-class DB
+class Manga_database
   def add_manga(manga_name, description, site, link, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max)
     begin
       prep = @db.prepare 'INSERT INTO manga_list VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
@@ -36,7 +36,7 @@ class DB
       prep.bind_param 7, rank
       prep.bind_param 8, rating
       prep.bind_param 9, rating_max
-      # manga_name must always be last ( note for future updates )
+      # manga_name variable must always be last ( note for future updates )
       prep.bind_param 10, manga_name
       prep.execute
     rescue SQLite3::Exception => e

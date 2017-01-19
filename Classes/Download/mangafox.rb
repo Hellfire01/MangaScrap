@@ -1,5 +1,6 @@
 class Download_Mangafox
-  private_class_method def self.link_err(data, chapter = false)
+  private
+  def link_err(data, chapter = false)
     if !chapter
       @db.add_todo(@manga_name, data[0], data[1], data[2])
       @aff.error_on_page_download('X')
@@ -10,6 +11,7 @@ class Download_Mangafox
     false
   end
 
+  public
   def get_links
     @links
   end

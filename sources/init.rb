@@ -35,7 +35,7 @@ def initialize_mangascrap(location)
     puts "error message is : '" + error.message + "'"
     exit 5
   end
-  db = DB.new
+  db = Manga_database.new
   init_utils
   if Params.instance.get_params[11] == 'false'
     String.disable_colorization = true
