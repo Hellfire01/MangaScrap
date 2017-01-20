@@ -35,3 +35,17 @@ a {
 html {
 	background-color: #F2F2F2;	
 }
+
+div#chapter-data {
+	left: 0;
+	top : 170px;
+	width: 580px;
+	margin-left: 15px;
+	position: absolute;
+	text-align: center;
+}
+
+p.heavy_text {
+	font-weight: bold;
+}
+

@@ -4,8 +4,10 @@ class HTML
   # adds variables to @traces in order to sort / check
   def add_data_to_traces
     @traces.each do |chap|
-      chap << "<a href=\"#####html_path#####" + html_chapter_filename(chap[3], chap[2]) + "\">#####elem#####</a>"
+      filename = html_chapter_filename(chap[3], chap[2])
+      chap << "<a href=\"#####html_path#####" + filename + "\">#####elem#####</a>"
       chap << Dir.glob(file_name(@dir + @path_pictures, chap[2], chap[3], -1, true)).size
+      chap << '.' + filename
     end
   end
 
@@ -15,6 +17,7 @@ class HTML
     i = 1
     Dir.glob(file_name(@dir + @path_pictures, chapter[2], chapter[3], -1, true)).each do |file|
       file_relative_pos = file_name('../../mangas/' + @manga_data[1] + '/', chapter[2], chapter[3], i) + '.jpg'
+      ret << "<p class=\"small-text\">#{i}</p>"
       ret << "<div class=\"frame\">\n"
       ret << "    <span class=\"hellper\"></span><img src=\"#{file_relative_pos}\">\n"
       ret << "</div>\n"
@@ -28,9 +31,24 @@ class HTML
     template = File.open(Dir.home + '/.MangaScrap/templates/chapter_template.html').read
     template = template.gsub('#####index#####', '../' + @manga_data[1] + '.html')
     template = template.gsub('#####name#####', @manga_name)
-    template = template.gsub('#####prev#####', (arr[2] != nil) ? (arr[2][4]).gsub('#####html_path#####', '.').gsub('#####elem#####', 'prev').gsub('#', '%23') : '')
-    template = template.gsub('#####next#####', (arr[0] != nil) ? (arr[0][4]).gsub('#####html_path#####', '.').gsub('#####elem#####', 'next').gsub('#', '%23') : '')
+    if arr[0] != nil
+      template = template.gsub('#####next#####', arr[0][4]).gsub('#####html_path#####', '.').gsub('#####elem#####', 'next')
+      template = template.gsub('#####next_url#####', arr[0][6])
+    else
+      template = template.gsub('#####next#####', '')
+      template = template.gsub('#####next_url#####', '')
+    end
+    if arr[2] != nil
+      template = template.gsub('#####prev#####', arr[2][4]).gsub('#####html_path#####', '.').gsub('#####elem#####', 'prev')
+      template = template.gsub('#####prev_url#####', arr[2][6])
+    else
+      template = template.gsub('#####prev#####', '')
+      template = template.gsub('#####prev_url#####', '')
+    end
+    chap_data = 'Chapter ' + ((arr[1][3] % 1 == 0) ? arr[1][3].to_i : arr[1][3]).to_s + ' ' + volume_int_to_string(arr[1][2], true)
+    template = template.gsub('#####chapter_data#####', chap_data)
     template = template.gsub('#####pictures#####', get_pictures_of_chapter(arr[1])).gsub('#', '%23')
+    template = template.gsub('#', '%23')
     File.open(@dir + @path_html + html_chapter_filename(arr[1][3], arr[1][2]), 'w') {|f| f.write(template) }
   end
 
@@ -158,7 +176,7 @@ class HTML
       ret << '  </div>'
       i += 1
     end
-    return ret.join("\n")
+  return ret.join("\n")
   end
 
   # generates the manga index ( the page containing the links to all mangas )
@@ -189,7 +207,7 @@ class HTML
       # chapter
       template = File.open(Dir.home + '/.MangaScrap/templates/chapter_template.css').read
       File.open(@params[1] + 'mangafox/html/css/chapter.css', 'w') {|f| f.write(template) }
-      # todo : this file may need to be moved
+      # todo : this file may need to be moved5780x1080
       template = File.open(Dir.home + '/.MangaScrap/templates/chapter_template.js').read
       File.open(@params[1] + 'mangafox/html/js/chapter.js', 'w') {|f| f.write(template) }
       $copied_js_css = true

@@ -16,6 +16,7 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 
 ### Changelog :
 
+0.10.1 : added arrow control on chapter pages, it is now possible to go to the next / previous page with left and right arrows<br />
 0.10.0 : big performance improvement, added JS to the HTML, many additions to the database to display more informations and text coloration<br />
 
 ###### Warning : the database changes and is not compatible with the previous versions<br />Please look at the file migration/0.9.x_to_0.10.x.txt<br />

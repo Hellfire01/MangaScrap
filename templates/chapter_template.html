@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <meta charset="UTF-8">
 <html>
+<script>
+    document.addEventListener("keydown", keyDownTextField, false);
+
+    function keyDownTextField(e) {
+        var keyCode = e.keyCode;
+        console.log(e.which);
+        if (e.which === 37) { // left
+            window.location.href = "#####prev_url#####";
+        } else if (e.which === 39) { // right
+            window.location.href = "#####next_url#####";
+        }
+    }
+</script>
 	<head>
 		<link rel="stylesheet" type="text/css" href="../css/chapter.css">
 	</head>
@@ -9,6 +22,9 @@
 			<div class="header">
 				 <h1>MangaScrap</h1>
 			</div>
+            <div id="chapter-data">
+                <p class="heavy_text">#####chapter_data#####</p>
+            </div>
 			<div class="chapter">
 				<a href="#####index#####" class="index">
 					<h1 class="name">#####name#####</h1>
