@@ -49,3 +49,15 @@ p.heavy_text {
 	font-weight: bold;
 }
 
+div#float-left {
+	margin-top: 200px;
+}
+
+div#float-right {
+    right: 0;
+    top : 458px;
+    width: 580px;
+    margin-right: 15px;
+    position: absolute;
+    text-align: center;
+}

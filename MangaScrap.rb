@@ -15,6 +15,7 @@
 
 require 'singleton'
 require 'open-uri'
+require 'pp'
 
 # gems
 require 'colorize'

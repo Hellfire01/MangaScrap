@@ -8,3 +8,4 @@ sudo gem install sqlite3
 sudo apt-get install build-essential patch
 sudo apt-get install ruby-dev zlib1g-dev liblzma-dev
 sudo gem install nokogiri
+sudo gem install colorize

@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <meta charset="UTF-8">
 <html>
+<script src="../js/chapter.js"></script>
 <script>
     document.addEventListener("keydown", keyDownTextField, false);
-
     function keyDownTextField(e) {
         var keyCode = e.keyCode;
-        console.log(e.which);
         if (e.which === 37) { // left
             window.location.href = "#####prev_url#####";
         } else if (e.which === 39) { // right
@@ -23,7 +22,17 @@
 				 <h1>MangaScrap</h1>
 			</div>
             <div id="chapter-data">
-                <p class="heavy_text">#####chapter_data#####</p>
+                <div class="behind">
+                    <p class="heavy_text">#####chapter_data#####</p>
+                    <p class="heavy_text"><a href="#####index#####">#####name##### chapter index</a></p>
+                    <p class="heavy_text"><a href="#####manga_index#####">manga index</a></p>
+                    <div id="float-left">
+                        <p>#####prev#####</p>
+                    </div>
+                </div>
+            </div>
+            <div id="float-right">
+                <p>#####next#####</p>
             </div>
 			<div class="chapter">
 				<a href="#####index#####" class="index">

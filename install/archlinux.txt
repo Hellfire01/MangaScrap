@@ -1,0 +1,9 @@
+sudo pacman -S ruby
+gem install sqlite3
+gem install colorize
+gem install nokogiri
+
+add the following line to your .bashrc ( or .zshrc ) :
+PATH=$PATH:~/.gem/ruby/2.4.0/bin
+
+if you have a different ruby version, please follow the instructions that are prompted on the terminal while installing the gems

@@ -46,8 +46,10 @@ class HTML
       template = template.gsub('#####prev_url#####', '')
     end
     chap_data = 'Chapter ' + ((arr[1][3] % 1 == 0) ? arr[1][3].to_i : arr[1][3]).to_s + ' ' + volume_int_to_string(arr[1][2], true)
-    template = template.gsub('#####chapter_data#####', chap_data)
-    template = template.gsub('#####pictures#####', get_pictures_of_chapter(arr[1])).gsub('#', '%23')
+    max_chap_data = 'Chapter ' + ((@traces[0][3] % 1 == 0) ? @traces[0][3].to_i : @traces[0][3]).to_s + ' ' + volume_int_to_string(@traces[0][2], true)
+    template = template.gsub('#####chapter_data#####', chap_data + ' / ' + max_chap_data)
+    template = template.gsub('#####pictures#####', get_pictures_of_chapter(arr[1]))
+    template = template.gsub('#####manga_index#####', @index_path)
     template = template.gsub('#', '%23')
     File.open(@dir + @path_html + html_chapter_filename(arr[1][3], arr[1][2]), 'w') {|f| f.write(template) }
   end
@@ -106,6 +108,7 @@ class HTML
       @path_html = '/html/' + @manga_data[1]
       @manga_name = @manga_data[11]
       @traces = @db.get_trace(@manga_data[1])
+      @index_path = @dir + '/index.html' #todo : manage sites
       add_data_to_traces
       dir_create(@dir + @path_html)
       template = File.open(Dir.home + '/.MangaScrap/templates/chapter_index_template.html')
