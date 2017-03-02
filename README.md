@@ -16,7 +16,7 @@ The programm will download all mangas in Documents/mangas/ by default<br />
 
 ### Changelog :
 
-0.11.0 : the argument management completely changed and is now much easier to use ( added instructions and a new way to use MangaScrap ) + the html was heavily optimised + added a management of bad gem loads<br />
+0.11.0 : the argument management completely changed and is now much easier to use ( added instructions and a new way to use MangaScrap ) + the html was heavily optimised + added a management of bad gem loads + changed the way mangas are identified to allow the scrap of multiple sites<br />
 
 ###### Warning : the database changes and is not compatible with the previous versions<br />Please look at the file migration/0.10.x_to_0.11.x.txt<br />
 
