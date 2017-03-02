@@ -1,30 +1,30 @@
 black_clover http://mangafox.me/
-crepuscule_yamchi
-doulou_dalu
+crepuscule_yamchi http://mangafox.me/
+doulou_dalu http://mangafox.me/
 
 #comments MUST start with a '#' as the very first character of the line
 #this is a comment
 
-doupo_cangqiong
-gate_jietai_kare_no_chi_nite_kaku_tatakeri
-nejimaki_kagyu
-onepunch_man
-overlord
-panlong
-qwan
+doupo_cangqiong http://mangafox.me/
+gate_jietai_kare_no_chi_nite_kaku_tatakeri http://mangafox.me/
+nejimaki_kagyu http://mangafox.me/
+onepunch_man http://mangafox.me/
+overlord http://mangafox.me/
+panlong http://mangafox.me/
+qwan http://mangafox.me/
 
 
 # empty lines are ignored
 
 re_monster http://mangafox.me/
-school_shock
-seirei_tsukai_no_kenbu_hyouju_issei
-sky_blue
-tegami_bachi
-tensei_shitara_slime_datta_ken
-the_gamer
-unbreakable_machine_doll
-witchcraft_works
-world_trigger
-yuragi_sou_no_yuuna_san
-the_new_gate
+school_shock http://mangafox.me/
+seirei_tsukai_no_kenbu_hyouju_issei http://mangafox.me/
+sky_blue http://mangafox.me/
+tegami_bachi http://mangafox.me/
+tensei_shitara_slime_datta_ken http://mangafox.me/
+the_gamer http://mangafox.me/
+unbreakable_machine_doll http://mangafox.me/
+witchcraft_works http://mangafox.me/
+world_trigger http://mangafox.me/
+yuragi_sou_no_yuuna_san http://mangafox.me/
+the_new_gate http://mangafox.me/

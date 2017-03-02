@@ -5,96 +5,72 @@
 # if you have a question, please go here :
 # https://github.com/Hellfire01/MangaScrap
 #
-# MangaScrap's return values :
+# Note :
+# MangaScrap will install it's databases and templates
+# in ~/.MangaScrap
+#
+# MangaScrap's return values :+
 # 0 : good
 # 1 : fatal error ( ruby native code exceptions )
 # 2 : db error
 # 3 : connection error
 # 4 : unexpected error ( not yet managed stuff )
 # 5 : argument error
+# 6 : gem error
 
 require 'singleton'
 require 'open-uri'
 require 'pp'
 
-# gems
-require 'colorize'
-require 'nokogiri'
-require 'sqlite3'
+def load_gem(gem)
+  begin
+    require gem
+  rescue Exception => e
+    puts ''
+    puts "exception while trying to load #{gem}, please follow the installation instructions in the install directory"
+    puts 'message is : ' + e.message
+    puts 'please note that a ruby update may require a re-download of the gems'
+    puts ''
+    exit 6
+  end
+end
 
-require_relative 'Classes/html/html'
-require_relative 'Classes/html/html_buffer'
-require_relative 'Classes/Download/mangafox'
-require_relative 'Classes/DownloadDisplay'
-require_relative 'Classes/arguments/query'
-require_relative 'Classes/arguments/argument_manager'
+# gems
+load_gem 'colorize'
+load_gem 'nokogiri'
+load_gem 'sqlite3'
+
+# files
+require_relative 'sources/init'
 require_relative 'sources/scan/scan'
 require_relative 'sources/scan/scan_utils'
-require_relative 'sources/download'
-require_relative 'sources/update'
-require_relative 'sources/delete_diff'
-require_relative 'sources/help'
-require_relative 'sources/add'
-require_relative 'sources/init'
-require_relative 'sources/list'
-require_relative 'sources/delete'
-require_relative 'sources/params'
-require_relative 'sources/clear'
-require_relative 'sources/redl'
-require_relative 'sources/html_manager'
+require_relative 'sources/instructions/delete_diff'
+require_relative 'sources/instructions/basic_instructions'
+require_relative 'sources/instructions/params'
+require_relative 'sources/instructions/redl'
 require_relative 'sources/utils/utils_file'
+require_relative 'sources/utils/utils_args'
 require_relative 'sources/utils/utils_co'
-require_relative 'sources/utils/utils_db'
 require_relative 'sources/utils/utils_manga'
 require_relative 'sources/utils/utils_html'
 require_relative 'sources/utils/utils_debug'
-require_relative 'Classes/DB/manga_db'
-require_relative 'Classes/DB/params_db'
+require_relative 'sources/Classes/html/html'
+require_relative 'sources/Classes/html/html_buffer'
+require_relative 'sources/Classes/Download/mangafox'
+require_relative 'sources/Classes/DownloadDisplay'
+require_relative 'sources/Classes/instructions/Parsers/Instruction_parser'
+require_relative 'sources/Classes/instructions/Parsers/Data_parser'
+require_relative 'sources/Classes/instructions/Parsers/Query_Parser'
+require_relative 'sources/Classes/instructions/Parsers/File_parser'
+require_relative 'sources/Classes/instructions/query'
+require_relative 'sources/Classes/instructions/Instructions_exec'
+require_relative 'sources/Classes/instructions/Manga_data_filter'
+require_relative 'sources/Classes/DB/Manga_data'
+require_relative 'sources/Classes/DB/Manga_database'
+require_relative 'sources/Classes/DB/Params'
 
-db = initialize_mangascrap(__dir__)
+initialize_mangascrap
 
-if ARGV.size == 0
-  update(db)
-else
-  case ARGV[0]
-  when '-u', '--update'
-    update(db)
-  when '-uf', '--update-fast'
-    update(db, true)
-  when '-a', '--add'
-    add(db, false)
-  when '-da', '--data'
-    add(db, true)
-  when '-ht', '--html'
-    html_manager(db)
-  when '-hti', '--html-index'
-    HTML.new(db).generate_index
-  when '-dl', '--download'
-    download(db)
-  when '-l', '--list'
-    list(db)
-  when '-d', '--delete'
-    delete(db)
-  when '-df', '--delete-files'
-    delete(db, true)
-  when '-pl', '--param_list'
-    param_list
-  when '-ps', '--param_set'
-    param_set
-  when '-pr', '--param_reset'
-    param_reset
-  when '-c', '--clear'
-    clear(db)
-  when '-redl', '--re-download'
-    re_dl(db)
-  #when '-sca', '--scan-add'
-  #  scan(db, 'add')
-  #when '-scc', '--scan-correct'
-  #  scan(db, 'correct')
-  when '-h', '--help'
-    help
-  else
-    puts 'error, unknown instruction : ' + ARGV[0]
-    puts '--help for help'
-  end
-end
+args = Instructions_exec.new
+args.run
+

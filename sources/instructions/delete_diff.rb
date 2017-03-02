@@ -7,15 +7,17 @@ def delete_bad_files(traces, data, dir)
 end
 
 #todo => attention à ce que le fichier repéré soit bel et bien celui supprimé
-#todo => cette fonction nécessite
-def delete_diff(db, chap_list, name)
+def delete_diff(chap_list, manga_data)
   params = Params.instance.get_params
-  # todo : manage site
-  dir = params[1] + 'mangafox/mangas/' + name + '/'
+  db = Manga_database.instance
+  dir = params[1] + manga_data.site_dir + manga_data.to_complete + manga_data.name + '/'
   chap_list = chap_list.map{|elem| data_extractor_MF(elem).shift(2)}.reverse
-  trace = db.get_trace(name)
-  trace = trace.each {|elem| elem.shift} # delete id of each chapter
-  trace = trace.each {|elem| elem.shift} # delete id of manga
+  tmp_trace = db.get_trace(manga_data)
+  trace = []
+  tmp_trace.each do |e|
+    # creating an array that contains only volume and chapter values
+    trace << [e[2], e[3]]
+  end
   pb = trace.select{|elem| !chap_list.include?(elem)}
   deleted = false
   pb.each do |chap|
@@ -25,15 +27,12 @@ def delete_diff(db, chap_list, name)
       File.delete(file)
     end
     # todo : manage site
-    Dir.glob(params[1] + 'mangafox/html/' + name + html_chapter_filename(chap[1], chap[0])).each do |file|
+    Dir.glob(params[1] + 'mangafox/html/' + manga_data.name + html_chapter_filename(chap[1], chap[0])).each do |file|
       puts 'deleting file : '.yellow + file
       File.delete(file)
     end
-    db.delete_trace(name, chap)
+    db.delete_trace(manga_data, chap)
     deleted = true
   end
-  if deleted
-    puts ''
-    HTML.new(db).generate_chapter_index(name)
-  end
+  deleted
 end

@@ -10,9 +10,9 @@ class Params
         raise 'db is nil'
       end
     rescue StandardError => e
-      db_error_exit('could not get params', e)
+      critical_error('could not get params', e)
     rescue SQLite3::Exception => e
-      db_error_exit('could not get params', e)
+      critical_error('could not get params', e)
     end
     ret[0]
   end
@@ -23,7 +23,7 @@ class Params
       prep.bind_param 1, value
       prep.execute
     rescue SQLite3::Exception => e
-      db_error_exit('could not update ' + param, e)
+      critical_error('could not update ' + param, e)
     end
   end
 
@@ -45,7 +45,7 @@ class Params
       prep.bind_param 7, 'true'
       prep.execute
     rescue SQLite3::Exception => e
-      db_error_exit('could not set / reset parameters', e)
+      critical_error('could not set / reset parameters', e)
     end
   end
 
@@ -93,7 +93,7 @@ class Params
         reset_parameters(true)
       end
     rescue SQLite3::Exception => e
-      db_error_exit('exception while retrieving params / initializing params', e)
+      critical_error('exception while retrieving params / initializing params', e)
     end
   end
 end

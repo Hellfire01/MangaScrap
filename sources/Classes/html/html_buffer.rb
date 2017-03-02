@@ -20,7 +20,6 @@ class HTML_buffer
   end
 
   def initialize
-    Struct.new('Updated', :name, :downloaded)
     @dl = []
   end
 end

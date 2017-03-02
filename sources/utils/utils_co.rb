@@ -89,8 +89,9 @@ end
 def get_page(link, silent = false)
   tries ||= $nb_tries
   begin
-    page = Nokogiri::HTML(open(link, 'User-Agent' => "Ruby/#{RUBY_VERSION}")) do |noko|
-      noko.noblanks.noerror
+    html = open(link, 'User-Agent' => "Ruby/#{RUBY_VERSION}")
+    page = Nokogiri::HTML(html) do |nokogiri|
+      nokogiri.noblanks.noerror
     end
   rescue StandardError => error
     tries = download_rescue(tries, link, error, 'could not download picture', silent)
@@ -129,42 +130,6 @@ def get_pic(link, silent = false)
   end
   sleep($between_sleep)
   page
-end
-
-# mangafox only => gets the link and returns the values in an array
-def data_extractor_MF(link)
-  if link[link.size - 1] == '/'
-    page = 1
-  end
-  link += '1.html'
-  link_split = link.split('/')
-  page = link_split[link_split.size - 1].chomp('.html').to_i
-  link_split[link_split.size - 2][0] = ''
-  chapter = link_split[link_split.size - 2].to_f
-  if chapter % 1 == 0
-    chapter = chapter.to_i
-  end
-  if link_split.size == 8
-    link_split[link_split.size - 3][0] = ''
-    if link_split[link_split.size - 3] =~ /\A\d+\z/
-      volume = link_split[link_split.size - 3].to_i
-    else
-      if link_split[link_split.size - 3] == 'NA'
-        volume = -3
-      elsif link_split[link_split.size - 3] == 'TBD'
-        volume = -2
-      elsif link_split[link_split.size - 3] == 'ANT'
-        volume = -4
-      else
-        volume = -42 # error value
-      end
-    end
-  else
-    volume = -1 # no volume
-  end
-  ret = Array.new
-  ret << volume << chapter << page
-  ret
 end
 
 # from the index page of a manga, extracts the links

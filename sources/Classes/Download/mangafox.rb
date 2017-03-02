@@ -2,10 +2,10 @@ class Download_Mangafox
   private
   def link_err(data, chapter = false)
     if !chapter
-      @db.add_todo(@manga_name, data[0], data[1], data[2])
+      @db.add_todo(@manga_data, data[0], data[1], data[2])
       @aff.error_on_page_download('X')
     else
-      @db.add_todo(@manga_name, data[0], data[1], -1)
+      @db.add_todo(@manga_data, data[0], data[1], -1)
       @aff.error_on_page_download('X')
     end
     false
@@ -16,9 +16,10 @@ class Download_Mangafox
     @links
   end
 
+  # todo => vérifier s'il n'est pas possible de supprimer cette fonction
   def link_generator(volume, chapter, page)
     chapter = chapter.to_i if chapter % 1 == 0
-    link = @site + 'manga/' + @manga_name + '/'
+    link = @manga_data.site + 'manga/' + @manga_data.name + '/'
     if volume >= 0
       vol_buffer = ((volume >= 10) ? '' : '0')
       link += 'v' + vol_buffer + volume.to_s + '/'
@@ -73,7 +74,7 @@ class Download_Mangafox
     if page == nil
       return link_err(data, true)
     end
-    @aff.prepare_chapter("downloading chapter #{data[1]}#{MF_volume_string(data[0])} of #{@manga_name}" + prep_display)
+    @aff.prepare_chapter("downloading chapter #{data[1]}#{MF_volume_string(data[0])} of #{@manga_data.name}" + prep_display)
     number_of_pages = page.xpath('//div[@class="l"]').text.split.last.to_i
     page_nb = 1
     while page_nb <= number_of_pages
@@ -91,13 +92,13 @@ class Download_Mangafox
       end
     end
     @aff.dump_chapter
-    @db.add_trace(@manga_name, data[0], data[1])
-    HTML_buffer.instance.add_chapter(@manga_name, data[0], data[1])
+    @db.add_trace(@manga_data, data[0], data[1], number_of_pages)
+    HTML_buffer.instance.add_chapter(@manga_data, data[0], data[1])
     true
   end
 
   def todo
-    todo = @db.get_todo(@manga_name)
+    todo = @db.get_todo(@manga_data)
     if todo.size != 0
       @aff.prepare_todo
       biggest = todo.map { |a| [a[2], 0].max }.max
@@ -124,10 +125,11 @@ class Download_Mangafox
       end
       @aff.end_todo
     end
+    @downloaded_a_page
   end
   
-  def missing_chapters
-    traces = @db.get_trace(@manga_name)
+  def missing_chapters(get_data = true)
+    traces = @db.get_trace(@manga_data)
     i = 0
     @links.each do |link|
       data = data_extractor_MF(link)
@@ -138,8 +140,9 @@ class Download_Mangafox
       i += 1
     end
     if @downloaded_a_page
-      data
-      HTML.new(@db).generate_chapter_index(@manga_name)
+      if get_data
+        data
+      end
     end
     @aff.dump
   end
@@ -147,15 +150,16 @@ class Download_Mangafox
   def update
     todo
     missing_chapters
+    @downloaded_a_page
   end
 
   def data
     alternative_names = @doc.xpath('//div[@id="title"]/h3').text
-    raag_data = @doc.xpath('//td[@valign="top"]')
-    release = raag_data[0].text.to_i
-    author = raag_data[1].text.gsub(/\s+/, '').gsub(',', ', ')
-    artist = raag_data[2].text.gsub(/\s+/, '').gsub(',', ', ')
-    genres = raag_data[3].text.gsub(/\s+/, '').gsub(',', ', ')
+    release_author_artist_genres = @doc.xpath('//td[@valign="top"]')
+    release = release_author_artist_genres[0].text.to_i
+    author = release_author_artist_genres[1].text.gsub(/\s+/, '').gsub(',', ', ')
+    artist = release_author_artist_genres[2].text.gsub(/\s+/, '').gsub(',', ', ')
+    genres = release_author_artist_genres[3].text.gsub(/\s+/, '').gsub(',', ', ')
     description = @doc.xpath('//p[@class="summary"]').text
     data = @doc.xpath('//div[@class="data"]/span')
     status = data[0].text.gsub(/\s+/, '').split(',')[0]
@@ -166,39 +170,34 @@ class Download_Mangafox
     type = tmp_type[tmp_type.size - 1]
     html_name = tmp_type.take(tmp_type.size - 1).join(' ')
     dir_create(@dir)
-    write_cover(@doc, '//div[@class="cover"]/img', @dir + 'cover.jpg', @params[1] + 'mangafox/mangas/' + @manga_name + '.jpg')
+    write_cover(@doc, '//div[@class="cover"]/img', @dir + 'cover.jpg', @params[1] +
+      'mangafox/mangas/' + @manga_data.name + '.jpg')
     File.open(@dir + 'description.txt', 'w') do |txt|
-      txt << data_conc(@manga_name, description_manipulation(description), @site, @site + @manga_name, author, artist, type, status, genres, release, html_name, alternative_names)
+      txt << data_conc(@manga_data.name, description_manipulation(description), @manga_data.site, @manga_data.link, author, artist, type, status, genres, release, html_name, alternative_names)
     end
-    @aff.data_disp(@manga_in_database)
-    if @manga_in_database
-      @db.update_manga(@manga_name, description, author, artist, genres, html_name, alternative_names, rank, rating, rating_max)
+    @aff.data_disp(@manga_data.in_db)
+    if @manga_data.in_db
+      @db.update_manga(@manga_data.name, description, author, artist, genres, html_name, alternative_names, rank, rating, rating_max)
     else
-      @db.add_manga(@manga_name, description, @site, (@site + 'manga/' + @manga_name), author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max)
+      @db.add_manga(@manga_data, description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max)
     end
   end
 
-  def initialize(db, manga_name, download_data)
+  def initialize(manga, download_data = true)
+    @manga_data = manga
     @downloaded_a_page = false
-    @manga_name = manga_name
     @params = Params.instance.get_params
-    @dir = @params[1] + 'mangafox/mangas/' + manga_name + '/'
-    @db = db
-    @site = 'http://mangafox.me/'
-    @manga_in_database = db.manga_in_data?(manga_name)
-    doc_link = @site + '/manga/' + manga_name
-    @doc = get_page(doc_link, true)
-    @aff = DownloadDisplay.new('mangafox', manga_name)
-    if download_data == true || @manga_in_database == false
-      if redirection_detection(@site + '/manga/' + manga_name)
-        puts "could not find manga #{manga_name} at " + @site + '/manga/' + manga_name
-        exit 3
-      end
+    @dir = @params[1] + manga.site_dir + 'mangas/' + manga.name + '/'
+    @db = Manga_database.instance
+    # doc is the variable that stores the raw data of the manga's page
+    @aff = DownloadDisplay.new('mangafox', manga.name)
+    @doc = get_page(manga.link, true)
+    if @doc == nil
+      raise 'failed to get manga ' + manga.name + "'s chapter index"
+    end
+    if download_data
       data
     end
-    if @doc == nil
-      raise 'failed to get manga ' + manga_name + "'s chapter index"
-    end
-    @links = extract_links(@doc, @manga_name, '//a[@class="tips"]', doc_link).reverse
+    @links = extract_links(@doc, manga.name, '//a[@class="tips"]', manga.link).reverse
   end
 end

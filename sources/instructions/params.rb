@@ -1,7 +1,7 @@
 # reading the file, adding DB values and setting the colors ( when needed )
 def param_list
   params = Params.instance.get_params
-  template = File.open(Dir.home + '/.MangaScrap/templates/params.txt').read
+  template = File.open('templates/params.txt').read
   template = template.gsub('#{params[1]}', params[1].green)
   template = template.gsub('#{params[2]}', params[2].to_s.green.to_s)
   template = template.gsub('#{params[3]}', params[3].to_s.green.to_s)
@@ -94,47 +94,47 @@ def param_check_string(db, param, display, value)
 end
 
 # checking arguments for params
-def args_check
-  if ARGV.size < 3
+def args_check(args)
+  if args.size < 3
     puts 'not enough arguments for parameter set'
     puts '--help for help'
     exit 5
   end
-  if ARGV[2].size == 0
+  if args[2].size == 0
     puts 'you cannot give an empty argument'
     exit 5
   end
 end
 
 # this function call the good params set function for the good variable type
-def param_set
+def param_set(args)
   db = Params.instance
-  args_check
-  case ARGV[1]
+  args_check(args)
+  case args[1]
   when 'dd'
-    param_check_bool(db, ARGV[1], ['delete diff', 'delete_diff'], ARGV[2])
+    param_check_bool(db, args[1], ['delete diff', 'delete_diff'], args[2])
   when 'ce'
-    param_check_bool(db, ARGV[1], ['catch exception', 'catch_execption'], ARGV[2])
+    param_check_bool(db, args[1], ['catch exception', 'catch_execption'], args[2])
   when 'mp'
-    param_check_string(db, ARGV[1], ['manga path', 'manga_path'], ARGV[2])
+    param_check_string(db, args[1], ['manga path', 'manga_path'], args[2])
   when 'bs'
-    param_check_nb(db, ARGV[1], ['between sleep', 'between_sleep'], ARGV[2].to_f, 0.1)
+    param_check_nb(db, args[1], ['between sleep', 'between_sleep'], args[2].to_f, 0.1)
   when 'fs'
-    param_check_nb(db, ARGV[1], ['failure sleep', 'failure_sleep'], ARGV[2].to_f, 0.1)
+    param_check_nb(db, args[1], ['failure sleep', 'failure_sleep'], args[2].to_f, 0.1)
   when 'es'
-    param_check_nb(db, ARGV[1], ['error sleep', 'error_sleep'], ARGV[2].to_f, 0.5)
+    param_check_nb(db, args[1], ['error sleep', 'error_sleep'], args[2].to_f, 0.5)
   when 'nb'
-    param_check_nb(db, ARGV[1], ['number of tries', 'nb_tries_on_fail'], ARGV[2].to_i, 1)
+    param_check_nb(db, args[1], ['number of tries', 'nb_tries_on_fail'], args[2].to_i, 1)
   when 'gh'
-    param_check_bool(db, ARGV[1], ['generate html', 'generate_html'], ARGV[2])
+    param_check_bool(db, args[1], ['generate html', 'generate_html'], args[2])
   when 'hn'
-    param_check_bool(db, ARGV[1], ['html nsfw', 'html_nsfw'], ARGV[2])
+    param_check_bool(db, args[1], ['html nsfw', 'html_nsfw'], args[2])
   when 'nd'
-    param_check_string(db, ARGV[1], ['nsfw data', 'html_nsfw_data'], ARGV[2])
+    param_check_string(db, args[1], ['nsfw data', 'html_nsfw_data'], args[2])
   when 'ct'
-    param_check_bool(db, ARGV[1], ['color text', 'color_text'], ARGV[2])
+    param_check_bool(db, args[1], ['color text', 'color_text'], args[2])
   else
-    puts 'error, unknown parameter id : ' + ARGV[1]
+    puts 'error, unknown parameter id : ' + args[1]
     puts '--help for help'
     exit 5
   end
@@ -146,17 +146,17 @@ def param_reset
   puts ''
   puts 'WARNING ! You are about to reset your parameters !'
   puts 'the parameters will be set to :'
-  puts 'manga path      = ' + Dir.home + '/Documents/mangas/'
-  puts 'between sleep   = 0.1'
-  puts 'failure sleep   = 0.1'
-  puts 'number of tries = 20'
-  puts 'error sleep     = 30'
-  puts 'delete diff     = true'
-  puts 'catch exception = true'
-  puts 'generate html   = true'
-  puts 'html nsfw       = true'
-  puts 'html nsfw data  = Ecchi, Mature, Smut, Adult'
-  puts 'color text      = true'
+  puts 'manga path      = ' + (Dir.home + '/Documents/mangas/').yellow
+  puts 'between sleep   = ' + '0.1'.yellow
+  puts 'failure sleep   = ' + '0.1'.yellow
+  puts 'number of tries = ' + '20'.yellow
+  puts 'error sleep     = ' + '30'.yellow
+  puts 'delete diff     = ' + 'true'.yellow
+  puts 'catch exception = ' + 'true'.yellow
+  puts 'generate html   = ' + 'true'.yellow
+  puts 'html nsfw       = ' + 'true'.yellow
+  puts 'html nsfw data  = ' + 'Ecchi, Mature, Smut, Adult'.yellow
+  puts 'color text      = ' + 'true'.yellow
   puts ''
   puts "Write 'YES' to continue"
   ret = STDIN.gets.chomp
@@ -166,5 +166,19 @@ def param_reset
     puts 'reset all parameters'
   else
     puts 'did not reset parameters'
+  end
+end
+
+def params_management(args)
+  case args[0]
+    when 'list'
+      param_list
+    when 'reset'
+      param_reset
+    when 'set'
+      param_set(args)
+    else
+      puts 'Error : '.red + 'unrecognised argument ' + args[0].yellow + ' for params'
+      puts './MangaScrap help'.yellow + ' for help'
   end
 end

@@ -1,8 +1,8 @@
 ## MangaScrap
 
 MangaScrap is a Ruby based script that will allow you to download your mangas and save them on your computer<br />
-It possese a database that allows it to know what chapters where not downloaded yet<br />
-Unlike other manga downloaders, it creates a local website on your computer allowing you to browse your mangas offline !<br />
+It posses a database that allows it to know what chapters where not downloaded yet<br />
+Unlike other manga downloader, it creates a local website on your computer allowing you to browse your mangas offline !<br />
 	
 #### basic usage :
 ./MangaScrap -a [manganame]  => will add a manga to follow to the database<br />
@@ -12,22 +12,26 @@ Unlike other manga downloaders, it creates a local website on your computer allo
 #### notes :
 ./MangaScrap -h => displays instructions<br />
 The programm will download all mangas in Documents/mangas/ by default<br />
-( it will create the mangas folder automaticaly )<br />
+( it will create the mangas folder automatically )<br />
 
 ### Changelog :
 
+0.11.0 : the argument management completely changed and is now much easier to use ( added instructions and a new way to use MangaScrap ) + the html was heavily optimised + added a management of bad gem loads<br />
+
+###### Warning : the database changes and is not compatible with the previous versions<br />Please look at the file migration/0.10.x_to_0.11.x.txt<br />
+
 0.10.2 : added a few clickable elements on each chapter and a reading progression<br />
 0.10.1 : added arrow control on chapter pages, it is now possible to go to the next / previous page with left and right arrows<br />
-0.10.0 : big performance improvement, added JS to the HTML, many additions to the database to display more informations and text coloration<br />
+0.10.0 : big performance improvement, added JS to the HTML, many additions to the database to display more information and text coloration<br />
 
 ###### Warning : the database changes and is not compatible with the previous versions<br />Please look at the file migration/0.9.x_to_0.10.x.txt<br />
 
 0.9.6 : drastically impoved the terminal display, it is now far easier to read<br />
-0.9.5 : added instructions to install the dependencies on debain<br />
-0.9.4 : fixed an error preventing the program to be lanched correctly the very first time<br />
+0.9.5 : added instructions to install the dependencies on debian<br />
+0.9.4 : fixed an error preventing the program to be launched correctly the very first time<br />
 0.9.3 : fixed a few bugs on the html generation<br />
 0.9.2 : reimplemented the delete diff, fixed a db error when trying to remove certain chapters from the traces and optimised the usage of the params<br />
-0.9.1 : improved the html : it is now fully portable and can be copyed ( with the pictures ) to any destination and remain readable / usable<br />
+0.9.1 : improved the html : it is now fully portable and can be copied ( with the pictures ) to any destination and remain readable / usable<br />
 0.9.0 : implemented 3 new options ( params ) for the html management + added the hti option ( shell )<br />
 
 ###### Warning : the database changes and is not compatible with the previous versions<br />Please look at the file migration/0.8.x_to_0.9.x.txt<br />

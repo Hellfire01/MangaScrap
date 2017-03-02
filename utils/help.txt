@@ -1,97 +1,134 @@
 
- arguments for MangaScrap :
+ DESCRIPTION :
+    MangaScrap is a web crawler witch downloads mangas and places them on your computer.
+    It's main features are :
+     - it's database : MangaScrap will remember what it downloaded and what needs to be downloaded
+        The database is located in ~/.MangaScrap
+     - it's local website : MangaScrap will generate a local website using everything it downloaded allowing
+        you to browse your mangas offline
 
- -a --add [-f 'name of file'] / 'manga name' [manga site (default is manga fox)]
-    add manga to database
-		also updates the manga index ( html )
+ INSTRUCTIONS :
+    definitions :
+        [data arguments compatible] : can use the second group of argument called data arguments
+        [own arguments] : requires it's own set of arguments. Should there also be [data arguments], they
+            will always be placed before
+        [in database] : all elements must be in the database
+        [not in database] : all elements must not be in the database
+        [elements required] : the instruction cannot be run without at least an element
 
- -da --data [-f 'name of file'] / 'manga name'
-    download data ( cover + details ) of targeted manga(s)
-		also updates the manga index ( html )
+    [add]g [data arguments compatible] [elements required] [not in database]
+        adds the listed elements to the database
 
- -u --update [-f 'name of file'] / [manga name]
-    update database / manga
-		will update the index ( html ) of each manga when it finished updating them
+    [update]g [data arguments compatible] [elements required] [in database]
+        updates the listed elements
+        MangaScrap will download the missing pages, delete the excess pages and re-generate the HTML
 
- -uf --update-fast [-f 'name of file'] / [manga name]
-    only update mangas witch are tagged as "Ongoing" in database
-		will update the index ( html ) of each manga when it finished updating them
+    [download]g [data arguments compatible] [elements required] [not in database]
+        first adds all the elements to the database and then downloads them
+        equivalent of [add]g and then [update]g
 
- -dl --download [-f 'name of file'] 'manga name' [manga site (default is manga fox)]
-    add manga and then download
+    [html]g [data arguments compatible] [in database]
+        MangaScrap will generate the HTML
+        should no arguments be passed, only the manga indexes will be updated
+        should [data arguments] be passed, all selected elements will have there HTML generated. The index is also generated
 
- -redl --redownload 'manga name' [volume] [chapter] [page]
-    deletes the volume / chapter(s) / page(s) from the trace databe and then updates the manga
+    [delete]g [data arguments compatible] [elements required] [in database]
+        deletes the elements from the database and the files ( html + jpeg )
 
- -l --list [manga name / manga site]
-    shows content of database
+    [delete-db]g [data arguments compatible] [elements required] [in database]
+        deletes the elements from the database only
 
- -d --delete [-f 'name of file'] / [manga name]
-    deletes manga from database ( not the files !!! )
-		also updates the manga index ( html )
+    [_todo]g [data arguments compatible] [elements required] [in database]
+        Downloads all missing pages for all the elements
 
- -df --delete-files [-f 'name of file'] / [manga name]
-    deletes manga from database and also the files
-		also updates the manga index ( html )
+    [clear]g [data arguments compatible] [elements required] [in database]
+        Deletes all missing pages from the _todo database
 
- -pl --param_list
-    lists actual settings
+    [output]g [data arguments compatible] [elements required]
+        writes all of the element's name and site on the standard output
+        mainly used for the [file]y [data argument] ( can be used to write a file containing all the selected elements )
 
- -ps --param_set 'parameter id' 'value'
-    sets the speciefied parameter
-    WARNING : when setting the destination folder of mangas, the already downloaded
-              pages are NOT moved
-        'parameter id' values :
-        mp => the path to witch the "manga" directory is created ( string )
-        bs => the sleep between 2 page downloads ( seconds )
-        fs => the sleep between 2 page download fails ( seconds )
-        nb => the number of download fails allowed before putting the page in the todo database ( int )
-        es => time between 2 errors - such as a conection loss - ( seconds )
-        dd => delete the chapters that are not in the link list - after they where moved to an other
-              volume for example - ( true / false )
+    [infos]g [data arguments compatible] [elements required] [in database]
+        writes all of the available information of the elements on the standard output
+        this includes anything that is available in the database
 
- -pr --param_reset
-    resets the parameters to default, will ask for confirmation
+    [param]g [own arguments]
+        Allows you to configure the way MangaScrap works.
+        [param]g can take 3 arguments :
 
- -c --clear [-f 'name of file'] / [manga name]
-    clears the todo database from the manga ( to be used when trying to update an unexisting chapter )
+            [list]y
+                Shows the status of all the current settings and there description
 
- -ht --html [-f 'name of file'] / [manga name]
-    generates the manga index + the chapter index and chapters of the required mangas
+            [reset]y
+                Resets all the values of all the parameters to there default configuration
+                Will request a confirmation
 
- -hti --html-index
-    regenerates the manga index only
+            [set]y paramId newValue
+                Allows you to set a new value to one of the parameters.
+                Requires 2 arguments : the paramId and the new value
+                The param ids can be found using [param]g [list]y
+                note : changing the destination directory does NOT move the already downloaded elements
 
- -h --help
-    displays help
+    [help]g
+        [help]y will display these instructions
 
+    [version]g
+        displays the current version of MangaScrap witch can be found in utils/version.txt
 
- -f + 'file name' allows you to do multiple mangas at once
- it is used with add, update, download and delete
- if used, no other arguments are required
- in the file, each manga is separated by a line break
- syntax is : manga_name [site]
- the site will be ignored for update and delete
+    [data arguments]
+        definition : the data arguments are the arguments that are used to get elements by [link]y, [id]y, [file]y, ...
 
- example :
- black_clover
- crepuscule_yamchi http://mangafox.me/
+        [all]y
+            Selects all elements in the database
 
- Usage exemples :
- ./MangaScrap -a my_super_manga
-    adds 'my_super_manga' to the database for future update
- ./MangaScrap -a -f my_manga_list.txt
+        [id]y name site
+            Gets one element with the combination of the name and of the site.
+            The name MUST be the one of the url
+
+        [link]y link
+            Gets one element with the complete link of the element
+
+        [file]y fileName
+            Gets all the element present in the file
+            All the elements must be of the name + site format
+            Empty lines are not a problem
+            It is possible to place comments but the commented line MUST start with a #
+
+        [query]y query
+            Allows you to get elements from the database directly
+            Currently just a placeholder
+
+ EXAMPLES :
+
+ ./MangaScrap.rb [add]g [id]y super_manga super_site
+    adds 'super_manga' of 'super_site' to the database for future update
+
+ ./MangaScrap.rb [add]g [file]y my_manga_list.txt
     adds all mangas of 'my_manga_list.txt' to the database for future update
- ./MangaScrap
+
+ ./MangaScrap.rb [update]g [all]y
     updates all mangas in database
- ./MangaScrap -f file.txt
+
+ ./MangaScrap.rb [update]g [file]y file.txt
     updates all mangas in file.txt
- ./MangaScrap -ps mp /home/toto/
-    sets the path of the manga directory to the last argument
-    WARNING : it does NOT move the already downloaded pages
+
+ ./MangaScrap.rb [param]g [set]y mp /home/toto/
+    sets the path of the destination directory to /home/toto
+
+ note : the instructions can also be chained
+
+ ./MangaScrap.rb [version]g [add]g [file]y file.txt [update]g [all]y
+    this will make MangaScrap display it's current version, add the content of file.txt to the database
+    and then update everything
+
+ note : MangaScrap is smart enough to allow names such as 'id' or 'update'
+
+ ./MangaScrap.rb [add]g [id]y id mangafox [update]g [file]y update
+    this will add the manga 'id' of mangafox and then will update all elements contained in the 'update' file
+
 
  Warning !
- The [manga name] is found in the url
+ The element's name is found in the url
  ex : "bleach" => http://mangafox.me/manga/bleach/ => "bleach"
  ex : "black clover" => http://mangafox.me/manga/black_clover/ => "black_clover"
  ex : "crepuscule" => http://mangafox.me/manga/crepuscule_yamchi/ => "crepuscule_yamchi"
@@ -99,8 +136,6 @@
  information concerning the display of the download :
  . => downloaded a page
  , => downloaded a page ( multiple of 10 )
- ; => downloaded a page ( pultiple of 50 )
+ ; => downloaded a page ( multiple of 50 )
  ? => could not download a page ( 404 not found )
  X => could not download a page ( other error )
-
-

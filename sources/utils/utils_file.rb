@@ -6,7 +6,7 @@ def dir_create(directory)
   unless Dir.exist?(directory)
     puts directory + ' does not exist, creating it'
     list = directory.split('/')
-    build = '/'
+    build = '/' #todo => adapt dir_create for windows
     list = list.reject {|elem| elem.empty?}
     list.each do |elem|
       build += elem + '/'
@@ -128,4 +128,16 @@ def copy_file(file, dest)
     return true
   end
   false
+end
+
+def delete_files(path, extension)
+  Dir.glob(path + '/*').sort.each do |file|
+    puts 'deleting file : ' + file
+    File.delete(file)
+  end
+  Dir.delete(path)
+  if File.exist?(path + extension)
+    puts 'deleting file : ' + path + extension
+    File.delete(path + extension)
+  end
 end
