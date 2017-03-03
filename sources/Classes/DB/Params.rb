@@ -65,7 +65,7 @@ class Params
     puts $default_manga_path.yellow
     puts ''
     puts ''
-    puts 'if you enjoy using MangaScrap, please o star me on githhub :'
+    puts 'if you enjoy using MangaScrap, please do star me on githhub :'
     puts 'https://github.com/Hellfire01/MangaScrap'
     puts ''
     puts ''
