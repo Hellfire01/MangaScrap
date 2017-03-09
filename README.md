@@ -8,9 +8,9 @@ Unlike other manga downloaders, it creates a local website on your computer allo
 ### basic usage :
 
 `./MangaScrap add link [link]`<br />
-will add a manga to follow to the database<br />
+Will add a manga to follow to the database<br />
 `./MangaScrap`<br />
-will update all mangas within the database<br />
+Will update all mangas within the database<br />
 `./MangaScrap download link [link]`<br />
 Will add the manga to the database and then download it<br />
 
@@ -18,14 +18,14 @@ Will add the manga to the database and then download it<br />
 MangaScrap has configurable parameters witch will allow you to configure the way it work to fit your needs<br />
 <br />
 `./MangaScrap params list`<br />
-shows all the parameters and there values<br />
+Shows all the parameters and there values<br />
 `./MangaScrap params set [param] [value]`<br />
-allow you to change a parameter<br />
+Allow you to change a parameter<br />
 <br />
 
 ### notes :
 `./MangaScrap help`<br />
-displays instructions<br />
+Displays instructions<br />
 <br />
 The program will download all mangas in ~/Documents/mangas/ by default<br />
 ( should the path not exist, it will be created automatically )<br />

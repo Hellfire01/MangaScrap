@@ -23,6 +23,9 @@
         updates the listed elements
         MangaScrap will download the missing pages, delete the excess pages and re-generate the HTML
 
+    [fast-update]g [data arguments compatible] [elements required] [in database]
+        Works just like [update]g but ignores all elements with the 'Completed' status
+
     [download]g [data arguments compatible] [elements required] [not in database]
         first adds all the elements to the database and then downloads them
         equivalent of [add]g and then [update]g
@@ -48,9 +51,8 @@
         writes all of the element's name and site on the standard output
         mainly used for the [file]y [data argument] ( can be used to write a file containing all the selected elements )
 
-    [infos]g [data arguments compatible] [elements required] [in database]
-        writes all of the available information of the elements on the standard output
-        this includes anything that is available in the database
+    [details]g [data arguments compatible] [elements required] [in database]
+        gives all of the available data on the element this includes anything that is available in the database
 
     [param]g [own arguments]
         Allows you to configure the way MangaScrap works.
@@ -137,5 +139,4 @@
  . => downloaded a page
  , => downloaded a page ( multiple of 10 )
  ; => downloaded a page ( multiple of 50 )
- ? => could not download a page ( 404 not found )
- X => could not download a page ( other error )
+ X => could not download a page ( error, page placed in todo )

@@ -10,7 +10,12 @@ end
 def delete_diff(chap_list, manga_data)
   params = Params.instance.get_params
   db = Manga_database.instance
-  dir = params[1] + manga_data.site_dir + manga_data.to_complete + manga_data.name + '/'
+  dir = params[1] + manga_data.site_dir + 'mangas/' + manga_data.name + '/'
+  unless File.directory?(dir)
+    puts 'Error : '.red
+    puts 'path ' + dir.yellow + ' does not exist, cannot delete-diff'
+    return false
+  end
   chap_list = chap_list.map{|elem| data_extractor_MF(elem).shift(2)}.reverse
   tmp_trace = db.get_trace(manga_data)
   trace = []
@@ -26,8 +31,7 @@ def delete_diff(chap_list, manga_data)
       puts 'deleting file : '.yellow + file
       File.delete(file)
     end
-    # todo : manage site
-    Dir.glob(params[1] + 'mangafox/html/' + manga_data.name + html_chapter_filename(chap[1], chap[0])).each do |file|
+    Dir.glob(params[1] + manga_data.site_dir + 'html/' + manga_data.name + html_chapter_filename(chap[1], chap[0])).each do |file|
       puts 'deleting file : '.yellow + file
       File.delete(file)
     end

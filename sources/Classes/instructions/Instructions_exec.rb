@@ -78,12 +78,17 @@ class Instructions_exec
       buff = get_valid_data('update', false, args)
       update(buff) unless buff.empty?
     end
+    @parser.on 'fast-update' do |args|
+      buff = get_valid_data('update', false, args)
+      update(buff, false, true) unless buff.empty?
+    end
     @parser.on 'download', 'dl' do |args|
       buff = get_valid_data('download', true, args, false)
       download(buff) unless buff.empty?
     end
-    @parser.on 'correct' do |args|
-      buff = get_valid_data('correct', true, args) # <=======================
+    @parser.on 'data-check' do |args|
+      puts 'data-check is currently a placeholder'
+      buff = get_valid_data('data-check', true, args) # <==========================================================
       # todo correct
       # fonction pour ajouter les nouveaux champs de données aux traces
       # permet aussi de supprimer les chapitres avec un mauvais nombre de pages
@@ -119,17 +124,17 @@ class Instructions_exec
       output(buff) unless buff.empty?
     end
     @parser.on 'to-file' do |args|
-      buff = get_valid_data('to-file', false, args, false) # <=================
+      buff = get_valid_data('to-file', false, args, false) # <=====================================================
       # todo to-file
       puts 'placeholder for to-file'
       pp buff
     end
-    @parser.on 'info' do |args|
+    @parser.on 'details' do |args|
       buff = get_valid_data('list', false, args, false)
-      infos(buff, true) unless buff.empty?
+      details(buff) unless buff.empty?
     end
     # params related
-    @parser.on 'macros' do |args| # <==========================================
+    @parser.on 'macros' do |args| # <==============================================================================
       # todo macros
       puts 'placeholder for macros'
       tmp = get_data_parser('macros')

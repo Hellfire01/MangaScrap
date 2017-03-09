@@ -35,11 +35,16 @@ end
 # updates all mangas by calling the right classes
 # should todo_only = true, the function missing_chapters will be called instead of
 #     update ( witch also calls missing_chapters )
-def update(mangas, todo_only = false)
+# should fast_update be set to true, all elements with the Completed status will be
+#     ignored
+def update(mangas, todo_only = false, fast_update = false)
   puts 'updating ' + mangas.size.to_s + ' element(s)'
   html = HTML.new
   params = Params.instance.get_params
   mangas.each do |manga|
+    if fast_update && manga.data[8] == 'Completed'
+      next
+    end
     dw = manga.get_download_class
     if dw == nil
       next
@@ -101,12 +106,43 @@ end
 
 # infos is used to get all the available information on the ùanga from the database
 # this includes traces and _todo
-def infos(manga_list)
-  # todo infos
-  puts 'currently a placeholder'
-  pp manga_list
-#  manga_list.sort{|a, b| a.link <=> b.link}.each do |manga|
-#  end
+def details(manga_list)
+  database = Manga_database.instance
+  manga_list.sort{|a, b| a.link <=> b.link}.each do |manga|
+    puts 'Details for : ' + manga.name.yellow
+    puts ''
+    puts 'Web :'.yellow
+    puts 'HTML name   : ' + manga.data[11]
+    puts 'Site        : ' + manga.site
+    puts 'Link        : ' + manga.link
+    puts 'Database id : ' + manga.id.to_s
+    puts 'Author      : ' + manga.data[5]
+    puts 'Artist      : ' + manga.data[6]
+    puts 'Type        : ' + manga.data[7]
+    puts 'Status      : ' + manga.data[8]
+    puts 'Genres      : ' + manga.data[9]
+    puts 'Year        : ' + manga.data[10].to_s
+    puts 'Traces :'.yellow
+    puts 'downloaded chapters : '
+    traces = database.get_trace(manga)
+    puts 'volumes  : ' + traces.map{|e| e[2]}.uniq.size.to_s
+    puts 'chapters : ' + traces.size.to_s
+    pages = traces.map{|e| e[5]}
+    if pages.include? nil
+      puts 'Error : '.red + 'at least one chapter has no page count value in the database, please use the ' + 'data-check'.green + ' instruction to correct this'
+    else
+      puts 'pages    : ' + pages.reduce(:+)
+    end
+    puts 'Todo :'.yellow
+    todo = database.get_todo(manga).size
+    # decouper les données en pages / chapitres
+    if todo == 0
+      puts 'there are no todo to download'
+    else
+       # note : les todo s'accumulent ( la fonction de check ne semble pas fonctionner )
+      puts "there is a total of #{todo} todo(s) to download"
+    end
+  end
 end
 
 # delete all _todo elements from the manga list
@@ -151,7 +187,7 @@ def help
     file = File.open('utils/help.txt', 'r')
     content = file.read
     content = content.gsub('_todo', 'todo')
-    instructions = %w(link id file query all add update download redl param version help list output delete delete-db html todo clear infos todo reset set)
+    instructions = %w(link id file query all add update fast-update download redl param version help list output delete delete-db details html todo clear todo reset set)
     instructions.each do |instruction|
       content = content.gsub('[' + instruction + ']g', instruction.green).gsub('[' + instruction + ']y', instruction.yellow)
     end

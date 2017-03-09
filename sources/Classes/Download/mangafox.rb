@@ -170,8 +170,7 @@ class Download_Mangafox
     type = tmp_type[tmp_type.size - 1]
     html_name = tmp_type.take(tmp_type.size - 1).join(' ')
     dir_create(@dir)
-    write_cover(@doc, '//div[@class="cover"]/img', @dir + 'cover.jpg', @params[1] +
-      'mangafox/mangas/' + @manga_data.name + '.jpg')
+    write_cover(@doc, '//div[@class="cover"]/img', @dir + 'cover.jpg', @params[1] + 'mangafox/mangas/' + @manga_data.name + '.jpg')
     File.open(@dir + 'description.txt', 'w') do |txt|
       txt << data_conc(@manga_data.name, description_manipulation(description), @manga_data.site, @manga_data.link, author, artist, type, status, genres, release, html_name, alternative_names)
     end

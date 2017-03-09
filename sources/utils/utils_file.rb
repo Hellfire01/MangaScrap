@@ -6,7 +6,11 @@ def dir_create(directory)
   unless Dir.exist?(directory)
     puts directory + ' does not exist, creating it'
     list = directory.split('/')
-    build = '/' #todo => adapt dir_create for windows
+    if list[0].empty?
+      build = '/'
+    else
+      build = ""
+    end
     list = list.reject {|elem| elem.empty?}
     list.each do |elem|
       build += elem + '/'
