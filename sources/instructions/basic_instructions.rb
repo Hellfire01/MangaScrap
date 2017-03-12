@@ -63,6 +63,22 @@ def update(mangas, todo_only = false, fast_update = false)
   puts 'done'
 end
 
+# downloads the cover and description of every element
+def data(mangas)
+  puts 'downloading data of ' + mangas.size.to_s + ' element(s)'
+  html = HTML.new
+  mangas.each do |manga|
+    dw = manga.get_download_class
+    if dw == nil
+      next
+    end
+    dw.data
+    html.generate_chapter_index(manga, false)
+  end
+  html.generate_index
+  puts 'done'
+end
+
 # basically just adds all mangas before updating them all
 # also re-filters the mangas to ensure that there are no errors
 def download(mangas)
@@ -187,7 +203,7 @@ def help
     file = File.open('utils/help.txt', 'r')
     content = file.read
     content = content.gsub('_todo', 'todo')
-    instructions = %w(link id file query all add update fast-update download redl param version help list output delete delete-db details html todo clear todo reset set)
+    instructions = %w(link id file query all add update fast-update download redl param version help list output delete delete-db details html todo clear todo reset set data)
     instructions.each do |instruction|
       content = content.gsub('[' + instruction + ']g', instruction.green).gsub('[' + instruction + ']y', instruction.yellow)
     end

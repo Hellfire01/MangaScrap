@@ -30,6 +30,9 @@
         first adds all the elements to the database and then downloads them
         equivalent of [add]g and then [update]g
 
+    [data]g [data arguments compatible] [elements required] [in database]
+        downloads the cover and details ( rating, description, ... ) of the selected elements
+
     [html]g [data arguments compatible] [in database]
         MangaScrap will generate the HTML
         should no arguments be passed, only the manga indexes will be updated

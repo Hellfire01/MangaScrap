@@ -107,6 +107,10 @@ class Instructions_exec
       buff = get_valid_data('clear', false, args)
       clear(buff) unless buff.empty?
     end
+    @parser.on 'data' do |args|
+      buff = get_valid_data('data', false, args)
+      data(buff) unless buff.empty?
+    end
     @parser.on 'todo' do |args|
       buff = get_valid_data('update', false, args)
       update(buff, true) unless buff.empty?
