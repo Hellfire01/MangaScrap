@@ -2,7 +2,7 @@
 rm ~/.MangaScrap/db/params.db
 
 2 - Update your manga.db
-sqlite3 ~/.MangaScrap.db/manga.bd
+sqlite3 ~/.MangaScrap/db/manga.db
 ALTER TABLE manga_list ADD html_name TEXT;
 ALTER TABLE manga_list ADD alternative_names NTEXT;
 ALTER TABLE manga_list ADD rank int;

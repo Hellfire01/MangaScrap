@@ -4,7 +4,7 @@ mv ~/.MangaScrap/params.db ~/.MangaScrap/db/.
 mv ~/.MangaScrap/mangas.db ~/.MangaScrap/db/.
 
 2 - updating params.rb
-sqlite3 params.bd
+sqlite3 params.db
 ALTER TABLE params ADD generate_html TEXT;
 ALTER TABLE params ADD html_nsfw TEXT;
 ALTER TABLE params ADD html_nsfw_data TEXT;
