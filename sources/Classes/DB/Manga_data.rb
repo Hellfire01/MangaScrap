@@ -15,6 +15,14 @@ class Manga_data
   attr_reader :to_complete, :link, :name, :site_dir, :id, :site, :data, :status, :in_db
 
   private
+  # ensures that the link starts with http or https
+  def link_correction
+    pp @link
+    unless @link.start_with?('http://', 'https://')
+      @link = 'http://' + @link
+    end
+  end
+
   # see if the link exists ( is it redirected ? )
   def check_link(display)
     if @link == nil
@@ -148,6 +156,7 @@ class Manga_data
         return false
       end
     elsif @link != nil # got manga_data with link
+      link_correction
       @site = extract_site_from_link(@link)
       @name = extract_name_from_link(@link)
       unless is_site_compatible?(display)
