@@ -89,8 +89,8 @@ class HTML
     biggest = @traces.map { |a| [a[:volume], 0].max }.max
     @traces = @traces.sort_by { |a| [(a[:volume] < 0) ? (biggest + a[:volume] * -1) * -1 : a[:volume] * -1, -a[:chapter]] }
     @traces.each do |chapter|
-      pp chapter
-      exit 42
+#      pp chapter
+#      exit 42
       ret += "<li>\n"
       chapter_buff = (chapter[:chapter] % 1 == 0) ? chapter[:chapter].to_i.to_s : chapter[:chapter].to_s
       volume_buff = volume_int_to_string(chapter[:volume], true)
