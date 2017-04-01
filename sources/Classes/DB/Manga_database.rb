@@ -1,10 +1,6 @@
 #manga database
 class Manga_database
   include Singleton
-  private
-  def now
-    Time.new.strftime('%Y/%m/%d')
-  end
 
   public
   # used to cast the lin of manga_list into a Manga_data
@@ -137,7 +133,7 @@ class Manga_database
   #init database
   def initialize
     begin
-      @db = SQLite3::Database.new Dir.home + '/.MangaScrap/db/manga.db'
+      @db = SQLite3::Database.new(Dir.home + '/.MangaScrap/db/manga.db')
       # manga_db
       @db.execute 'CREATE TABLE IF NOT EXISTS manga_list (
         Id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, site TEXT,

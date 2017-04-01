@@ -38,13 +38,13 @@ end
 # should fast_update be set to true, all elements with the Completed status will be
 #     ignored
 def update(mangas, todo_only = false, fast_update = false)
-  puts 'updating ' + mangas.size.to_s + ' element(s)'
   html = HTML.new
   params = Params.instance.get_params
+  if fast_update
+    mangas = mangas.reject{|manga| manga.data[8] == 'Completed'}
+  end
+  puts 'updating ' + mangas.size.to_s + ' element(s)'
   mangas.each do |manga|
-    if fast_update && manga.data[8] == 'Completed'
-      next
-    end
     dw = manga.get_download_class
     if dw == nil
       next
@@ -60,6 +60,7 @@ def update(mangas, todo_only = false, fast_update = false)
     html.generate_chapter_index(manga) if generate_html
   end
   html.generate_index
+  html.generate_updated
   puts 'done'
 end
 
@@ -96,6 +97,7 @@ def html_manager(mangas)
     html.generate_chapter_index(manga, true)
   end
   html.generate_index
+  html.generate_updated
   puts 'done'
 end
 

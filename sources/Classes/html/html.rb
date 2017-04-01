@@ -1,4 +1,4 @@
-$copied_js_css = false
+$copied_js_css = []
 
 class HTML
   private
@@ -89,6 +89,8 @@ class HTML
     biggest = @traces.map { |a| [a[:volume], 0].max }.max
     @traces = @traces.sort_by { |a| [(a[:volume] < 0) ? (biggest + a[:volume] * -1) * -1 : a[:volume] * -1, -a[:chapter]] }
     @traces.each do |chapter|
+      pp chapter
+      exit 42
       ret += "<li>\n"
       chapter_buff = (chapter[:chapter] % 1 == 0) ? chapter[:chapter].to_i.to_s : chapter[:chapter].to_s
       volume_buff = volume_int_to_string(chapter[:volume], true)
@@ -122,13 +124,18 @@ class HTML
   end
 
   # generates the links for each manga ( cover + name ), used for the manga index
-  def html_get_data(site)
+  def html_get_data(site, updated_recently = false)
     mangas = @db.get_manga_list(site)
     ret = []
     i = 0
+    # mangas = mangas.reject.... if updated_recently
     mangas.sort{|a, b| a.link <=> b.link}.each do |manga|
       ret << "  <div class='manga'>"
-      ret << "    <a onmouseover=\"displayData(#{i})\" onmouseout=\"clearData()\" href=\"" + './html/' + manga.name + '.html' + '">'
+      if updated_recently
+        ret << "    <a href=\"" + './html/' + manga.name + '.html' + '">'
+      else
+        ret << "    <a onmouseover=\"displayData(#{i})\" onmouseout=\"clearData()\" href=\"" + './html/' + manga.name + '.html' + '">'
+      end
       source_buffer = '      <img src="./mangas/' + manga.name + '.jpg' + '">'
       if @params[9] == 'false'
         manga_genres = manga.data[9].split(', ')
@@ -154,18 +161,21 @@ class HTML
     File.open(dest, 'w') {|f| f.write(file)}
   end
 
-  def copy_html_related_files
-    unless $copied_js_css
+  # copies the static files ( the css and css witch is not edited )
+  # keeps track of what was copied to avoid unnecessary copies
+  def copy_html_related_files(site)
+    unless $copied_js_css.include?(site)
       dir_create(@dir + 'html/css/')
       dir_create(@dir + 'html/js/')
       # css
       file_copy(__dir__ + '/../../../templates/chapter_index_template.css', @dir + '/html/css/chapter_index.css')
       file_copy(__dir__ + '/../../../templates/chapter_template.css', @dir + '/html/css/chapter.css')
       file_copy(__dir__ + '/../../../templates/manga_index_template.css', @dir + '/html/css/manga_index.css')
+      file_copy(__dir__ + '/../../../templates/manga_updated_index_template.css', @dir + '/html/css/manga_updated_index.css')
       # js
       file_copy(__dir__ + '/../../../templates/chapter_index_template.js', @dir + '/html/js/chapter_index.js')
       file_copy(__dir__ + '/../../../templates/chapter_template.js', @dir + '/html/js/chapter.js')
-      $copied_js_css = true
+      $copied_js_css << site
     end
   end
 
@@ -218,11 +228,10 @@ class HTML
   def generate_index
     if @params[8] == 'true' || @force_html == true
       puts 'updating html of manga index'
-      # every single site has it's own directory witch is get through the function get_dir_from_site
-      sites = ['http://mangafox.me/']
+      sites = Manga_data.get_compatible_sites
       sites.each do |site|
         @dir = @params[1] + get_dir_from_site(site)
-        copy_html_related_files
+        copy_html_related_files(site)
         template = File.open('templates/manga_index_template.html').read
         template = template.gsub('#####list#####', html_get_data(site))
         File.open(@dir + 'index.html', 'w') {|f| f.write(template)}
@@ -231,7 +240,29 @@ class HTML
         File.open(@dir + 'html/js/manga_index.js', 'w') {|f| f.write(js)}
       end
     end
-    # important !!! => les fichiers css DOIVENT être copiés
+  end
+
+  # very similar to the index but only shows the recently updated elements
+
+  # WARNING ======================================================================================================================================================
+  #
+  # pour savoir qui a fait une mise à jour en dernier :
+  # requete SQL de type (SELECT manga_id(unique) from traces where updated *less than 2 days*)
+  #
+  # WARNING ======================================================================================================================================================
+
+  def generate_updated
+    if @params[8] == 'true' || @force_html == true
+      puts 'generating updated index'
+      sites = Manga_data.get_compatible_sites
+      sites.each do |site|
+        @dir = @params[1] + get_dir_from_site(site)
+        copy_html_related_files(site)
+        template = File.open('templates/manga_updated_index_template.html').read
+        template = template.gsub('#####list#####', html_get_data(site, true))
+        File.open(@dir + 'index_updated.html', 'w') {|f| f.write(template)}
+      end
+    end
   end
 
   # the constructor copies all the css and places them in the html dir

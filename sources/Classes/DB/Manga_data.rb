@@ -95,6 +95,10 @@ class Manga_data
   end
 
   public
+  def self.get_compatible_sites
+    ['http://mangafox.me/']
+  end
+
   def to_s
     'link = ' + ((@link == nil) ? '/' : '"' + @link + '"') +
       ', name = ' + ((@name == nil) ? '/' : '"' + @name + '"') +

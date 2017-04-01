@@ -12,3 +12,7 @@ end
 def html_chapter_filename(chapter, volume)
   '/v' + vol_buffer_string(volume) + 'c' + chap_buffer_string(chapter) + '.html'
 end
+
+def now
+  Time.new.strftime('%Y/%m/%d')
+end
