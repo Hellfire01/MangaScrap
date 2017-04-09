@@ -1,6 +1,7 @@
 ### Changelog :
 
-0.11.3 : debugs mineurs + implémentation de scripts pour faire les migrations plus facilement<br />
+0.11.4 : added an API and instructions on how to use it, it will be used for the GUI<br />
+0.11.3 : small bug fixes + implemented scripts to allow faster migrations / updates<br />
 0.11.2 : implemented the 'data' instruction<br />
 0.11.1 : implemented the 'details' and 'fast-update' instructions + debugged the delete-diff + the directory system should be compatible with Windows<br />
 0.11.0 : the argument management completely changed and is now much easier to use ( added instructions and a new way to use MangaScrap ) + the html was heavily optimised + added a management of bad gem loads + changed the way mangas are identified to allow the scrap of multiple sites<br />

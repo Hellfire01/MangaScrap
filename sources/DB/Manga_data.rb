@@ -103,6 +103,7 @@ class Manga_data
   end
 
   public
+  # returns an array of the sites that MangaScrap currently manages
   def self.get_compatible_sites
     ['http://mangafox.me/']
   end
@@ -113,9 +114,11 @@ class Manga_data
       ', site = ' + ((@site == nil) ? '/' : '"' + @site + '"')
   end
 
+  # used to get an array containing the volume / chapter / page values from a link
+  # will exit if the resolve method was not called before and did not return true
   def extract_values_from_link(link)
     unless @status
-      critical_error('extract_values_from_link function was called when the data class was not resolved or invalid')
+      critical_error('the extract_values_from_link method was called when the data class was not resolved or invalid')
     end
     case @site
       when 'http://mangafox.me/'
@@ -125,9 +128,11 @@ class Manga_data
     end
   end
 
+  # returns the class used to download the manga
+  # will exit if the resolve method was not called before and did not return true
   def get_download_class
     unless @status
-      critical_error('the download class was required when the data class is not ready')
+      critical_error('the get_download_class method was called when the data class was not resolved or invalid')
     end
     begin
       case @site
@@ -145,8 +150,10 @@ class Manga_data
   end
 
   # the function resolve will try to complete the missing information
-  # for that it will connect to the database and check or look online
-  #     unless get_data_in_db
+  # for that it will connect to the database and check or look online unless get_data_in_db
+  # please note that the function will exit if the constructor was not called with the good arguments
+  # connect = bool, determines if the class can try to use internet if it could not find in the database
+  # display = bool, used to allow writing on the standard output or not
   def resolve(connect, display)
     if @status
       return true
@@ -192,7 +199,12 @@ class Manga_data
     end
   end
 
-  # if data = nil => the manga is not in the database
+  # the constructor takes multiple arguments but they should not all be given at once unless the data comes from the database
+  # id = int / nil, is the id used in the database
+  # name = string / nil, is the name used in the url of the manga
+  # site = string / nil, is the name of the website hosting the manga
+  # link = string / nil, is the url of the manga
+  # data = array of elements / nil, the array contains the line of the manga in the database
   def initialize(id, name, site, link, data)
     @name = name
     @site = site

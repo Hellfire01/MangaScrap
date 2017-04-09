@@ -1,7 +1,7 @@
 # reading the file, adding DB values and setting the colors ( when needed )
 def param_list
   params = Params.instance.get_params
-  template = File.open('templates/params.txt').read
+  template = File.open('sources/templates/text/params.txt').read
   template = template.gsub('#{params[1]}', params[1].green)
   template = template.gsub('#{params[2]}', params[2].to_s.green.to_s)
   template = template.gsub('#{params[3]}', params[3].to_s.green.to_s)

@@ -1,10 +1,19 @@
 # this class is used to cut the arguments given to MangaScrap and allow
 class Instruction_parser
   private
-  # function used to exit whenever there is not enought argument for a 'jump'
+  # function used to exit whenever there is not enough argument for a 'jump'
+  # jump : number of arguments required
+  # prev : the argument
+  # parent : the instruction
   def jump_error_exit(prev, jump, parent)
     puts 'Error : '.red + prev.yellow + ' requires ' + jump.to_s.yellow + ' more argument(s)'
     puts 'in : [' + parent + ']'
+    case prev
+      when 'id'
+        puts 'id '.yellow + 'requires a ' + 'name'.blue + ' ( first argument ) and a ' + 'site'.blue + ' ( second argument )'
+s      else
+        # other instructions
+    end
     exit 4
   end
 

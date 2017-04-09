@@ -168,13 +168,13 @@ class HTML
       dir_create(@dir + 'html/css/')
       dir_create(@dir + 'html/js/')
       # css
-      file_copy(__dir__ + '/../../../templates/chapter_index_template.css', @dir + '/html/css/chapter_index.css')
-      file_copy(__dir__ + '/../../../templates/chapter_template.css', @dir + '/html/css/chapter.css')
-      file_copy(__dir__ + '/../../../templates/manga_index_template.css', @dir + '/html/css/manga_index.css')
-      file_copy(__dir__ + '/../../../templates/manga_updated_index_template.css', @dir + '/html/css/manga_updated_index.css')
+      file_copy(__dir__ + '/../templates/web/chapter_index_template.css', @dir + '/html/css/chapter_index.css')
+      file_copy(__dir__ + '/../templates/web/chapter_template.css', @dir + '/html/css/chapter.css')
+      file_copy(__dir__ + '/../templates/web/manga_index_template.css', @dir + '/html/css/manga_index.css')
+      file_copy(__dir__ + '/../templates/web/manga_updated_index_template.css', @dir + '/html/css/manga_updated_index.css')
       # js
-      file_copy(__dir__ + '/../../../templates/chapter_index_template.js', @dir + '/html/js/chapter_index.js')
-      file_copy(__dir__ + '/../../../templates/chapter_template.js', @dir + '/html/js/chapter.js')
+      file_copy(__dir__ + '/../templates/web/chapter_index_template.js', @dir + '/html/js/chapter_index.js')
+      file_copy(__dir__ + '/../templates/web/chapter_template.js', @dir + '/html/js/chapter.js')
       $copied_js_css << site
     end
   end
@@ -200,7 +200,7 @@ class HTML
       @index_path = @dir + 'index.html' #todo : manage sites
       @traces = get_traces(manga_data)
       dir_create(@path_html)
-      template = File.open('templates/chapter_index_template.html').read
+      template = File.open('sources/templates/web/chapter_index_template.html').read
       template = template.gsub('#####name#####', @manga_name)
       template = template.gsub('#####description#####', @manga_data[2].gsub("\n", '<br />'))
       template = template.gsub('#####site#####', html_a_buffer(@manga_data[4]))
@@ -218,7 +218,7 @@ class HTML
       template = chapter_list_to_a_list(template).gsub('#', '%23')
       File.open(@path_html + '.html', 'w') {|f| f.write(template)}
       if index
-        @chapter_template = File.open('templates/chapter_template.html').read
+        @chapter_template = File.open('sources/templates/web/chapter_template.html').read
         html_generate_chapters(manga_data)
       end
     end
@@ -232,10 +232,10 @@ class HTML
       sites.each do |site|
         @dir = @params[1] + get_dir_from_site(site)
         copy_html_related_files(site)
-        template = File.open('templates/manga_index_template.html').read
+        template = File.open('sources/templates/web/manga_index_template.html').read
         template = template.gsub('#####list#####', html_get_data(site))
         File.open(@dir + 'index.html', 'w') {|f| f.write(template)}
-        js = File.open('templates/manga_index_template.js').read
+        js = File.open('sources/templates/web/manga_index_template.js').read
         js = js.gsub('#####tab#####', index_js_data(site))
         File.open(@dir + 'html/js/manga_index.js', 'w') {|f| f.write(js)}
       end
@@ -258,7 +258,7 @@ class HTML
       sites.each do |site|
         @dir = @params[1] + get_dir_from_site(site)
         copy_html_related_files(site)
-        template = File.open('templates/manga_updated_index_template.html').read
+        template = File.open('sources/templates/web/manga_updated_index_template.html').read
         template = template.gsub('#####list#####', html_get_data(site, true))
         File.open(@dir + 'index_updated.html', 'w') {|f| f.write(template)}
       end

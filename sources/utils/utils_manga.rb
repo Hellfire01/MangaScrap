@@ -111,6 +111,7 @@ def description_manipulation(description, line_size = 120, min_nb_lines = 0)
   ret
 end
 
+# used to get the volume, chapter and page of a link as an array
 def data_extractor_MF(link)
   if link[link.size - 1] == '/'
     page = 1
