@@ -14,7 +14,6 @@ Will add a manga to follow to the database
 Will update all mangas within the database
 - `./MangaScrap download link [link]`<br />
 Will add the manga to the database and then download it
-<br />
 
 ### configuration
 
@@ -31,7 +30,6 @@ Displays instructions<br />
 - The program will download all mangas in ~/Documents/mangas/ by default ( should the path not exist, it will be created automatically )<br />
 - Currently MangaScrap only manages mangafox but it is planned to do much more in the near future<br />
 - The dev branch of MangaScrap is on [gitlab](https://gitlab.com/Hellfire01/MangaScrapp)
-<br />
 
 ### API :
 
