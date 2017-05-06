@@ -1,6 +1,10 @@
 #manga database
 class Manga_database
   include Singleton
+  private
+  def now
+    Time.new.strftime('%Y/%m/%d')
+  end
 
   public
   # used to cast the lin of manga_list into a Manga_data
@@ -8,33 +12,23 @@ class Manga_database
     Manga_data.new(data[0], data[1], data[3], data[4], data)
   end
 
-  # tries and caches an sql request
-  def db_exec(request, error, args = [])
-    begin
-      ret = @db.execute request, args
-    rescue SQLite3::Exception => e
-      critical_error(error, e)
-    end
-    ret
-  end
-
   # def add_manga(*args)
   def add_manga(manga_data, description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max)
     arguments = [manga_data.name, description, manga_data.site, manga_data.link, author, artist, type, status, genres,release, html_name, alternative_names, rank, rating, rating_max, now, false.to_s, false.to_s]
-    db_exec('INSERT INTO manga_list VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 'could not insert ' + manga_data.name.yellow + ' into the database', arguments)
+    Utils_database::db_exec('INSERT INTO manga_list VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 'could not insert ' + manga_data.name.yellow + ' into the database', @db, arguments)
   end
 
   def update_manga(manga_name, description, author, artist, genres, html_name, alternative_names, rank, rating, rating_max)
     args = [description, author, artist, html_name, genres, alternative_names, rank, rating, rating_max]
     # manga_name variable must always be last ( note for future updates )
     args << manga_name
-    db_exec('UPDATE manga_list SET description=?, author=?, artist=?, html_name=?, genres=?, alternative_names=?, rank=?, rating=?, rating_max=? WHERE name=?', 'could not update ' + manga_name.yellow, args)
+    Utils_database::db_exec('UPDATE manga_list SET description=?, author=?, artist=?, html_name=?, genres=?, alternative_names=?, rank=?, rating=?, rating_max=? WHERE name=?', 'could not update ' + manga_name.yellow, @db, args)
   end
 
   def delete_manga(manga_data)
     clear_todo(manga_data)
-    db_exec('DELETE FROM manga_trace WHERE mangaId=?', "Exception while deleting #{manga_data.name} from trace database", [manga_data.id])
-    db_exec('DELETE FROM manga_list WHERE Id=?', "Exception while deleting #{manga_data.name} from database", [manga_data.id])
+    Utils_database::db_exec('DELETE FROM manga_trace WHERE mangaId=?', "Exception while deleting #{manga_data.name} from trace database", @db, [manga_data.id])
+    Utils_database::db_exec('DELETE FROM manga_list WHERE Id=?', "Exception while deleting #{manga_data.name} from database", @db, [manga_data.id])
   end
 
   def get_manga(manga_data)
@@ -42,9 +36,7 @@ class Manga_database
       puts 'Error '.red + ': while trying to get manga in database => Data is nil'
       exit 2
     end
-    # todo use db_exec correctly
-    ret = db_exec("SELECT * FROM manga_list WHERE name='#{manga_data.name}' and site='#{manga_data.site}'", "Exception while getting #{manga_data.name} in database")
-    ret[0]
+    Utils_database::db_exec('SELECT * FROM manga_list WHERE name=? and site=?', "Exception while getting #{manga_data.name} in database", @db, [manga_data.name, manga_data.site])[0]
   end
 
   def manga_in_data?(manga_data)
@@ -57,9 +49,9 @@ class Manga_database
   # todo il faut adapter le html
   def get_manga_list(site = nil)
     if site == nil
-      buff = db_exec('SELECT * FROM manga_list ORDER BY name COLLATE NOCASE', 'Exception while getting manga list')
+      buff = Utils_database::db_exec('SELECT * FROM manga_list ORDER BY name COLLATE NOCASE', 'Exception while getting manga list', @db)
     else
-      buff = db_exec('SELECT * FROM manga_list WHERE site=? ORDER BY name COLLATE NOCASE', 'Exception while getting manga list', [site])
+      buff = Utils_database::db_exec('SELECT * FROM manga_list WHERE site=? ORDER BY name COLLATE NOCASE', 'Exception while getting manga list', @db, [site])
     end
     ret = []
     buff.each do |manga|
@@ -84,20 +76,20 @@ class Manga_database
         return false
       end
     end
-    db_exec('INSERT INTO manga_todo VALUES (NULL, ?, ?, ?, ?, ?)', 'could not add todo for ' + manga_data.name, insert)
+    Utils_database::db_exec('INSERT INTO manga_todo VALUES (NULL, ?, ?, ?, ?, ?)', 'could not add todo for ' + manga_data.name, @db, insert)
     true
   end
 
   def get_todo(manga_data)
-    db_exec('SELECT * FROM manga_todo WHERE mangaId=?', 'exception on database while getting todo of ' + manga_data.name, [manga_data.id])
+    Utils_database::db_exec('SELECT * FROM manga_todo WHERE mangaId=?', 'exception on database while getting todo of ' + manga_data.name, @db, [manga_data.id])
   end
 
   def delete_todo(id)
-    db_exec('DELETE FROM manga_todo WHERE Id=?', 'exception on database while deleting todo element', [id])
+    Utils_database::db_exec('DELETE FROM manga_todo WHERE Id=?', 'exception on database while deleting todo element', @db, [id])
   end
 
   def clear_todo(manga_data)
-    db_exec('DELETE FROM manga_todo WHERE mangaId=?', "exception on database while deleting todo of #{manga_data.name}", [manga_data.id])
+    Utils_database::db_exec('DELETE FROM manga_todo WHERE mangaId=?', "exception on database while deleting todo of #{manga_data.name}", @db, [manga_data.id])
   end
 
   # trace database
@@ -118,16 +110,16 @@ class Manga_database
       end
     end
     unless found
-      db_exec('INSERT INTO manga_trace VALUES (NULL, ?, ?, ?, ?, ?)', 'could not add trace for ' + manga_data.name.yellow, insert)
+      Utils_database::db_exec('INSERT INTO manga_trace VALUES (NULL, ?, ?, ?, ?, ?)', 'could not add trace for ' + manga_data.name.yellow, @db, insert)
     end
   end
   
   def get_trace(manga_data)
-    db_exec('SELECT * FROM manga_trace WHERE mangaId=?', "could not get trace database of #{manga_data.name}", [manga_data.id])
+    Utils_database::db_exec('SELECT * FROM manga_trace WHERE mangaId=?', "could not get trace database of #{manga_data.name}", @db, [manga_data.id])
   end
 
   def delete_trace(manga_data, chapter)
-    db_exec('DELETE FROM manga_trace WHERE mangaId=? AND volume=? and chapter=?', 'could not erase element from trace database', [manga_data.id, chapter[0], chapter[1]])
+    Utils_database::db_exec('DELETE FROM manga_trace WHERE mangaId=? AND volume=? and chapter=?', 'could not erase element from trace database', @db, [manga_data.id, chapter[0], chapter[1]])
   end
 
   #init database
@@ -151,7 +143,7 @@ class Manga_database
       @db.execute 'CREATE TABLE IF NOT EXISTS manga_trace_string (
         Id INTEGER PRIMARY KEY AUTOINCREMENT, mangaId INTEGER, chap TEXT, date VARCHAR(32), nb_pages INTEGER)'
     rescue SQLite3::Exception => e
-      critical_error('exception occured while trying to open / create tables', e)
+     Utils_errors::critical_error('exception occured while trying to open / create tables', e)
     end
   end
 end

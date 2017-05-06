@@ -28,7 +28,7 @@ class File_parser
       @text = File.open(@file_name).read
       @text.gsub!(/\r\n?/, '\n')
     rescue => e
-      critical_error('could not open file ' + @file_name.yellow, e)
+     Utils_errors::critical_error('could not open file ' + @file_name.yellow, e)
     end
     true
   end

@@ -1,7 +1,10 @@
 sudo pacman -S ruby
+sudo pacman -S tk
+
 gem install sqlite3
 gem install colorize
 gem install nokogiri
+gem install tk
 
 add the following line to your .bashrc ( or .zshrc ) :
 PATH=$PATH:~/.gem/ruby/2.4.0/bin

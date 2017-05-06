@@ -1,8 +1,8 @@
-class Download_Mangafox
+class Download_Mangareader_Pandamanga
   private
   def extract_links(manga)
     tries = @params[4]
-    links = @doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
+    links = @doc.xpath('//table[@id="listing"]/tr/td/a').map{ |link| link['href'] }
     while (links == nil || links.size == 0) && tries > 0
       puts ('error while retrieving chapter index of ' + manga.name).yellow
       doc = get_page(manga.link)
@@ -14,7 +14,11 @@ class Download_Mangafox
     if links == nil || links.size == 0
       raise ('failed to get manga '.red + manga.name.yellow + ' chapter index'.red)
     end
-    links
+    ret = []
+    links.each do |link|
+      ret << @manga_data.site + link[1..-1]
+    end
+    ret
   end
 
   def link_err(data, chapter = false)
@@ -28,27 +32,6 @@ class Download_Mangafox
     false
   end
 
-  # takes the volume value to return it's string value
-  def volume_string(value)
-    volume_string = ''
-    case value
-      when (value == -2)
-        volume_string = ' of volume TBD'
-      when (value == -3)
-        volume_string = ' of volume NA'
-      when (value == -4)
-        volume_string = ' of volume ANT'
-      when (value >= 0)
-        volume_string = " of volume #{value}"
-        if value % 1 == 0
-          volume_string += ' '
-        end
-      else
-        # volume string remains empty for return
-    end
-    volume_string
-  end
-
   public
   def get_links
     @links
@@ -56,26 +39,7 @@ class Download_Mangafox
 
   # todo => vérifier s'il n'est pas possible de supprimer cette fonction
   def link_generator(volume, chapter, page)
-    chapter = chapter.to_i if chapter % 1 == 0
-    link = @manga_data.site + 'manga/' + @manga_data.name + '/'
-    if volume >= 0
-      vol_buffer = ((volume >= 10) ? '' : '0')
-      link += 'v' + vol_buffer + volume.to_s + '/'
-    elsif volume == -2
-      link += 'vTBD/'
-    elsif volume == -3
-      link += 'vNA/'
-    elsif volume == -4
-      link += 'vANT/'
-    end
-    chap_buffer = ((chapter < 10) ? '00' : ((chapter < 100) ? '0' : ''))
-    link += 'c' + chap_buffer
-    if chapter % 1 == 0
-      link += chapter.to_i.to_s
-    else
-      link += chapter.to_s
-    end
-    link += '/' + page.to_s + '.html'
+    link = @manga_data.site + @manga_data.name + '/' + chapter.to_s + '/' + page.to_s
     if Utils_connection::redirection_detection(link)
       puts 'Error : generated a bad link\nlink = ' + link
       return nil
@@ -88,7 +52,7 @@ class Download_Mangafox
     if page == nil
       return false
     end
-    pic_link = page.xpath('//img[@id="image"]').map{|img| img['src']}
+    pic_link = page.xpath('//img').map{|img| img['src']}
     if pic_link[0] == nil
       return link_err(data)
     end
@@ -101,33 +65,29 @@ class Download_Mangafox
   end
 
   def chapter_link(link, prep_display = '')
-    data = Utils_website_specific::Mangafox::data_extractor(link)
-    if data[0] == -42
-      @aff.unmanaged_link(link)
-      false
-    end
-    last_pos = link.rindex(/\//)
-    link = link[0..last_pos].strip + '1.html'
+    data = @manga_data.extract_values_from_link(link)
     page = Utils_connection::get_page(link, true)
     if page == nil
       return link_err(data, true)
     end
-    @aff.prepare_chapter("downloading chapter #{data[1]}#{volume_string(data[0])} of #{@manga_data.name}" + prep_display)
-    number_of_pages = page.xpath('//div[@class="l"]').text.split.last.to_i
+    @aff.prepare_chapter("downloading chapter #{data[1]} of #{@manga_data.name}" + prep_display)
+    number_of_pages = page.xpath('//option').last.text.to_i
     page_nb = 1
+    link += '/1'
     while page_nb <= number_of_pages
       data[2] = page_nb
       unless page_link(link, data)
         link_err(data)
       end
       @aff.downloaded_page(page_nb)
-      page_nb += 1
       last_pos = link.rindex(/\//)
-      link = link[0..last_pos].strip + page_nb.to_s + '.html'
+      link = link[0..last_pos].strip + page_nb.to_s
+      page = ''
       page = Utils_connection::get_page(link, true)
       if page == nil
         return link_err(data, true)
       end
+      page_nb += 1
     end
     @aff.dump_chapter
     @db.add_trace(@manga_data, data[0], data[1], number_of_pages)
@@ -142,19 +102,18 @@ class Download_Mangafox
       biggest = todo.map { |a| [a[2], 0].max }.max
       todo = todo.sort_by! { |a| [(a[2] < 0) ? (biggest + a[2] * -1) : a[2], -a[3]] }
       todo.each do |elem|
-        volume_string = volume_string(elem[2])
         if elem[4] != -1
-          @aff.display_todo("downloading page #{elem[4]}, chapter #{elem[3]}" + ((elem[2] == -1) ? '' : ", volume #{elem[2]} "))
+          @aff.display_todo("downloading page #{elem[4]}, chapter #{elem[3]}")
           data = []
-          data << elem[2] << elem[3] << elem[4]
-          if (link = link_generator(elem[2], elem[3], elem[4])) != nil && page_link(link, data) == true
+          data << -1 << elem[3] << elem[4]
+          if (link = link_generator(-1, elem[3], elem[4])) != nil && page_link(link, data) == true
             @db.delete_todo(elem[0])
           else
             @aff.todo_err("failed to download page #{elem[4]} of chapter #{elem[3]}" + volume_string)
           end
         else
-          @aff.display_todo("downloading chapter #{elem[3]}" + ((elem[2] == -1) ? '' : ", volume #{elem[2]} "), true)
-          if (link = link_generator(elem[2], elem[3], 1)) != nil && chapter_link(link) == true
+          @aff.display_todo("downloading chapter #{elem[3]}")
+          if (link = link_generator(-1, elem[3], 1)) != nil && chapter_link(link) == true
             @db.delete_todo(elem[0])
           else
             @aff.todo_err("failed to download chapter #{elem[3]}" + volume_string, true)
@@ -170,8 +129,8 @@ class Download_Mangafox
     traces = @db.get_trace(@manga_data)
     i = 0
     @links.each do |link|
-      data = Utils_website_specific::Mangafox::data_extractor(link)
-      if traces.count{|_id, _manga_name, vol_value, chap_value| vol_value == data[0] && chap_value == data[1]} == 0
+      data = @manga_data.extract_values_from_link(link)
+      if traces.count{|_id, _manga_name, _vol_value, chap_value| chap_value == data[1]} == 0
         prep_display = " ( link #{i + 1} / #{@links.size} )"
         chapter_link(link, prep_display)
       end
@@ -196,23 +155,21 @@ class Download_Mangafox
 
   def data
     @extracted_data = true
-    alternative_names = @doc.xpath('//div[@id="title"]/h3').text
-    release_author_artist_genres = @doc.xpath('//td[@valign="top"]')
-    release = release_author_artist_genres[0].text.to_i
-    author = release_author_artist_genres[1].text.gsub(/\s+/, '').gsub(',', ', ')
-    artist = release_author_artist_genres[2].text.gsub(/\s+/, '').gsub(',', ', ')
-    genres = release_author_artist_genres[3].text.gsub(/\s+/, '').gsub(',', ', ')
-    description = @doc.xpath('//p[@class="summary"]').text
-    data = @doc.xpath('//div[@class="data"]/span')
-    status = data[0].text.gsub(/\s+/, '').split(',')[0]
-    rank = data[1].text[/\d+/]
-    rating = data[2].text[/\d+[.,]\d+/]
-    rating_max = 5 # rating max is a constant in mangafox
-    tmp_type = @doc.xpath('//div[@id="title"]/h1')[0].text.split(' ')
-    type = tmp_type[tmp_type.size - 1]
-    html_name = tmp_type.take(tmp_type.size - 1).join(' ')
+    tmp = @doc.xpath('//div[@id="mangaproperties"]/table/tr')
+    alternative_names = tmp[1].text.split(':')[1].strip
+    release = tmp[2].text.split(':')[1].strip.to_i
+    author = tmp[4].text.split(':')[1].strip
+    artist = tmp[5].text.split(':')[1].strip
+    genres = tmp[7].text.split(':')[1].strip
+    description = @doc.xpath('//div[@id="readmangasum"]/p')[0].text
+    status = tmp[3].text.split(':')[1].strip
+    rank = -1
+    rating = -1
+    rating_max = -1
+    type = (tmp[6].text.split(':')[1].strip == 'Right to Left') ? 'Manga' : 'Manhwa'
+    html_name = @doc.xpath('//h2')[0].text
     Utils_file::dir_create(@dir)
-    Utils_connection::write_cover(@doc, '//div[@class="cover"]/img', @dir + 'cover.jpg', @params[1] + 'mangafox/mangas/' + @manga_data.name + '.jpg')
+    Utils_connection::write_cover(@doc, '//div[@id="mangaimg"]/img', @dir + 'cover.jpg', @params[1] + 'mangareader/mangas/' + @manga_data.name + '.jpg')
     File.open(@dir + 'description.txt', 'w') do |txt|
       txt << Utils_file::data_concatenation(@manga_data.name, Utils_file::description_manipulation(description), @manga_data.site, @manga_data.link, author, artist, type, status, genres, release, html_name, alternative_names)
     end
@@ -232,7 +189,7 @@ class Download_Mangafox
     @dir = @params[1] + manga.site_dir + 'mangas/' + manga.name + '/'
     @db = Manga_database.instance
     # doc is the variable that stores the raw data of the manga's page
-    @aff = DownloadDisplay.new('mangafox', manga.name)
+    @aff = DownloadDisplay.new('mangareader', manga.name)
     @doc = Utils_connection::get_page(manga.link, true)
     if @doc == nil
       raise 'failed to get manga ' + manga.name + "'s chapter index"
@@ -240,6 +197,6 @@ class Download_Mangafox
     if download_data
       data
     end
-    @links = extract_links(manga).reverse
+    @links = extract_links(manga)
   end
 end

@@ -10,8 +10,7 @@
  INSTRUCTIONS :
     definitions :
         [data arguments compatible] : can use the second group of argument called data arguments
-        [own arguments] : requires it's own set of arguments. Should there also be [data arguments], they
-            will always be placed before
+        [own arguments] : requires it's own set of arguments. They are always placed first before other arguments
         [in database] : all elements must be in the database
         [not in database] : all elements must not be in the database
         [elements required] : the instruction cannot be run without at least an element
@@ -29,6 +28,23 @@
     [download]g [data arguments compatible] [elements required] [not in database]
         first adds all the elements to the database and then downloads them
         equivalent of [add]g and then [update]g
+
+    [redl]g / [re-download]g [own arguments] [data arguments compatible] [elements required] [in database]
+        alows to re-download pages of the selected element(s)
+        [redl]g takes 1 to 3 arguments
+
+            [p]y page_value
+                specifies the page witch you want to be downloaded
+                the page must be used with the chapter ([c]y) argument
+
+            [c]y chapter_value
+                specifies the chapter witch you want to be downloaded
+                can be used without the volume ([v]y) unless they are
+
+            [v]y volume_value
+                specifies the volume witch you want to be downloaded
+                can be used independently of the page ([p]y) and chapter ([p]y) argument
+
 
     [data]g [data arguments compatible] [elements required] [in database]
         downloads the cover and details ( rating, description, ... ) of the selected elements
@@ -116,6 +132,9 @@
 
  ./MangaScrap.rb [update]g [file]y file.txt
     updates all mangas in file.txt
+
+ ./MangaScrap.rb [redl]g [p]y 1 [c]y 1 [id]y super_manga super_site
+    re-downloads the page 1 of the chapter 1 of the super_manga from the super_site
 
  ./MangaScrap.rb [param]g [set]y mp /home/toto/
     sets the path of the destination directory to /home/toto

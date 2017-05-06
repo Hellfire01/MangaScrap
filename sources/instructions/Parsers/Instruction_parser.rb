@@ -11,7 +11,7 @@ class Instruction_parser
     case prev
       when 'id'
         puts 'id '.yellow + 'requires a ' + 'name'.blue + ' ( first argument ) and a ' + 'site'.blue + ' ( second argument )'
-s      else
+      else
         # other instructions
     end
     exit 4
@@ -28,9 +28,9 @@ s      else
       else
         puts '', '', '', '', ''
       end
-      display = 'executing : ' + buff[0].green + ' ' + buff[1].join(' ')
+      display = 'executing : ' + buff[0].green + ' ' + buff[1].join(' ') + ' '
       @jump.each do |e|
-        display = display.gsub(e[0] + ' ', e[0].yellow + ' ') # todo improve this to avoid colorizing arguments
+        display = display.gsub(' ' + e[0] + ' ', ' ' + e[0].yellow + ' ') # todo improve this to avoid colorizing arguments
       end
       puts display
       puts ''

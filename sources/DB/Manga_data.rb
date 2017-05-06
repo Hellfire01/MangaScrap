@@ -17,7 +17,6 @@ class Manga_data
   private
   # ensures that the link starts with http or https
   def link_correction
-    pp @link
     unless @link.start_with?('http://', 'https://')
       @link = 'http://' + @link
     end
@@ -31,7 +30,7 @@ class Manga_data
         @link += '/'
       end
     end
-    if redirection_detection(@link)
+    if Utils_connection::redirection_detection(@link)
         puts 'Warning :'.yellow + ' could not connect to ' + @link.yellow if display
       return false
     end
@@ -54,22 +53,6 @@ class Manga_data
     tmp.split('/').first
   end
 
-  # gets the line content from the database
-  def copy_from_database
-    tmp = Manga_database.instance.db_exec('SELECT * FROM manga_list WHERE link=?', 'did not find manga', [@link])
-    if tmp != nil
-      @status = true
-      @in_db = true
-      @id = tmp[0]
-      @name = tmp[1]
-      @site = tmp[3]
-      @data = tmp
-      is_site_compatible?(false) # function used here to get @site_dir and @ to_complete
-      return true
-    end
-    false
-  end
-
   # if the manga is already in the database, get all the information
   def get_data_in_db
     ret = Manga_database.instance.get_manga(self)
@@ -88,29 +71,47 @@ class Manga_data
   # check if the site is managed and correct it to be compatible with the DB
   def is_site_compatible?(display)
     case @site
-      when 'http://mangafox.me/', 'mangafox', 'mangafox.me', 'http://mangafox.me'
+      when 'http://mangafox.me/', 'http://mangafox.me', 'mangafox.me', 'mangafox'
         @site = 'http://mangafox.me/'
         @to_complete = 'manga/'
-        @site_dir = get_dir_from_site(@site)
-        if @link == nil
-          @link = @site + @to_complete + @name
-        end
-        return true
+      when 'http://www.mangareader.net/', 'http://www.mangareader.net', 'www.mangareader.net', 'mangareader.net', 'mangareader'
+        @site = 'http://www.mangareader.net/'
+        @to_complete = ''
+      when 'http://www.mangapanda.com/', 'http://www.mangapanda.com', 'www.mangapanda.com', 'mangapanda.com', 'mangapanda'
+        @site = 'http://www.mangapanda.com/'
+        @to_complete = ''
       else
         puts 'Data error '.red + '(invalid link) :' + ' the site ' + @site.yellow + ' is unmanaged' if display
         return false
     end
+    if @link == nil
+      @link = @site + @to_complete + @name
+    end
+    @site_dir = Manga_data::get_dir_from_site(@site)
+    true
   end
 
   public
   # returns an array of the sites that MangaScrap currently manages
   def self.get_compatible_sites
-    ['http://mangafox.me/']
+    %w(http://mangafox.me/ http://www.mangareader.net/ http://www.mangapanda.com/)
+  end
+
+  def self.get_dir_from_site(site)
+    case site
+      when 'http://mangafox.me/', 'http://mangafox.me', 'mangafox.me', 'mangafox'
+        return 'mangafox/'
+      when 'http://www.mangareader.net/', 'http://www.mangareader.net', 'mangareader.net', 'mangareader'
+        return 'mangareader/'
+      when 'http://www.mangapanda.com/', 'http://www.mangapanda.com', 'mangapanda.com', 'mangapanda'
+        return 'mangapanda/'
+      else
+       Utils_errors::critical_error('the function get_dir_from_site was called with a bad argument (' + site.yellow + ')')
+    end
   end
 
   def to_s
-    'link = ' + ((@link == nil) ? '/' : '"' + @link + '"') +
-      ', name = ' + ((@name == nil) ? '/' : '"' + @name + '"') +
+    'link = ' + ((@link == nil) ? '/' : '"' + @link + '"') + ', name = ' + ((@name == nil) ? '/' : '"' + @name + '"') +
       ', site = ' + ((@site == nil) ? '/' : '"' + @site + '"')
   end
 
@@ -118,35 +119,41 @@ class Manga_data
   # will exit if the resolve method was not called before and did not return true
   def extract_values_from_link(link)
     unless @status
-      critical_error('the extract_values_from_link method was called when the data class was not resolved or invalid')
+     Utils_errors::critical_error('the extract_values_from_link method was called when the data class was not resolved or invalid')
     end
     case @site
       when 'http://mangafox.me/'
-        data_extractor_MF(link)
+        Utils_website_specific::Mangafox::data_extractor(link)
+      when 'http://www.mangareader.net/', 'http://www.mangapanda.com/'
+        Utils_website_specific::Mangareader_Mangapanda::data_extractor(link)
       else
-        critical_error('extract_values_from_link function was called with an unknown site (' + @site.yellow + ') value')
+       Utils_errors::critical_error('extract_values_from_link function was called with an unknown site (' + @site.yellow + ') value')
     end
   end
 
   # returns the class used to download the manga
   # will exit if the resolve method was not called before and did not return true
-  def get_download_class
+  def get_download_class(download_data = true)
     unless @status
-      critical_error('the get_download_class method was called when the data class was not resolved or invalid')
+     Utils_errors::critical_error('the get_download_class method was called when the data class was not resolved or invalid')
     end
-    begin
-      case @site
-        when 'http://mangafox.me/'
-          return Download_Mangafox.new(self)
-        else
-          critical_error('the data class tried to get a download class that does not exist for the site "' + @site.yellow + '"')
+    if @download_class == nil
+      begin
+        case @site
+          when 'http://mangafox.me/'
+            return Download_Mangafox.new(self, download_data)
+          when 'http://www.mangareader.net/', 'http://www.mangapanda.com/'
+            return Download_Mangareader_Pandamanga.new(self, download_data)
+          else
+           Utils_errors::critical_error('the data class tried to get a download class that does not exist for the site "' + @site.yellow + '"')
+        end
+      rescue => e
+        puts 'Exception while trying to get '.red + @name.yellow
+        puts 'reason is : '.yellow + e.message
+        return nil
       end
-    rescue => e
-      puts 'Exception while trying to get '.red + @name.yellow
-      puts 'reason is : '.yellow + e.message
-      return nil
     end
-    nil
+    @download_class
   end
 
   # the function resolve will try to complete the missing information
@@ -172,7 +179,7 @@ class Manga_data
     else # Error => the data was not fed correctly to the class
       pp self
       puts ''
-      critical_error('the data class was called with incorrect parameters')
+     Utils_errors::critical_error('the data class was called with incorrect parameters')
     end
     ret = get_data_in_db
     if !ret && connect # if it is not in the database and a connection is required, then it is good
@@ -216,6 +223,7 @@ class Manga_data
     @site_dir = ''
     @to_complete = ''
     @in_db = @status
+    @download_class = nil
     if @in_db
       is_site_compatible?(false) # function used here to get @site_dir and @ to_complete
     end
