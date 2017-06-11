@@ -30,8 +30,10 @@ class Manga_data
         @link += '/'
       end
     end
-    if Utils_connection::redirection_detection(@link)
-        puts 'Warning :'.yellow + ' could not connect to ' + @link.yellow if display
+    begin
+      Utils_connection::get_page(@link, true)
+    rescue RuntimeError
+      puts 'Warning :'.yellow + ' could not connect to ' + @link.yellow if display
       return false
     end
     true
@@ -94,7 +96,9 @@ class Manga_data
   public
   # returns an array of the sites that MangaScrap currently manages
   def self.get_compatible_sites
-    %w(http://mangafox.me/ http://www.mangareader.net/ http://www.mangapanda.com/)
+    %w(http://mangafox.me/
+http://www.mangareader.net/
+http://www.mangapanda.com/)
   end
 
   def self.get_dir_from_site(site)
@@ -149,9 +153,13 @@ class Manga_data
         end
       rescue => e
         puts 'Exception while trying to get '.red + @name.yellow
+        puts 'exception is : ' + e.class.to_s
         puts 'reason is : '.yellow + e.message
         return nil
-      end
+      rescue ArgumentError => e
+        puts 'Exception while trying to get '.red + @name.yellow
+        Utils_errors::critical_error('Argument error ( something is wrong with the code', e)
+        end
     end
     @download_class
   end
@@ -185,6 +193,7 @@ class Manga_data
     if !ret && connect # if it is not in the database and a connection is required, then it is good
       if check_link(display)
         @status = true
+
         return true
       end
       return false
@@ -225,7 +234,7 @@ class Manga_data
     @in_db = @status
     @download_class = nil
     if @in_db
-      is_site_compatible?(false) # function used here to get @site_dir and @ to_complete
+      is_site_compatible?(false) # function used here to get @site_dir and @to_complete values
     end
   end
 end

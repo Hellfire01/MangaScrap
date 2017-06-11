@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 echo "ALTER TABLE manga_trace ADD date VARCHAR(32);
 ALTER TABLE manga_trace ADD nb_pages INTEGER;
 ALTER TABLE manga_todo ADD date VARCHAR(32);

@@ -6,7 +6,12 @@
 
 require 'singleton'
 require 'sqlite3'
-require_relative '../Classes/DB/params_db'
+require_relative '../sources/DB/Params'
+require_relative '../sources/DB/sub_params/params_module'
+require_relative '../sources/DB/sub_params/Download'
+require_relative '../sources/DB/sub_params/HTML'
+require_relative '../sources/DB/sub_params/Misc'
+require_relative '../sources/DB/sub_params/Threads'
 
 if ARGV.size != 2
   puts 'this tool needs 2 arguments'
@@ -34,8 +39,8 @@ unless confirm_delete(pattern_to_replace, replacing_pattern)
   exit 0
 end
 
-params = Params.instance.get_params
-dirs = Dir[params[1] + '/mangafox/mangas/*']
+# todo, enable the multi_sites
+dirs = Dir[Params.instance.download[:manga_path] + '/mangafox/mangas/*']
 dirs.delete_if {|dir| dir.include?('.jpg')}
 dirs.sort.each do |dir|
   puts dir

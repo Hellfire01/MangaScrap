@@ -1,5 +1,6 @@
 html {
-	background-color: #F2F2F2;	
+	background-color: #F2F2F2;
+	font-size: 12px;
 }
 
 div.container {
@@ -13,6 +14,11 @@ div.header, div.footer {
 	background-color: black;
 	clear: left;
 	text-align: center;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	width: 60%;
+	margin-left: 20%;
+	margin-right: 20%;
 }
 
 a {
@@ -20,11 +26,11 @@ a {
 }
 
 div.list {
-	margin-left: 200px;
-	margin-right: 600px;
+	margin-left: 1%;
+	margin-right: 30%;
 	border-left: 1px solid gray;
 	border-right: 1px solid gray;
-	padding: 1em;
+	padding: 5px;
 	overflow: hidden;
 	min-height: 650px;
 	text-align: justify;
@@ -33,14 +39,18 @@ div.list {
 .manga {
 	display: inline-block;
 	text-align: center;
-	margin: 5px auto;
-	min-height: 180px;
+	margin-top: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
+	min-height: 250px;
 	overflow: hidden;
+	max-width: 160px;
+	vertical-align: top;
 }
 
 .manga img {
-	max-height: 300px;
-	max-width: 200px;
+	max-height: 200px;
+	max-width: 140px;
 	width: auto;
 	height: auto;
 }
@@ -56,7 +66,7 @@ a {
 div#details {
 	right: 0;
 	top : 170px;
-	width: 580px;
+	width: 28%;
 	margin-right: 15px;
 	position: absolute;
 }

@@ -1,3 +1,4 @@
+=begin
 # gets the value of the page / chapter / volume
 def value_extract(elem)
   if elem[0] != 'v' && elem[0] != 'c' && elem[0] != 'p'
@@ -62,3 +63,4 @@ def scan_dir(dir, db, name)
   end
   data
 end
+=end

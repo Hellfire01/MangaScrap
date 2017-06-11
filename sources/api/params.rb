@@ -3,7 +3,11 @@
 module MangaScrap_API
   # returns all of the parameters in an array of [name, id, value]
   def self.get_params_list
-    Params.instance.get_params_list
+    Params.instance.param_classes
+  end
+
+  def self.display_params
+    Params.instance.display_params
   end
 
   # allows you to set the parameters
@@ -27,7 +31,7 @@ module MangaScrap_API
   def self.params_management(args)
     case args[0]
       when 'list'
-        puts Params.instance.param_list_file
+        display_params
       when 'reset'
         Params.instance.param_reset
       when 'set'

@@ -1,0 +1,24 @@
+
+[html]
+
+[agh] (agh) = {agh}
+allows you to choose if you want the html to be generated automatically or not
+
+[ne] (ne) = {ne}
+allows you to choose if you wish to have the covers of NSFW ( Not Safe For Work ) displayed in the manga index ( if
+nsfw is enabled, the covers will be replaced by the site's logo )
+use the nsfw data (nd) to choose yourself witch are the genres that are NSFW
+true = display cover
+false = display logo
+
+[nc] (nc) = {nc}
+determines witch genres you determine as being NSFW, default is Mature, Ecchi, Smut and Adult
+syntax is : write all the genres you wish to add at once separating them by a comma and a space ( ", " )
+be careful to respect the capital letters
+this option is only used when the html nsfw |ne| option is set to true
+
+[td] (td) = {td}
+(not yet implemented)
+
+[nm] (nm) = {nm}
+(not yet implemented)

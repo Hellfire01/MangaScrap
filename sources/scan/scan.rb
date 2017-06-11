@@ -34,7 +34,7 @@ module Scan
       exit 4
     end
     puts 'getting chapter list from site'
-    chap_list = Download_mf.new(db, name, false).get_links
+    chap_list = Download_mf.new(db, name, false).links
     dir = params.get_params[1] + site + '/' + name + '/'
     Dir.chdir(dir)
     if mode == 'add'
@@ -45,7 +45,7 @@ module Scan
       puts 'correcting scan'
       scan_correct(db, name, dir, chap_list)
     else
-      puts 'critical error : unkown scan mode : ' + mode
+      puts 'critical error : unknown scan mode : ' + mode
     end
 =end
 end

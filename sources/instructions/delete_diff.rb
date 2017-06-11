@@ -9,7 +9,7 @@ module Delete_diff
 
   #todo => attention à ce que le fichier repéré soit bel et bien celui supprimé
   def self.delete_diff(chap_list, manga_data)
-    params = Params.instance.get_params
+    params = Params.instance.download
     db = Manga_database.instance
     dir = params[1] + manga_data.site_dir + 'mangas/' + manga_data.name + '/'
     unless File.directory?(dir)
@@ -32,7 +32,7 @@ module Delete_diff
         puts 'deleting file : '.yellow + file
         File.delete(file)
       end
-      Dir.glob(params[1] + manga_data.site_dir + 'html/' + manga_data.name + HTML_utils::html_chapter_filename(chap[1], chap[0])).each do |file|
+      Dir.glob(params[:manga_path] + manga_data.site_dir + 'html/' + manga_data.name + HTML_utils::html_chapter_filename(chap[1], chap[0])).each do |file|
         puts 'deleting file : '.yellow + file
         File.delete(file)
       end

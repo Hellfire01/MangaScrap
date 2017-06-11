@@ -75,10 +75,8 @@ class DownloadDisplay
   
   # normal display for a todo element
   def display_todo(string, chapter = false)
+    puts ''
     puts string
-    if chapter
-      puts ''
-    end
   end
 
   # called when an error occured while trying to download a todo element

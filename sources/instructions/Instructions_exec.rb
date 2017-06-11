@@ -1,4 +1,5 @@
 =begin
+
 This class parses the ARGV to extract all of the instructions MangaScrap will use
 To add your own instruction, you need to add your own block respecting this format in the init_parser method :
 
@@ -160,11 +161,13 @@ class Instructions_exec
 
   public
   # returns a pre-configured parser for the data arguments
-  # id needs 2 arguments : name ( args[0] and site args[1] )
-  # link needs one argument : link ( args[0] )
-  # File parser uses one argument : file_name ( args[0] ) and directly outputs it's content in @data_to_prepare
-  # query takes one argument : query witch is the parsed to extract the required mangas
-  # all does not use any arguments and gets everything from the database
+  # takes an arguments : instruction = the instruction that calls these data_arguments
+  # the data argument's arguments :
+  #   id needs 2 arguments : name ( args[0] and site args[1] )
+  #   link needs one argument : link ( args[0] )
+  #   File parser uses one argument : file_name ( args[0] ) and directly outputs it's content in @data_to_prepare
+  #   query takes one argument : query witch is the parsed to extract the required mangas
+  #   all does not use any arguments and gets everything from the database
   def get_data_parser(instruction)
     parser = Data_parser.new(instruction)
     parser.on('id', 2) do |args|

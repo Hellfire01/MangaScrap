@@ -1,5 +1,9 @@
 ### Changelog :
 
+0.12.0 : huge optimisation : download is close to twice as fast + new management of the parameters + more understandable errors<br />
+
+###### Warning : the params database is not compatible<br />Please look at the file migration/0.11.x_to_0.12.x.txt<br />
+
 0.11.5 : lots of refactoring + bug fixes + optimisation ( the updates are now faster ) + updated the API + updated the help instruction + added management of 2 new sites : mangareader and pandamanga<br />
 0.11.4 : added an API and instructions on how to use it, it will be used for the GUI<br />
 0.11.3 : small bug fixes + implemented scripts to allow faster migrations / updates<br />

@@ -158,7 +158,11 @@
  ex : "crepuscule" => http://mangafox.me/manga/crepuscule_yamchi/ => "crepuscule_yamchi"
 
  information concerning the display of the download :
+ good ( completed chapters get placed in the trace database ) :
  . => downloaded a page
  , => downloaded a page ( multiple of 10 )
  ; => downloaded a page ( multiple of 50 )
- X => could not download a page ( error, page placed in todo )
+ errors ( get placed in the todo database ), small letter for a page, capital letter for a chapter
+ x => could not download the html page ( needed to get to the image )
+ ! => could not download the image
+ r => got redirected when trying to connect to the link

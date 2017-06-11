@@ -69,13 +69,15 @@ class Manga_database
       exit 2
     end
     todo = get_todo(manga_data)
-    insert = [manga_data.id, volume_value, chapter_value, page_nb, now]
+    insert = [manga_data.id, volume_value, chapter_value, page_nb]
     todo.each do |elem|
+      elem.pop
       elem.shift
       if elem == insert
         return false
       end
     end
+    insert << now
     Utils_database::db_exec('INSERT INTO manga_todo VALUES (NULL, ?, ?, ?, ?, ?)', 'could not add todo for ' + manga_data.name, @db, insert)
     true
   end
@@ -102,6 +104,7 @@ class Manga_database
     trace = get_trace(manga_data)
     insert = [manga_data.id, volume_value, chapter_value, now, nb_pages]
     found = false
+    # todo : pour les comparaisons de traces, il ne faut surtout pas comparer les dates
     trace.each do |elem| # checking if the trace does not already exist in database to avoid duplicates
       elem.shift # the first element is shift as it contains the id of the trace
       if elem == insert

@@ -1,0 +1,27 @@
+
+[download]
+
+[mp] (mp) = {mp}
+folder where you would like your mangas downloaded
+
+[bs] (bs) = {bs}
+time between 2 requests on the site of the manga ( seconds )
+
+[fs] (fs) = {fs}
+time between 2 request failures ( seconds )
+
+[nbf] (nbf) = {nbf}
+the number of tries MangaScrap will do before putting the page in the todo database
+
+[es] (es) = {es}
+time between 2 errors - such as a connection loss - ( seconds )
+30 seconds or more is advised
+
+[cto] (cto) = {cto}
+Allows you to decide how much time MangaScrap will try to connect to the site before stopping or trying again
+Values range from 1 to 300 seconds
+
+[dt] (dt) = {dt}
+Allows you to decide how much time MangaScrap will try to download the web page / comic page / ...
+Warning : this time value includes the |cto| time
+Values from 0 ( no timeout ) to 300 seconds

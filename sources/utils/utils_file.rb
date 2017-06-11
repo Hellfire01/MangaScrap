@@ -95,7 +95,7 @@ module Utils_file
     if pic_buffer != nil
       begin
         File.open(name_buffer + '.jpg', 'wb') do |pic|
-          pic << pic_buffer.read
+          pic << pic_buffer
         end
         if File.exist?(name_buffer + '.txt')
           File.delete(name_buffer + '.txt')
@@ -132,8 +132,8 @@ module Utils_file
   end
 
   # used for the description.txt file of every manga
-  def self.data_concatenation(manga_name, description, site, link, author, artist, type, status, genres, release, html_name, alternative_names)
-    ret =  'name         = ' + manga_name + "\n"
+  def self.data_concatenation(manga_data, description, author, artist, type, status, genres, release, html_name, alternative_names)
+    ret =  'name         = ' + manga_data.name + "\n"
     ret += 'html name    = ' + html_name + "\n"
     ret += 'other names  = ' + alternative_names + "\n"
     ret += 'author       = ' + author + "\n"
@@ -143,8 +143,8 @@ module Utils_file
     ret += 'status       = ' + status + "\n"
     ret += 'genres       = ' + genres + "\n"
     ret += "\n"
-    ret += 'site = ' + site + "\n"
-    ret += 'link = ' + link + "\n"
+    ret += 'site = ' + manga_data.site + "\n"
+    ret += 'link = ' + manga_data.link + "\n"
     ret += "\n"
     ret += "description :\n"
     ret += "\n"

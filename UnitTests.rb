@@ -10,7 +10,7 @@ return values are :
 0 : good
 1 : file load error
 2 : gem load error
-3 : bad Ruby version
+3 : bad Ruby versionw
 4 : bad argument given to UnitTests.rb
 5 : error on class require
 
@@ -23,6 +23,9 @@ return values are :
 #        fonctionnalités de l'API de MangaScrap
 ##################################################################################
 ##################################################################################
+
+puts 'needs to be updated'
+exit 42
 
 verbose = false
 if ARGV.size != 0

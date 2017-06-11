@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # 1 - Delete your params DB ( please note all important information such as mangapath before doing so if you have changed any parameter )
 rm ~/.MangaScrap/db/params.db
 

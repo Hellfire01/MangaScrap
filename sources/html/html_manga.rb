@@ -113,7 +113,7 @@ class HTML_manga
   public
   # generates the chapter index, includes description, cover, names of artist and author, ...
   def generate_chapter_index
-    if @params[8] == 'true' || @force_html == true
+    if @html_params[:auto_generate_html]
       puts 'updating chapter index of ' + @manga_data[1]
       Utils_file::dir_create(@path_html)
       template = File.open('sources/templates/web/manga_presentation/presentation_template.html').read
@@ -139,7 +139,7 @@ class HTML_manga
   end
 
   def initialize(manga_data, force_html = false)
-    @params = Params.instance.get_params
+    @html_params = Params.instance.html
     @db = Manga_database.instance
     @force_html = force_html
     @manga_data = []
@@ -150,7 +150,7 @@ class HTML_manga
     end
     @manga_name = @manga_data[11]
     @path_pictures = '/mangas/' + @manga_data[1] + '/'
-    @dir = @params[1] + Manga_data::get_dir_from_site(manga_data.site)
+    @dir = Params.instance.download[:manga_path] + Manga_data::get_dir_from_site(manga_data.site)
     @path_html = @dir + 'html/' + @manga_data[1]
     HTML_utils::copy_html_related_files(manga_data.site, @dir)
     @traces = get_traces(manga_data)

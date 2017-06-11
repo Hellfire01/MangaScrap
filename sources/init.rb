@@ -2,12 +2,13 @@
 
 class Init
   def self.get_gem_list
-  %w(singleton
+    %w(singleton
   open-uri
   pp
   colorize
   nokogiri
-  sqlite3)
+  sqlite3
+  typhoeus)
   end
 
   def self.get_file_list
@@ -30,7 +31,7 @@ class Init
   utils/website_specific/mangareader_mangapanda_utils
   html/html
   html/html_manga
-  html/html_buffer
+  Download/base_downloader
   Download/mangafox
   Download/mangareader_mangapanda
   DownloadDisplay
@@ -41,9 +42,17 @@ class Init
   instructions/query
   instructions/Instructions_exec
   instructions/Manga_data_filter
+  DB/sub_data/data_module
+  DB/sub_data/History
+  DB/sub_data/Macro
+  DB/sub_params/params_module
+  DB/sub_params/HTML
+  DB/sub_params/Download
+  DB/sub_params/Misc
+  DB/sub_params/Threads
+  DB/Params
   DB/Manga_data
-  DB/Manga_database
-  DB/Params)
+  DB/Manga_database)
   end
 
   def self.load_gem(gem)
@@ -53,9 +62,10 @@ class Init
       puts ''
       puts "exception while trying to load #{gem}, please follow the installation instructions in the install directory"
       puts 'message is : ' + e.message
-      puts 'please note that a ruby update may require a re-download of the gems'
       puts ''
-      exit exit_value
+      puts 'please note that a ruby update may require a re-download of the gems'.yellow
+      puts ''
+      exit 1
     end
   end
 
@@ -79,6 +89,7 @@ class Init
     Struct.new('Updated', :name, :downloaded)
     Struct.new('Query_arg', :name, :arg_type, :sql_column, :sub_string)
     Struct.new('HTML_data', :volume, :chapter, :date, :href, :nb_pages, :file_name)
+    Struct.new('Param_value', :string, :id, :type, :value, :class, :min_value, :max_value)
     begin
       Utils_file::dir_create(Dir.home + '/.MangaScrap/db')
     rescue StandardError => error
@@ -87,7 +98,7 @@ class Init
       exit 5
     end
     Utils_connection::init_utils
-    if Params.instance.get_params[11] == 'false'
+    unless Params.instance.misc[:color_text]
       String.disable_colorization = true
     end
   end

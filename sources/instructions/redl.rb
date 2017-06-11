@@ -6,7 +6,7 @@ module Re_download_module
     if dw == nil
       return false
     end
-    links = dw.get_links
+    links = dw.links
     links.sort.each do |link|
       data = element.extract_values_from_link(link)
       if data[0] == volume
@@ -34,7 +34,7 @@ module Re_download_module
     if dw == nil
       return false
     end
-    links = dw.get_links
+    links = dw.links
     links.each do |link|
       data = element.extract_values_from_link(link)
       if data[0] == volume && data[1] == chapter
@@ -59,14 +59,11 @@ module Re_download_module
     if dw == nil
       return false
     end
-    links = dw.get_links
+    links = dw.links
     links.each do |link|
       data = element.extract_values_from_link(link)
       if data[0] == volume && data[1] == chapter
         new_link = dw.link_generator(volume, chapter, page)
-        if Utils_connection::redirection_detection(new_link)
-          break
-        end
         failure = false
         puts "downloading page #{page} of chapter #{chapter}" + ((volume == -1) ? '' : ((volume == -2) ? ' of volume TBD' : " of volume #{volume}"))
         dw.page_link(new_link, element.extract_values_from_link(new_link))

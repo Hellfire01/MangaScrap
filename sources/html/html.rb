@@ -14,11 +14,12 @@ class HTML
         ret << "    <a onmouseover=\"displayData(#{i})\" onmouseout=\"clearData()\" href=\"" + './html/' + manga.name + '.html' + '">'
       end
       source_buffer = '      <img src="./mangas/' + manga.name + '.jpg' + '">'
-      if @params[9] == 'false'
+      if @html_params[:nsfw_enabled]
         manga_genres = manga.data[9].split(', ')
-        if (@params[10].split(', ') & manga_genres).empty?
+        if (@html_params[:nsfw_categories].split(', ') & manga_genres).empty?
           ret << source_buffer
         else
+          # todo manage sites
           # warning : sites must be managed
           ret << '      <img src="' + Dir.home + '/.MangaScrap/pictures/logos/mangafox.png">'
         end
@@ -57,12 +58,12 @@ class HTML
   public
 # generates the manga index ( the page containing the links to all mangas )
   def generate_index
-    if @params[8] == 'true' || @force_html == true
+    if @html_params[:auto_generate_html]
       puts 'updating html of manga index'
       sites = Manga_data::get_compatible_sites
       sites.each do |site|
         site_dir = Manga_data::get_dir_from_site(site)
-        dir = @params[1] + site_dir
+        dir = @manga_path + site_dir
         HTML_utils::copy_html_related_files(site, dir)
         template = File.open('sources/templates/web/site_index/site_index_template.html').read
         template = template.gsub('#####list#####', html_get_data(site))
@@ -84,12 +85,12 @@ class HTML
   # WARNING ======================================================================================================================================================
 
   def generate_updated
-    if @params[8] == 'true' || @force_html == true
+    if @html_params[:auto_generate_html]
       puts 'generating updated index'
       sites = Manga_data.get_compatible_sites
       sites.each do |site|
         site_dir = Manga_data::get_dir_from_site(site)
-        dir = @params[1] + site_dir
+        dir = @manga_path + site_dir
         HTML_utils::copy_html_related_files(site, dir)
         template = File.open('sources/templates/web/manga_updated_index_template.html').read
         template = template.gsub('#####list#####', html_get_data(site, true))
@@ -102,8 +103,8 @@ class HTML
   # the constructor copies all the css and places them in the html dir
   def initialize(force_html = false)
     @force_html = force_html
-    @params = Params.instance.get_params
-    @nsfw_genres = @params[10].split(', ')
+    @manga_path = Params.instance.download[:manga_path]
+    @html_params = Params.instance.html
     @db = Manga_database.instance
   end
 end

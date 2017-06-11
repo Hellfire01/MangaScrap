@@ -1,17 +1,13 @@
-$nb_tries = -1
-$between_sleep = -1
-$failure_sleep = -1
-$error_sleep = -1
-$catch_fatal = 'false'
+$download_params = nil
 
 module Utils_connection
   private
   # used to know hom much sleep time is needed
   def self.sleep_manager(error)
     if error.class.to_s == 'SocketError' # connection error
-      sleep($error_sleep)
+      sleep($download_params[:error_sleep])
     else
-      sleep($failure_sleep)
+      sleep($download_params[:failure_sleep])
     end
   end
 
@@ -25,114 +21,59 @@ module Utils_connection
       unless silent
         print "\n"
         STDOUT.flush
-        puts message + ' ' + link + ' after ' + $nb_tries.to_s + ' tries'
-        puts 'message is : ' + error.message
+        puts message + ' ' + link + ' after ' + $download_params[:nb_tries_on_fail].to_s + ' tries'
+        puts 'message is : ' + error
       end
       nil
-    end
-  end
-
-  # exception manager for the utils_co.rb functions
-  def self.rescue_fatal(error, silent = false)
-    if $catch_fatal == 'false'
-      unless silent
-        print "\n"
-        STDOUT.flush
-        puts 'Warning : exception occured, message is : ' + error.message
-        puts 'Exception class is : ' + error.class.to_s
-        puts 'raising it again'
-        puts ''
-      end
-      raise error
-    else
-      if error.class.to_s != 'fatal'
-        raise error
-      end
     end
   end
 
   public
   # initialises the global variables
   def self.init_utils
-    params = Params.instance.get_params
-    $between_sleep = params[2]
-    $failure_sleep = params[3]
-    $nb_tries = params[4]
-    $error_sleep = params[5]
-    $catch_fatal = params[7]
+    $download_params = Params.instance.download
   end
 
-  # detects if there was a redirection on the required link
-  def self.redirection_detection(url)
-    tries ||= $nb_tries
-    begin
-      open(url) do |resp|
-        if resp.base_uri.to_s != url
-          return true
+  def self.download(link, silent, error_message)
+    tries ||= $download_params[:nb_tries_on_fail]
+    while tries != 0
+      sleep($download_params[:between_sleep])
+      request = Typhoeus::Request.new(link, accept_encoding: 'gzip', connecttimeout: $download_params[:connect_timeout],
+                                      timeout: $download_params[:download_timeout], followlocation: false)
+      request.on_complete do |response|
+        if response.success?
+          return response.body
+        elsif response.timed_out? # time out
+          tries = download_rescue(tries, link, 'time out', error_message, silent)
+          if tries == nil
+            break
+          end
+        elsif response.code == 302 # redirection
+          raise 'redirection'
+        else # all other errors
+          tries = download_rescue(tries, link, "http code error #{response.code}", error_message, silent)
+          if tries == nil
+            break
+          end
         end
       end
-    rescue StandardError => error
-      if tries > 0
-        tries -= 1
-        sleep_manager(error)
-        retry
-      else
-        puts 'connection is lost or could not find manga, stopping programm'
-        puts url
-        puts 'message is : ' + error.message
-        exit 3
-      end
-    rescue Exception => error
-      rescue_fatal(error)
+      request.run
     end
-    false
+    return nil
   end
 
   # connects to link and download page
   def self.get_page(link, silent = false)
-    tries ||= $nb_tries
-    begin
-      html = open(link, 'User-Agent' => "Ruby/#{RUBY_VERSION}")
-      page = Nokogiri::HTML(html) do |nokogiri|
-        nokogiri.noblanks.noerror
-      end
-    rescue StandardError => error
-      tries = download_rescue(tries, link, error, 'could not download picture', silent)
-      if tries == nil
-        return nil
-      end
-      retry
-    rescue Exception => error
-      rescue_fatal(error)
+    html = download(link, silent, 'could not download picture')
+    if html == nil
+      return nil
     end
-    sleep($between_sleep)
-    page
+    Nokogiri::HTML(html, 'utf-8')
   end
 
   # connects to link and download picture
   def self.get_pic(link, silent = false)
-    safe_link = link.gsub(/[\[\]]/) { '%%%s' % $&.ord.to_s(16) }
-    tries ||= $nb_tries
-    begin
-      page = open(safe_link, 'User-Agent' => "Ruby/#{RUBY_VERSION}")
-    rescue URI::InvalidURIError => error
-      unless silent
-        puts 'Warning : bad url'
-        puts link
-        puts 'message is : ' + error.message
-      end
-      return nil
-    rescue StandardError => error
-      tries = download_rescue(tries, link, error, 'could not download picture', silent)
-      if tries == nil
-        return nil
-      end
-      retry
-    rescue Exception => error
-      rescue_fatal(error, silent)
-    end
-    sleep($between_sleep)
-    page
+    download(link, silent, 'could not download picture')
   end
 
   # extracts the cover link, downloads it and writes it twice
@@ -146,15 +87,12 @@ module Utils_connection
       cover_buffer = File.open('./pictures/other/404.png')
     end
     if cover_buffer != nil
-      cover1 = File.new(path1, 'wb')
-      cover2 = File.new(path2, 'wb')
-      until cover_buffer.eof?
-        chunk = cover_buffer.read(1024)
-        cover1.write(chunk)
-        cover2.write(chunk)
+      File.open(path1, 'wb') do |pic|
+        pic << cover_buffer
       end
-      cover1.close
-      cover2.close
+      File.open(path2, 'wb') do |pic|
+        pic << cover_buffer
+      end
     else
       puts 'WARNING : cover could not download cover'
     end

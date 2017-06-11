@@ -1,0 +1,6 @@
+1. note all of your params
+
+2. install tythoeus
+gem install typhoeus
+
+3. input all of your params into MangaScrap using the "param set" instruction

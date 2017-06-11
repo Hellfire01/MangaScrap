@@ -28,7 +28,7 @@ module MangaScrap_API
   # fast_update = bool, if true, the update function will ignore all mangas with the 'Completed' status
   def self.update(mangas, todo_only = false, fast_update = false)
     html = HTML.new
-    params = Params.instance.get_params
+    params = Params.instance.misc
     if fast_update
       mangas = mangas.reject{|manga| manga.data[8] == 'Completed'}
     end
@@ -39,8 +39,8 @@ module MangaScrap_API
         next
       end
       generate_html = (todo_only ? dw.todo : dw.update)
-      if params[6] == 'true'
-        if Delete_diff::delete_diff(dw.get_links, manga) || generate_html
+      if params[:delete_diff]
+        if Delete_diff::delete_diff(dw.links, manga) || generate_html
           html_manga = HTML_manga.new(manga)
           html_manga.generate_chapter_index
         end
@@ -104,7 +104,7 @@ module MangaScrap_API
     puts 'downloading data of ' + mangas.size.to_s + ' element(s)'
     html = HTML.new
     mangas.each do |manga|
-      dw = manga.get_download_class
+      dw = manga.get_download_class(false)
       if dw == nil
         next
       end

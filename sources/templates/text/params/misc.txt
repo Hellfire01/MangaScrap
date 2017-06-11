@@ -1,0 +1,15 @@
+
+[misc]
+
+[ct] (ct) = {ct}
+allows you to choose between a very boring and colorless text output ( false ) and a very colored one ( true )
+
+[dd] (dd) = {dd}
+if ever during an update a chapter is in the traces database but not in the chapter list, it is deleted ( or not )
+this can happen when a chapter is mistakenly uploaded to the wrong manga or the chapter list / organisation changed
+
+[ve] (ve) = {ve}
+(not yet implemented)
+
+[cu] (cu) = {cu}
+(not yet implemented)

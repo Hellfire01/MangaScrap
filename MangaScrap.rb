@@ -27,6 +27,8 @@ the api can be found in ./sources/api/
 
 =end
 
+$0='MangaScrap'
+
 require_relative 'sources/init'
 
 begin
