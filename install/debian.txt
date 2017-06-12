@@ -6,3 +6,4 @@ sudo apt-get install ruby-dev ruby2.3 ruby2.3-dev libsqlite3-dev build-essential
 sudo gem install sqlite3
 sudo gem install nokogiri
 sudo gem install colorize
+sudo gem install typhoeus

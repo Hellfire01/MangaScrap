@@ -29,47 +29,29 @@ class Download_Mangareader_Pandamanga
   end
 
   def page_link(link, data)
-    begin
-      page = Utils_connection::get_page(link, true)
-    rescue RuntimeError
-      return link_err(data, false, 'r')
-    end
-    if page == nil
-      return false
-    end
-    pic_link = page.xpath('//img').map{|img| img['src']}
-    if pic_link[0] == nil
-      return link_err(data, false, 'x')
-    end
-    pic_buffer = Utils_connection::get_pic(pic_link[0], true)
-    if pic_buffer == nil || Utils_file::write_pic(pic_buffer, data, @dir) == false
-      return link_err(data, false, '!')
-    end
-    @downloaded_a_page = true
-    true
+    get_page_from_link(link, data, '//img')
   end
 
   def chapter_link(link, prep_display = '')
     data = @manga_data.extract_values_from_link(link)
     begin
-      page = Utils_connection::get_page(link, true)
+      if (page = Utils_connection::get_page(link, true)) == nil
+        return link_err(data, true, 'X')
+      end
     rescue RuntimeError
       return link_err(data, true, 'R')
-    end
-    if page == nil
-      return link_err(data, true, 'X')
     end
     @aff.prepare_chapter("downloading chapter #{data[1]} of #{@manga_data.name}" + prep_display)
     number_of_pages = page.xpath('//option').last.text.to_i
     if number_of_pages == 0
-      raise 'could not get number of pages from page. Link = ' + link
+      return link_err(data, true, '?')
     end
     page_nb = 1
     link += '/1'
     while page_nb <= number_of_pages
       data[2] = page_nb
       unless page_link(link, data)
-        return false
+        @aff.dump_chapter
       end
       @aff.downloaded_page(page_nb)
       last_pos = link.rindex(/\//)

@@ -98,6 +98,12 @@ class Instructions_exec
       buff = get_valid_data('list', false, args, false)
       MangaScrap_API::details(buff) unless buff.empty?
     end
+    @parser.on 'managed' do ||
+      puts "managed websites are :\n\n"
+      Manga_data::get_compatible_sites.sort.each do |link|
+        puts link
+      end
+    end
   end
 
   def init_parser_mangas_related

@@ -96,6 +96,9 @@
     [version]g
         displays the current version of MangaScrap witch can be found in utils/version.txt
 
+    [managed]g
+        displays the list of the compatible websites that MangaScrap is able to scrap
+
     [data arguments]
         definition : the data arguments are the arguments that are used to get elements by [link]y, [id]y, [file]y, ...
 
@@ -166,3 +169,4 @@
  x => could not download the html page ( needed to get to the image )
  ! => could not download the image
  r => got redirected when trying to connect to the link
+ ? => could not extract the pages from the html

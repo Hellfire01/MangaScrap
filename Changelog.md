@@ -1,5 +1,6 @@
 ### Changelog :
 
+0.12.1 : stability increase + added the instruction "managed" to display the compatible websites<br />
 0.12.0 : huge optimisation : download is close to twice as fast + new management of the parameters + more understandable errors<br />
 
 ###### Warning : the params database is not compatible<br />Please look at the file migration/0.11.x_to_0.12.x.txt<br />

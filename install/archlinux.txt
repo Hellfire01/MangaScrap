@@ -4,6 +4,7 @@ sudo pacman -S tk
 gem install sqlite3
 gem install colorize
 gem install nokogiri
+gem install typhoeus
 gem install tk
 
 add the following line to your .bashrc ( or .zshrc ) :

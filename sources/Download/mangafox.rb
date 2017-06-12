@@ -45,20 +45,7 @@ class Download_Mangafox
 
   # downloads a page, with link = the link, data = [volume, chapter, page]
   def page_link(link, data)
-    page = Utils_connection::get_page(link, true)
-    if page == nil
-      return false
-    end
-    pic_link = page.xpath('//img[@id="image"]').map{|img| img['src']}
-    if pic_link[0] == nil
-      return link_err(data, false, 'x')
-    end
-    pic_buffer = Utils_connection::get_pic(pic_link[0], true)
-    if pic_buffer == nil || Utils_file::write_pic(pic_buffer, data, @dir) == false
-      return link_err(data, false, '!')
-    end
-    @downloaded_a_page = true
-    true
+    get_page_from_link(link, data, '//img[@id="image"]')
   end
 
   # downloads a chapter with link = the link and prep_display = small string displayed when announcing the download of the chapter
@@ -80,13 +67,13 @@ class Download_Mangafox
     @aff.prepare_chapter("downloading #{data_to_string(data)} of #{@manga_data.name}" + prep_display)
     number_of_pages = page.xpath('//div[@class="l"]').text.split.last.to_i
     if number_of_pages == 0
-      raise 'could not get number of pages from page. Link = ' + link
+      return link_err(data, true, '?')
     end
     page_nb = 1
     while page_nb <= number_of_pages
       data[2] = page_nb
       unless page_link(link, data)
-        return false
+        @aff.dump_chapter
       end
       @aff.downloaded_page(page_nb)
       last_pos = link.rindex(/\//)

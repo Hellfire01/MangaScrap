@@ -73,7 +73,7 @@ module MangaScrap_API
       file = File.open('sources/templates/text/help.txt', 'r')
       content = file.read
       content = content.gsub('_todo', 'todo')
-      instructions = %w(link id file query all add update fast-update download redl re-download p c v param version help list output delete delete-db details html todo clear todo reset set data)
+      instructions = %w(link id file query all add update fast-update download redl re-download p c v param version help list output delete delete-db details html todo clear todo reset set data managed)
       instructions.each do |instruction|
         content = content.gsub('[' + instruction + ']g', instruction.green).gsub('[' + instruction + ']y', instruction.yellow)
       end

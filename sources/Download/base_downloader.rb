@@ -12,6 +12,7 @@ module Base_downloader
     if chapter
       @db.add_todo(@manga_data, data[0], data[1], -1)
       @aff.error_on_page_download(disp)
+      @aff.dump_chapter
     else
       @db.add_todo(@manga_data, data[0], data[1], data[2])
       @aff.error_on_page_download(disp)
@@ -31,6 +32,27 @@ module Base_downloader
     else
       @db.add_manga(@manga_data, description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max)
     end
+  end
+
+  def get_page_from_link(link, data, xpath)
+    begin
+      page = Utils_connection::get_page(link, true)
+    rescue RuntimeError
+      return link_err(data, false, 'r')
+    end
+    if page == nil
+      return false
+    end
+    pic_link = page.xpath(xpath).map{|img| img['src']}
+    if pic_link[0] == nil
+      return link_err(data, false, 'x')
+    end
+    pic_buffer = Utils_connection::get_pic(pic_link[0], true)
+    if pic_buffer == nil || Utils_file::write_pic(pic_buffer, data, @dir) == false
+      return link_err(data, false, '!')
+    end
+    @downloaded_a_page = true
+    true
   end
 
   public
