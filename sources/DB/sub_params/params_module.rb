@@ -44,10 +44,7 @@ module Params_module
 
   # params check for numbers
   def param_check_nb(param, value)
-    unless value.instance_of? 'Fixnum'
-      write_output "#{value} is not a Fixnum, got a #{value.class}"
-      false
-    end
+    value = (param[:type] == 'int' ? value.to_i : value.to_f)
     if value < param[:min_value] || value > param[:max_value]
       write_output "the value cannot be < #{param[:min_value]} or > #{param[:max_value]} for #{param[:string]} (#{param[:id]})"
       return false

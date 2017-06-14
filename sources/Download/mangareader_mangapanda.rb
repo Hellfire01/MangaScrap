@@ -50,10 +50,7 @@ class Download_Mangareader_Pandamanga
     link += '/1'
     while page_nb <= number_of_pages
       data[2] = page_nb
-      unless page_link(link, data)
-        @aff.dump_chapter
-      end
-      @aff.downloaded_page(page_nb)
+      page_link(link, data)
       last_pos = link.rindex(/\//)
       page_nb += 1
       link = link[0..last_pos].strip + page_nb.to_s
