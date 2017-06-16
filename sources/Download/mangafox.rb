@@ -50,6 +50,7 @@ class Download_Mangafox
 
   # downloads a chapter with link = the link and prep_display = small string displayed when announcing the download of the chapter
   def chapter_link(link, prep_display = '')
+#    get_chapter_from_link(link, prep_display, '//div[@class="l"]', '.html')
     data = @manga_data.extract_values_from_link(link)
     if data[0] == -42
       @aff.unmanaged_link(link)

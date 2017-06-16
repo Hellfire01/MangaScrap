@@ -1,6 +1,7 @@
 ### Changelog :
 
-0.12.2 : fixed an issue when setting a param with a number<br />
+0.12.3 : stability fix : fixed an issue with the instrction parser + an issue where MangaScrap would download 0 pages for a chapter<br />
+0.12.2 : stability fix : fixed an issue when setting a param with a number<br />
 0.12.1 : stability increase + added the instruction "managed" to display the compatible websites<br />
 0.12.0 : huge optimisation : download is close to twice as fast + new management of the parameters + more understandable errors<br />
 

@@ -5,8 +5,8 @@ class Instruction_parser
   # jump : number of arguments required
   # prev : the argument
   # parent : the instruction
-  def jump_error_exit(prev, jump, parent)
-    puts 'Error : '.red + prev.yellow + ' requires ' + jump.to_s.yellow + ' more argument(s)'
+  def jump_error_exit(data_argument, jump, parent)
+    puts 'Error : '.red + data_argument.yellow + ' requires ' + jump.to_s.yellow + ' more argument(s)'
     puts 'in : [' + parent + ']'
     case prev
       when 'id'
@@ -42,34 +42,30 @@ class Instruction_parser
   # the @jump variables are used to allow arguments ( such as a file name ) to have
   #    values as instructions
   def args_extract(arg)
-    ret = [] # extracted arguments
-    jump = 0 # used if a @jump argument is found
-    prev = @args[0] # used for error display purposes
-    # args_extract tries to shift all of @args but stops when an @instruction is found
+    ret = []
     while @args.size != 0
-      if jump == 0
-        prev = @args[0]
-      end
       key = @instructions.key?(@args[0])
-      buff = @jump.select{|e| e[0] == @args[0]}[0]
-      if buff != nil
-        jump = buff[1] + 1
-      end
-      if jump == 0 && key
+      data_instruction = @args[0]
+      ret << @args[0]
+      @args.shift
+      if key
         return ret
-      else
-        if @args.empty?
-          jump_error_exit(prev, jump, arg + ' ' + ret)
+      end
+      to_jump = @jump.select{|e| e[0] == @args[0]}[0]
+      if to_jump != nil
+        i = 0
+        while i < to_jump[1]
+          if @args.size == 0
+            jump_error_exit(data_instruction, to_jump, arg.green + ' ' + ret)
+          end
+          ret << @args[0]
+          @args.shift
+          i += 1
         end
+      else
         ret << @args[0]
         @args.shift
       end
-      if jump != 0
-        jump -= 1
-      end
-    end
-    if jump != 0
-      jump_error_exit(prev, jump, arg.green + ' ' + prev)
     end
     ret
   end
@@ -82,8 +78,7 @@ class Instruction_parser
       arg = @args[0]
       if @instructions.key? arg
         @args.shift
-        buff = args_extract(arg)
-        @to_exec << [arg, buff]
+        @to_exec << [arg, args_extract(arg)]
       else
         puts 'Error : '.red + 'unrecognised instruction "' + arg.yellow + '"'
         exit 4
@@ -92,7 +87,7 @@ class Instruction_parser
     run
   end
 
-  # adds instruction with a block
+  # adds instruction
   def on(*args, &test)
     args.each do |arg|
       @instructions[arg] = test

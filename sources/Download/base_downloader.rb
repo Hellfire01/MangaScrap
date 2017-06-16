@@ -52,6 +52,38 @@ module Base_downloader
       return link_err(data, false, '!')
     end
     @downloaded_a_page = true
+    @aff.downloaded_page(data[2])
+    true
+  end
+
+  def get_chapter_from_link(link, prep_display, nb_pages_xpath, add_to_link)
+    data = @manga_data.extract_values_from_link(link)
+    if data[0] == -42
+      @aff.unmanaged_link(link)
+      false
+    end
+    begin
+      if (page = Utils_connection::get_page(link, true)) == nil
+        return link_err(data, true, 'X')
+      end
+    rescue RuntimeError
+      return link_err(data, true, 'R')
+    end
+    @aff.prepare_chapter("downloading #{data_to_string(data)} of #{@manga_data.name}" + prep_display)
+    number_of_pages = page.xpath(nb_pages_xpath).text.split.last.to_i
+    if number_of_pages == 0
+      return link_err(data, true, '?')
+    end
+    page_nb = 1
+    while page_nb <= number_of_pages
+      data[2] = page_nb
+      page_link(link, data)
+      last_pos = link.rindex(/\//)
+      page_nb += 1
+      link = link[0..last_pos].strip + page_nb.to_s + add_to_link
+    end
+    @aff.dump_chapter
+    @db.add_trace(@manga_data, data[0], data[1], number_of_pages)
     true
   end
 
@@ -108,14 +140,14 @@ module Base_downloader
       todo.each do |elem|
         @aff.display_todo('downloading ' + values_to_string(elem[2], elem[3], elem[4]))
         if elem[4] != -1 # if chapter
-          data = [] << -1 << elem[3] << elem[4]
-          if page_link(link_generator(-1, elem[3], elem[4]), data)
+          data = [] << elem[2] << elem[3] << elem[4]
+          if page_link(link_generator(elem[2], elem[3], elem[4]), data)
             @db.delete_todo(elem[0])
           else
             @aff.todo_err('failed to download ' + values_to_string(elem[2], elem[3], elem[4]))
           end
         else # if not a chapter
-          if chapter_link(link_generator(-1, elem[3], 1))
+          if chapter_link(link_generator(elem[2], elem[3], 1))
             @db.delete_todo(elem[0])
           else
             @aff.todo_err('failed to download ' + values_to_string(elem[2], elem[3], nil), true)

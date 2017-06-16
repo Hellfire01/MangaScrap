@@ -48,7 +48,6 @@ class Instructions_exec
 
   # used to prepare the parser, all of the instructions that are understood by MangaScrap are in these methods
   # add your own instructions here
-
   def init_parser
     @parser = Instruction_parser.new
     init_parser_mangas_related

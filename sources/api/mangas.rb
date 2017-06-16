@@ -138,7 +138,7 @@ module MangaScrap_API
       ' and '.yellow + 'all of the downloaded pages' :
       ' but ' + 'not'.yellow + ' the downloaded files' ), manga_list)
       db = Manga_database.instance
-      path = Params.instance.get_params[1]
+      path = Params.instance.download[:manga_path]
       manga_list.each do |manga|
         db.delete_manga(manga)
         if delete_files

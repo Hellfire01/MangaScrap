@@ -42,7 +42,9 @@ class Params_misc
         delete_diff VARCHAR(5),
         verbose VARCHAR(32),
         check_for_updates VARCHAR(5))") do |data|
+      # bloc
       @params = Struct::Misc_params.new(*data)
     end
+    # code
   end
 end
