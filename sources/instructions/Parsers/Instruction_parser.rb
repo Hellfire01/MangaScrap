@@ -43,28 +43,23 @@ class Instruction_parser
   #    values as instructions
   def args_extract(arg)
     ret = []
-    while @args.size != 0
-      key = @instructions.key?(@args[0])
-      data_instruction = @args[0]
-      ret << @args[0]
-      @args.shift
-      if key
+    until @args.empty?
+      if @instructions.key?(@args[0])
         return ret
       end
       to_jump = @jump.select{|e| e[0] == @args[0]}[0]
+      ret << @args[0]
+      @args.shift
       if to_jump != nil
         i = 0
         while i < to_jump[1]
           if @args.size == 0
-            jump_error_exit(data_instruction, to_jump, arg.green + ' ' + ret)
+            jump_error_exit(ret[0], to_jump, arg.green + ' ' + ret)
           end
           ret << @args[0]
           @args.shift
           i += 1
         end
-      else
-        ret << @args[0]
-        @args.shift
       end
     end
     ret

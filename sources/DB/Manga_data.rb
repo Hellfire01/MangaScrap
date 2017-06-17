@@ -156,6 +156,9 @@ http://www.mangapanda.com/)
         puts 'exception is : ' + e.class.to_s
         puts 'reason is : '.yellow + e.message
         return nil
+      rescue RuntimeError => e
+        puts 'Exception while trying to get '.red + @name.yellow + ' (' + e.message + ')'
+        return nil
       rescue ArgumentError => e
         puts 'Exception while trying to get '.red + @name.yellow
         Utils_errors::critical_error('Argument error ( something is wrong with the code', e)

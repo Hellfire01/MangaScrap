@@ -17,7 +17,10 @@ class Data_parser
 
   def bad_argument_exit(error)
     puts 'Error :'.red + ' for instruction "' + @command.yellow + ' ' + @instruction.yellow + '"'
-    puts 'unrecognised argument "' + error.yellow + '"'
+    unless error == nil
+      puts 'unrecognised argument "' + error.yellow + '"'
+    end
+    pp caller
     exit 4
   end
 

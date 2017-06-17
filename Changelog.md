@@ -1,5 +1,6 @@
 ### Changelog :
 
+0.12.4 : stability fix : corrected an error with the instruction parsing<br />
 0.12.3 : stability fix : fixed an issue with the instrction parser + an issue where MangaScrap would download 0 pages for a chapter<br />
 0.12.2 : stability fix : fixed an issue when setting a param with a number<br />
 0.12.1 : stability increase + added the instruction "managed" to display the compatible websites<br />
