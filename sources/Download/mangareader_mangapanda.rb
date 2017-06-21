@@ -34,6 +34,7 @@ class Download_Mangareader_Pandamanga
 
   def chapter_link(link, prep_display = '')
     data = @manga_data.extract_values_from_link(link)
+    @aff.prepare_chapter("downloading chapter #{data[1]} of #{@manga_data.name}" + prep_display)
     begin
       if (page = Utils_connection::get_page(link, true)) == nil
         return link_err(data, true, 'X')
@@ -41,7 +42,6 @@ class Download_Mangareader_Pandamanga
     rescue RuntimeError
       return link_err(data, true, 'R')
     end
-    @aff.prepare_chapter("downloading chapter #{data[1]} of #{@manga_data.name}" + prep_display)
     number_of_pages = page.xpath('//option').last.text.to_i
     if number_of_pages == 0
       return link_err(data, true, '?')
@@ -60,21 +60,24 @@ class Download_Mangareader_Pandamanga
     true
   end
 
+  public
   def data
-    @extracted_data = true
-    tmp = @doc.xpath('//div[@id="mangaproperties"]/table/tr')
-    alternative_names = tmp[1].text.split(':')[1].strip
-    release = tmp[2].text.split(':')[1].strip.to_i
-    author = tmp[4].text.split(':')[1].strip
-    artist = tmp[5].text.split(':')[1].strip
-    genres = tmp[7].text.split(':')[1].strip
-    description = @doc.xpath('//div[@id="readmangasum"]/p')[0].text
-    status = tmp[3].text.split(':')[1].strip
-    rank = -1
-    rating = -1
-    rating_max = -1
-    type = (tmp[6].text.split(':')[1].strip == 'Right to Left') ? 'Manga' : 'Manhwa'
-    html_name = @doc.xpath('//h2')[0].text
-    validate_data(description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max, '//div[@id="mangaimg"]/img')
+    unless @extracted_data
+      @extracted_data = true
+      tmp = @doc.xpath('//div[@id="mangaproperties"]/table/tr')
+      alternative_names = tmp[1].text.split(':')[1].strip
+      release = tmp[2].text.split(':')[1].strip.to_i
+      author = tmp[4].text.split(':')[1].strip
+      artist = tmp[5].text.split(':')[1].strip
+      genres = tmp[7].text.split(':')[1].strip
+      description = @doc.xpath('//div[@id="readmangasum"]/p')[0].text
+      status = tmp[3].text.split(':')[1].strip
+      rank = -1
+      rating = -1
+      rating_max = -1
+      type = (tmp[6].text.split(':')[1].strip == 'Right to Left') ? 'Manga' : 'Manhwa'
+      html_name = @doc.xpath('//h2')[0].text
+      validate_data(description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max, '//div[@id="mangaimg"]/img')
+    end
   end
 end

@@ -94,8 +94,7 @@ class HTML_manga
   def chapter_list_to_a_list(template)
     ret = ''
     buff = ''
-    biggest = @traces.map { |a| [a[:volume], 0].max }.max
-    @traces = @traces.sort_by { |a| [(a[:volume] < 0) ? (biggest + a[:volume] * -1) * -1 : a[:volume] * -1, -a[:chapter]] }
+    @traces = Utils_misc::sort_chapter_list(@traces)
     @traces.each do |chapter|
   #      pp chapter
   #      exit 42

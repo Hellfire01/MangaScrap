@@ -1,5 +1,6 @@
 ### Changelog :
 
+0.12.5 : stability fix : fixed a wrong path for the covers ( they were not displayed correctly on the local website ) + corrected a few errors with the todo elements and the related display<br />
 0.12.4 : stability fix : corrected an error with the instruction parsing<br />
 0.12.3 : stability fix : fixed an issue with the instrction parser + an issue where MangaScrap would download 0 pages for a chapter<br />
 0.12.2 : stability fix : fixed an issue when setting a param with a number<br />

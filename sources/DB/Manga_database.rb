@@ -62,28 +62,33 @@ class Manga_database
 
   # _todo database
   def add_todo(manga_data, volume_value, chapter_value, page_nb)
+    insert = [manga_data.id, volume_value, chapter_value, page_nb, now]
     if manga_data == nil || volume_value == nil || chapter_value == nil || page_nb == nil
       puts 'Error while trying to insert element in todo database => nil'
       p insert
-      puts '(manga_name, volume, chapter, page)'
+      puts '(manga_name, volume, chapter, page, date)'
       exit 2
     end
     todo = get_todo(manga_data)
-    insert = [manga_data.id, volume_value, chapter_value, page_nb]
     todo.each do |elem|
-      elem.pop
-      elem.shift
-      if elem == insert
+      if elem[:manga_id] == manga_data.id && elem[:volume] == volume_value && elem[:chapter] == chapter_value && elem[:page] == page_nb
         return false
       end
     end
-    insert << now
     Utils_database::db_exec('INSERT INTO manga_todo VALUES (NULL, ?, ?, ?, ?, ?)', 'could not add todo for ' + manga_data.name, @db, insert)
     true
   end
 
   def get_todo(manga_data)
-    Utils_database::db_exec('SELECT * FROM manga_todo WHERE mangaId=?', 'exception on database while getting todo of ' + manga_data.name, @db, [manga_data.id])
+    raw_todo = Utils_database::db_exec('SELECT * FROM manga_todo WHERE mangaId=?', 'exception on database while getting todo of ' + manga_data.name, @db, [manga_data.id])
+    if raw_todo.size == 0
+      return raw_todo
+    end
+    ret = []
+    raw_todo.each do |todo|
+      ret << Struct::Todo_value.new(*todo)
+    end
+    ret
   end
 
   def delete_todo(id)

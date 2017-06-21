@@ -83,6 +83,7 @@ class Download_Mangafox
     true
   end
 
+  public
   def data
     unless @extracted_data
       @extracted_data = true

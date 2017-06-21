@@ -11,7 +11,9 @@ class DownloadDisplay
     puts ('downloaded ' + @pages.to_s + ' page' + ((@pages > 1) ? 's' : '')).green
     if @failed != 0
       puts 'could not download '.yellow + @failed.to_s.red + ' out of '.yellow + @pages.to_s
-      puts 'all pages were added to the todo database'
+      unless @todo
+        puts 'all pages were added to the todo database'
+      end
     end
     @failed = 0
     @pages = 0
@@ -70,13 +72,7 @@ class DownloadDisplay
       introduce_manga
     end
     puts ''
-    puts 'downloading todo pages'
-  end
-  
-  # normal display for a todo element
-  def display_todo(string, chapter = false)
-    puts ''
-    puts string
+    puts 'downloading todo pages'.magenta
   end
 
   # called when an error occured while trying to download a todo element
@@ -87,7 +83,8 @@ class DownloadDisplay
   # this is called once the todo is done ( called at the end of todo )
   def end_todo
     @todo = false
-    puts 'done'
+    puts ''
+    puts 'done'.magenta
     puts ''
   end
 
@@ -139,10 +136,8 @@ class DownloadDisplay
       introduction
     end
     # depending on the error message a different character can be displayed
-    unless @todo
-      printf error.red
-      STDOUT.flush
-    end
+    printf error.red
+    STDOUT.flush
     @total_failed_pages += 1
     @failed += 1
     @total_pages += 1

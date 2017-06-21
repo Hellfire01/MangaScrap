@@ -104,7 +104,7 @@ module MangaScrap_API
     puts 'downloading data of ' + mangas.size.to_s + ' element(s)'
     html = HTML.new
     mangas.each do |manga|
-      dw = manga.get_download_class(false)
+      dw = manga.get_download_class
       if dw == nil
         next
       end

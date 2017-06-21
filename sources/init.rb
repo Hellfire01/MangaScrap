@@ -24,6 +24,7 @@ class Init
   utils/utils_errors
   utils/utils_co
   utils/utils_db
+  utils/utils_misc
   utils/utils_html
   utils/utils_debug
   utils/utils_user_input
@@ -89,6 +90,8 @@ class Init
     Struct.new('Updated', :name, :downloaded)
     Struct.new('Query_arg', :name, :arg_type, :sql_column, :sub_string)
     Struct.new('HTML_data', :volume, :chapter, :date, :href, :nb_pages, :file_name)
+    Struct.new('Data', :volume, :chapter, :page, :link)
+    Struct.new('Todo_value', :id, :manga_id, :volume, :chapter, :page, :date)
     Struct.new('Param_value', :string, :id, :type, :value, :class, :min_value, :max_value)
     begin
       Utils_file::dir_create(Dir.home + '/.MangaScrap/db')

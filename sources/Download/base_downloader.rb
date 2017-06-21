@@ -22,7 +22,7 @@ module Base_downloader
 
   def validate_data(description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max, cover_xpath)
     Utils_file::dir_create(@dir)
-    Utils_connection::write_cover(@doc, cover_xpath, @dir + 'cover.jpg', @params[:manga_path] + @manga_data.site_dir + @manga_data.name + '.jpg')
+    Utils_connection::write_cover(@doc, cover_xpath, @dir + 'cover.jpg', @params[:manga_path] + @manga_data.site_dir + 'mangas/' + @manga_data.name + '.jpg')
     File.open(@dir + 'description.txt', 'w') do |txt|
       txt << Utils_file::data_concatenation(@manga_data, Utils_file::description_manipulation(description), author, artist, type, status, genres, release, html_name, alternative_names)
     end
@@ -135,22 +135,15 @@ module Base_downloader
     todo = @db.get_todo(@manga_data)
     if todo.size != 0
       @aff.prepare_todo
-      biggest = todo.map { |a| [a[2], 0].max }.max
-      todo = todo.sort_by! { |a| [(a[2] < 0) ? (biggest + a[2] * -1) : a[2], -a[3]] }
-      todo.each do |elem|
-        @aff.display_todo('downloading ' + values_to_string(elem[2], elem[3], elem[4]))
-        if elem[4] != -1 # if chapter
-          data = [] << elem[2] << elem[3] << elem[4]
-          if page_link(link_generator(elem[2], elem[3], elem[4]), data)
-            @db.delete_todo(elem[0])
-          else
-            @aff.todo_err('failed to download ' + values_to_string(elem[2], elem[3], elem[4]))
+      Utils_misc::sort_chapter_list(todo, true).each do |elem|
+        if elem[:page] != -1 # if page
+          data = [] << elem[:volume] << elem[:chapter] << elem[:page]
+          if page_link(link_generator(elem[:volume], elem[:chapter], elem[:page]), data)
+            @db.delete_todo(elem[:id])
           end
-        else # if not a chapter
-          if chapter_link(link_generator(elem[2], elem[3], 1))
-            @db.delete_todo(elem[0])
-          else
-            @aff.todo_err('failed to download ' + values_to_string(elem[2], elem[3], nil), true)
+        else # if chapter
+          if chapter_link(link_generator(elem[:volume], elem[:chapter], 1))
+            @db.delete_todo(elem[:id])
           end
         end
       end
@@ -162,13 +155,29 @@ module Base_downloader
   # checks witch are the chapters that have not been downloaded ( they are not in the traces database )
   # the method first gets all of the links from the database and then compares with the links of the website
   def missing_chapters
+=begin
     traces = @db.get_trace(@manga_data)
     i = 0
     @links.each do |link|
-      data = Utils_website_specific::Mangafox::data_extractor(link)
+      data = @manga_data.extract_values_from_link(link)
       if traces.count{|_id, _manga_name, vol_value, chap_value| vol_value == data[0] && chap_value == data[1]} == 0
         prep_display = " ( link #{i + 1} / #{@links.size} )"
         chapter_link(link, prep_display)
+      end
+      i += 1
+    end
+    @aff.dump
+=end
+    traces = @db.get_trace(@manga_data)
+    i = 0
+    all_data = []
+    @links.each do |link|
+      all_data << Struct::Data.new(*@manga_data.extract_values_from_link(link), link)
+    end
+    Utils_misc::sort_chapter_list(all_data).each do |data|
+      if traces.count{|_id, _manga_name, vol_value, chap_value| vol_value == data[:volume] && chap_value == data[:chapter]} == 0
+        prep_display = " ( link #{i + 1} / #{@links.size} )"
+        chapter_link(data[:link], prep_display)
       end
       i += 1
     end
