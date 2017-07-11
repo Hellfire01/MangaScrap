@@ -27,7 +27,7 @@ module Delete_diff
     pb = trace.select{|elem| !chap_list.include?(elem)}
     deleted = false
     pb.each do |chap|
-      puts ('deleting volume ' + Utils_file::volume_int_to_string(chap[0]) + ' chapter ' + chap[1].to_s).yellow
+      puts ('deleting ' + Utils_file::volume_int_to_string(chap[0], false) + ' chapter ' + chap[1].to_s).yellow
       Dir.glob(Utils_file::file_name(dir, chap[0], chap[1], nil, true)).sort.each do |file|
         puts 'deleting file : '.yellow + file
         File.delete(file)

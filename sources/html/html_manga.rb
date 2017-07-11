@@ -94,7 +94,7 @@ class HTML_manga
   def chapter_list_to_a_list(template)
     ret = ''
     buff = ''
-    @traces = Utils_misc::sort_chapter_list(@traces)
+    @traces = Utils_misc::sort_chapter_list(@traces).reverse
     @traces.each do |chapter|
   #      pp chapter
   #      exit 42

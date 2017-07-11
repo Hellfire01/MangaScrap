@@ -87,6 +87,29 @@ module Base_downloader
     true
   end
 
+  # checks witch are the chapters that have not been downloaded ( they are not in the traces database )
+  # the method first gets all of the links from the database and then compares with the links of the website
+  def missing_chapters
+    traces = @db.get_trace(@manga_data)
+    if @todo.size != 0
+      @todo = @todo.reject{|e| e[:page] != -1}
+    end
+    i = 0
+    all_data = []
+    @links.each do |link|
+      all_data << Struct::Data.new(*@manga_data.extract_values_from_link(link), link)
+    end
+    Utils_misc::sort_chapter_list(all_data).each do |data|
+      if traces.count{|_id, _manga_name, vol_value, chap_value| vol_value == data[:volume] && chap_value == data[:chapter]} == 0 &&
+      @todo.count{|e| e[:chapter] == data[:chapter]} == 0
+        prep_display = " ( link #{i + 1} / #{@links.size} )"
+        chapter_link(data[:link], prep_display)
+      end
+      i += 1
+    end
+    @aff.dump
+  end
+
   public
   # takes the data array [volume, chapter, page] and casts it into a string
   def values_to_string(volume, chapter, page)
@@ -95,19 +118,19 @@ module Base_downloader
     page_string = ''
     case volume
       when -2
-        volume_string = 'volume TBD'
+        volume_string = 'volume TBD '
       when -3
-        volume_string = 'volume NA'
+        volume_string = 'volume NA '
       when -4
-        volume_string = 'volume ANT'
+        volume_string = 'volume ANT '
       else
         if volume >= 0
-          volume_string = "volume #{volume}"
+          volume_string = "volume #{volume} "
         end
     end
-    chapter_string = "chapter #{chapter} " if chapter != nil || chapter == -1
+    chapter_string = "chapter #{chapter}" if chapter != nil || chapter == -1
     page_string = "page #{page}" if page != nil || page == -1
-    volume_string + ' ' + chapter_string + ' ' + page_string
+    volume_string + chapter_string + ' ' + page_string
   end
 
   def data_to_string(data)
@@ -132,10 +155,10 @@ module Base_downloader
   # elem[0] = id of line in database ; elem[1] = id of manga in database
   # elem[2] = volume value ; elem[3] = chapter value ; elem[4] = page value
   def todo
-    todo = @db.get_todo(@manga_data)
-    if todo.size != 0
+    @todo = @db.get_todo(@manga_data)
+    if @todo.size != 0
       @aff.prepare_todo
-      Utils_misc::sort_chapter_list(todo, true).each do |elem|
+      Utils_misc::sort_chapter_list(@todo, true).each do |elem|
         if elem[:page] != -1 # if page
           data = [] << elem[:volume] << elem[:chapter] << elem[:page]
           if page_link(link_generator(elem[:volume], elem[:chapter], elem[:page]), data)
@@ -150,38 +173,6 @@ module Base_downloader
       @aff.end_todo
     end
     @downloaded_a_page
-  end
-
-  # checks witch are the chapters that have not been downloaded ( they are not in the traces database )
-  # the method first gets all of the links from the database and then compares with the links of the website
-  def missing_chapters
-=begin
-    traces = @db.get_trace(@manga_data)
-    i = 0
-    @links.each do |link|
-      data = @manga_data.extract_values_from_link(link)
-      if traces.count{|_id, _manga_name, vol_value, chap_value| vol_value == data[0] && chap_value == data[1]} == 0
-        prep_display = " ( link #{i + 1} / #{@links.size} )"
-        chapter_link(link, prep_display)
-      end
-      i += 1
-    end
-    @aff.dump
-=end
-    traces = @db.get_trace(@manga_data)
-    i = 0
-    all_data = []
-    @links.each do |link|
-      all_data << Struct::Data.new(*@manga_data.extract_values_from_link(link), link)
-    end
-    Utils_misc::sort_chapter_list(all_data).each do |data|
-      if traces.count{|_id, _manga_name, vol_value, chap_value| vol_value == data[:volume] && chap_value == data[:chapter]} == 0
-        prep_display = " ( link #{i + 1} / #{@links.size} )"
-        chapter_link(data[:link], prep_display)
-      end
-      i += 1
-    end
-    @aff.dump
   end
 
   # the update method will first check for _todo elements to download then check for missing chapters
@@ -211,6 +202,7 @@ module Base_downloader
   # @db => the database instance todo : delete the variable
   # @aff => the attached DownloadDisplay class
   # @doc => the first page todo : regarder si le Manga_data ne peut pas faire ça au moment de son check_link
+  # @_todo => an arry containing all of the _todo elements. Used to avoid downloading the same chapter twice when updating
   def initialize(manga, download_data = true)
     @manga_data = manga
     @downloaded_a_page = false
@@ -221,6 +213,7 @@ module Base_downloader
     # doc is the variable that stores the raw data of the manga's page
     @aff = DownloadDisplay.new(manga.site_dir, manga.name)
     @doc = Utils_connection::get_page(manga.link, true)
+    @todo = []
     if @doc == nil
       raise 'failed to get manga ' + manga.name + "'s chapter index"
     end

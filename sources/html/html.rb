@@ -15,6 +15,8 @@ class HTML
       end
       source_buffer = '      <img src="./mangas/' + manga.name + '.jpg' + '">'
       if @html_params[:nsfw_enabled]
+        ret << source_buffer
+      else
         manga_genres = manga.data[9].split(', ')
         if (@html_params[:nsfw_categories].split(', ') & manga_genres).empty?
           ret << source_buffer
@@ -23,8 +25,6 @@ class HTML
           # warning : sites must be managed
           ret << '      <img src="' + Dir.home + '/.MangaScrap/pictures/logos/mangafox.png">'
         end
-      else
-        ret << source_buffer
       end
       ret << '      <p>' + Utils_file::description_manipulation(manga.name.gsub('_', ' '), 25, 3).gsub('\n', '<br />') + '</p>'
       ret << '    </a>'

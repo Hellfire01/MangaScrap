@@ -52,6 +52,7 @@ class Download_Mangafox
   def chapter_link(link, prep_display = '')
 #    get_chapter_from_link(link, prep_display, '//div[@class="l"]', '.html')
     data = @manga_data.extract_values_from_link(link)
+    @aff.prepare_chapter("downloading #{data_to_string(data)} of #{@manga_data.name}" + prep_display)
     if data[0] == -42
       @aff.unmanaged_link(link)
       false
@@ -65,7 +66,6 @@ class Download_Mangafox
     rescue RuntimeError
       return link_err(data, true, 'R')
     end
-    @aff.prepare_chapter("downloading #{data_to_string(data)} of #{@manga_data.name}" + prep_display)
     number_of_pages = page.xpath('//div[@class="l"]').text.split.last.to_i
     if number_of_pages == 0
       return link_err(data, true, '?')

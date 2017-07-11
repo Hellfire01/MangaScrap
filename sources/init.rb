@@ -36,10 +36,11 @@ class Init
   Download/mangafox
   Download/mangareader_mangapanda
   DownloadDisplay
-  instructions/Parsers/Instruction_parser
-  instructions/Parsers/Data_parser
+  instructions/Parsers/exec/Instruction_parser
+  instructions/Parsers/exec/Data_parser
   instructions/Parsers/Query_Parser
   instructions/Parsers/File_parser
+  instructions/Parsers/Site_parser
   instructions/query
   instructions/Instructions_exec
   instructions/Manga_data_filter
@@ -82,9 +83,7 @@ class Init
     end
   end
 
-  def self.initialize_mangascrap
-    load_all_gems
-    load_relative_files
+  def self.init_structures
     Struct.new('Arg', :name, :sub_args, :nb_args, :does_not_need_args?)
     Struct.new('Sub_arg', :name, :nb_args)
     Struct.new('Updated', :name, :downloaded)
@@ -93,6 +92,13 @@ class Init
     Struct.new('Data', :volume, :chapter, :page, :link)
     Struct.new('Todo_value', :id, :manga_id, :volume, :chapter, :page, :date)
     Struct.new('Param_value', :string, :id, :type, :value, :class, :min_value, :max_value)
+    Struct.new('Website', :link, :aliases, :dir, :to_complete, :class)
+  end
+
+  def self.initialize_mangascrap
+    load_all_gems
+    load_relative_files
+    init_structures
     begin
       Utils_file::dir_create(Dir.home + '/.MangaScrap/db')
     rescue StandardError => error

@@ -135,7 +135,7 @@ module MangaScrap_API
   # delete_files = bool, if true, the files of the manga will also be deleted
   def self.delete(manga_list, delete_files = true)
     if Utils_user_input::require_confirmation('you are about to ' + 'delete'.red + ' the following element(s) from the database' + ((delete_files) ?
-      ' and '.yellow + 'all of the downloaded pages' :
+      ' AND '.yellow + 'all of the downloaded pages' :
       ' but ' + 'not'.yellow + ' the downloaded files' ), manga_list)
       db = Manga_database.instance
       path = Params.instance.download[:manga_path]

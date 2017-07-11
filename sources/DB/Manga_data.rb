@@ -15,6 +15,16 @@ class Manga_data
   attr_reader :to_complete, :link, :name, :site_dir, :id, :site, :data, :status, :in_db
 
   private
+  # places all of the website related information in the @sites array
+  def init_sites
+    @sites << Struct::Website.new('http://mangafox.me/', %w(http://mangafox.me mangafox.me mangafox),
+                                  'mangafox', 'manga/', Download_Mangafox)
+    @sites << Struct::Website.new('http://www.mangareader.net/', %w(http://www.mangareader.net www.mangareader.net mangareader.net mangareader),
+                                  'mangareader', '', Download_Mangareader_Pandamanga)
+    @sites << Struct::Website.new('http://www.mangapanda.com/', %w(http://www.mangapanda.com www.mangapanda.com mangapanda.com mangapanda),
+                                  'pandamanga', '', Download_Mangareader_Pandamanga)
+  end
+
   # ensures that the link starts with http or https
   def link_correction
     unless @link.start_with?('http://', 'https://')
@@ -236,6 +246,8 @@ http://www.mangapanda.com/)
     @to_complete = ''
     @in_db = @status
     @download_class = nil
+    @sites = []
+    init_sites
     if @in_db
       is_site_compatible?(false) # function used here to get @site_dir and @to_complete values
     end

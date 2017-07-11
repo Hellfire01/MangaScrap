@@ -193,6 +193,12 @@ class Instructions_exec
         puts 'ignoring file instruction'.yellow
       end
     end
+    parser.on('site', 1) do |args|
+      e = Site_parser.new(args[0], @data_to_prepare)
+      unless e.good
+        puts 'ignoring site instruction'.yellow
+      end
+    end
     parser.on('query', 1) do |args| # <======================================================== currently a placeholder
       puts 'query is currently a placeholder'
 #      query = Query_Manager.new
