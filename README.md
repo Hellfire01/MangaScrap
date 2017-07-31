@@ -4,11 +4,15 @@ MangaScrap is a Ruby based program that will allow you to download your mangas a
 It posses a database that allows it to know what chapters where not downloaded yet<br />
 Unlike other manga downloaders, it also creates a local website on your computer allowing you to browse your mangas offline<br />
 
+
 MangaScrap allows you to download your mangas on the following websites :
 
 - mangafox
 - mangareader
 - mangapanda
+
+It also has a [facebook](https://www.facebook.com/MangaScrap/) page if ever you want to follow it
+
 
 ### basic usage :
 
