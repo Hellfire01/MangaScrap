@@ -19,7 +19,7 @@ module Re_download_module
       end
     end
     if failure
-      puts 'did not find any links in the chapter index with the requested volume for ' + element.name + ' of ' + element.site
+      puts 'did not find any links in the chapter index with the requested volume for ' + element[:name] + ' of ' + element[:website][:link]
     else
       puts 'done'
     end
@@ -44,7 +44,7 @@ module Re_download_module
       end
     end
     if failure
-      puts 'did not find any links in the chapter index with the requested chapter for ' + element.name + ' of ' + element.site
+      puts 'did not find any links in the chapter index with the requested chapter for ' + element[:name] + ' of ' + element[:website][:link]
     else
       puts 'done'
     end
@@ -71,7 +71,7 @@ module Re_download_module
       end
     end
     if failure
-      puts 'did not find any links in the chapter index with the requested page for ' + element.name + ' of ' + element.site
+      puts 'did not find any links in the chapter index with the requested page for ' + element[:name] + ' of ' + element[:website][:link]
     else
       puts 'done'
     end

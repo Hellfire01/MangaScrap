@@ -32,19 +32,15 @@
     [redl]g / [re-download]g [own arguments] [data arguments compatible] [elements required] [in database]
         alows to re-download pages of the selected element(s)
         [redl]g takes 1 to 3 arguments
-
             [p]y page_value
                 specifies the page witch you want to be downloaded
                 the page must be used with the chapter ([c]y) argument
-
             [c]y chapter_value
                 specifies the chapter witch you want to be downloaded
                 can be used without the volume ([v]y) unless they are
-
             [v]y volume_value
                 specifies the volume witch you want to be downloaded
                 can be used independently of the page ([p]y) and chapter ([p]y) argument
-
 
     [data]g [data arguments compatible] [elements required] [in database]
         downloads the cover and details ( rating, description, ... ) of the selected elements
@@ -76,14 +72,11 @@
     [param]g [own arguments]
         Allows you to configure the way MangaScrap works.
         [param]g can take 3 arguments :
-
             [list]y
                 Shows the status of all the current settings and there description
-
             [reset]y
                 Resets all the values of all the parameters to there default configuration
                 Will request a confirmation
-
             [set]y paramId newValue
                 Allows you to set a new value to one of the parameters.
                 Requires 2 arguments : the paramId and the new value
@@ -101,23 +94,18 @@
 
     [data arguments]
         definition : the data arguments are the arguments that are used to get elements by [link]y, [id]y, [file]y, ...
-
         [all]y
             Selects all elements in the database
-
         [id]y name site
             Gets one element with the combination of the name and of the site.
             The name MUST be the one of the url
-
         [link]y link
             Gets one element with the complete link of the element
-
         [file]y fileName
             Gets all the element present in the file
             All the elements must be of the name + site format
             Empty lines are not a problem
             It is possible to place comments but the commented line MUST start with a #
-
         [query]y query
             Allows you to get elements from the database directly
             Currently just a placeholder

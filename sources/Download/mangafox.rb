@@ -4,7 +4,7 @@ class Download_Mangafox
   private
   def extract_links(manga)
     tries = @params[4]
-    links = @doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
+    links = @manga_data[:index_page].xpath('//a[@class="tips"]').map{ |link| link['href'] }
     while (links == nil || links.size == 0) && tries > 0
       puts ('error while retrieving chapter index of ' + manga.name).yellow
       doc = Utils_connection::get_page(manga.link)
@@ -20,9 +20,55 @@ class Download_Mangafox
   end
 
   public
+  def self.volume_string_to_int(string)
+    case string
+      when (string == 'TBD')
+        volume = -2
+      when (string == 'NA')
+        volume = -3
+      when (string == 'ANT')
+        volume = -4
+      else
+        volume = string.to_i
+    end
+    volume
+  end
+
+  def self.data_extractor(link)
+    link += '1.html'
+    link_split = link.split('/')
+    page = link_split[link_split.size - 1].chomp('.html').to_i
+    link_split[link_split.size - 2][0] = ''
+    chapter = link_split[link_split.size - 2].to_f
+    if chapter % 1 == 0
+      chapter = chapter.to_i
+    end
+    if link_split.size == 8
+      link_split[link_split.size - 3][0] = ''
+      if link_split[link_split.size - 3] =~ /\A\d+\z/
+        volume = link_split[link_split.size - 3].to_i
+      else
+        if link_split[link_split.size - 3] == 'NA'
+          volume = -3
+        elsif link_split[link_split.size - 3] == 'TBD'
+          volume = -2
+        elsif link_split[link_split.size - 3] == 'ANT'
+          volume = -4
+        else
+          volume = -42 # error value
+        end
+      end
+    else
+      volume = -1 # no volume
+    end
+    ret = Array.new
+    ret << volume << chapter << page
+    ret
+  end
+
   def link_generator(volume, chapter, page)
     chapter = chapter.to_i if chapter % 1 == 0
-    link = @manga_data.site + 'manga/' + @manga_data.name + '/'
+    link = @manga_data[:website][:link] + 'manga/' + @manga_data[:name] + '/'
     if volume >= 0
       vol_buffer = ((volume >= 10) ? '' : '0')
       link += 'v' + vol_buffer + volume.to_s + '/'
@@ -50,56 +96,27 @@ class Download_Mangafox
 
   # downloads a chapter with link = the link and prep_display = small string displayed when announcing the download of the chapter
   def chapter_link(link, prep_display = '')
-#    get_chapter_from_link(link, prep_display, '//div[@class="l"]', '.html')
-    data = @manga_data.extract_values_from_link(link)
-    @aff.prepare_chapter("downloading #{data_to_string(data)} of #{@manga_data.name}" + prep_display)
-    if data[0] == -42
-      @aff.unmanaged_link(link)
-      false
+    get_chapter_from_link(link, prep_display, '.html') do |page|
+      page.xpath('//div[@class="l"]').text.split.last.to_i
     end
-    last_pos = link.rindex(/\//)
-    link = link[0..last_pos].strip + '1.html'
-    begin
-      if (page = Utils_connection::get_page(link, true)) == nil
-        return link_err(data, true, 'X')
-      end
-    rescue RuntimeError
-      return link_err(data, true, 'R')
-    end
-    number_of_pages = page.xpath('//div[@class="l"]').text.split.last.to_i
-    if number_of_pages == 0
-      return link_err(data, true, '?')
-    end
-    page_nb = 1
-    while page_nb <= number_of_pages
-      data[2] = page_nb
-      page_link(link, data)
-      last_pos = link.rindex(/\//)
-      page_nb += 1
-      link = link[0..last_pos].strip + page_nb.to_s + '.html'
-    end
-    @aff.dump_chapter
-    @db.add_trace(@manga_data, data[0], data[1], number_of_pages)
-    true
   end
 
-  public
   def data
     unless @extracted_data
       @extracted_data = true
-      alternative_names = @doc.xpath('//div[@id="title"]/h3').text
-      release_author_artist_genres = @doc.xpath('//td[@valign="top"]')
+      alternative_names = @manga_data[:index_page].xpath('//div[@id="title"]/h3').text
+      release_author_artist_genres = @manga_data[:index_page].xpath('//td[@valign="top"]')
       release = release_author_artist_genres[0].text.to_i
       author = release_author_artist_genres[1].text.gsub(/\s+/, '').gsub(',', ', ')
       artist = release_author_artist_genres[2].text.gsub(/\s+/, '').gsub(',', ', ')
       genres = release_author_artist_genres[3].text.gsub(/\s+/, '').gsub(',', ', ')
-      description = @doc.xpath('//p[@class="summary"]').text
-      data = @doc.xpath('//div[@class="data"]/span')
+      description = @manga_data[:index_page].xpath('//p[@class="summary"]').text
+      data = @manga_data[:index_page].xpath('//div[@class="data"]/span')
       status = data[0].text.gsub(/\s+/, '').split(',')[0]
       rank = data[1].text[/\d+/]
       rating = data[2].text[/\d+[.,]\d+/]
       rating_max = 5 # rating max is a constant in mangafox
-      tmp_type = @doc.xpath('//div[@id="title"]/h1')[0].text.split(' ')
+      tmp_type = @manga_data[:index_page].xpath('//div[@id="title"]/h1')[0].text.split(' ')
       type = tmp_type[tmp_type.size - 1]
       html_name = tmp_type.take(tmp_type.size - 1).join(' ')
       validate_data(description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max, '//div[@class="cover"]/img')

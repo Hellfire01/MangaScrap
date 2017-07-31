@@ -6,8 +6,8 @@ module MangaScrap_API
   # displays the name + site of the mangas ( used to create manga list files )
   # mangas = array of Manga_Data
   def self.output(mangas)
-    mangas.sort{|a, b| a.link <=> b.link}.each do |manga|
-      puts manga.name + ' ' + manga.site
+    mangas.sort{|a, b| a[:link] <=> b[:link]}.each do |manga|
+      puts manga[:name] + ' ' + manga[:website][:link]
     end
   end
 
@@ -16,20 +16,20 @@ module MangaScrap_API
   # mangas = array of Manga_Data where status = true and in_db = true
   def self.details(mangas)
     database = Manga_database.instance
-    mangas.sort{|a, b| a.link <=> b.link}.each do |manga|
-      puts 'Details for : ' + manga.name.yellow
+    mangas.sort{|a, b| a[:link] <=> b[:link]}.each do |manga|
+      puts 'Details for : ' + manga[:name].yellow
       puts ''
       puts 'Web :'.yellow
-      puts 'HTML name   : ' + manga.data[11]
-      puts 'Site        : ' + manga.site
-      puts 'Link        : ' + manga.link
-      puts 'Database id : ' + manga.id.to_s
-      puts 'Author      : ' + manga.data[5]
-      puts 'Artist      : ' + manga.data[6]
-      puts 'Type        : ' + manga.data[7]
-      puts 'Status      : ' + manga.data[8]
-      puts 'Genres      : ' + manga.data[9]
-      puts 'Year        : ' + manga.data[10].to_s
+      puts 'HTML name   : ' + manga[:data][11]
+      puts 'Site        : ' + manga[:website][:link]
+      puts 'Link        : ' + manga[:link]
+      puts 'Database id : ' + manga[:id].to_s
+      puts 'Author      : ' + manga[:data][5]
+      puts 'Artist      : ' + manga[:data][6]
+      puts 'Type        : ' + manga[:data][7]
+      puts 'Status      : ' + manga[:data][8]
+      puts 'Genres      : ' + manga[:data][9]
+      puts 'Year        : ' + manga[:data][10].to_s
       puts 'Traces :'.yellow
       puts 'downloaded chapters : '
       traces = database.get_trace(manga)
@@ -42,14 +42,16 @@ module MangaScrap_API
         puts 'pages    : ' + pages.reduce(:+).to_s
       end
       puts 'Todo :'.yellow
-      todo = database.get_todo(manga).size
-      # todo : sort the todo and display it
-      if todo == 0
+      todo = database.get_todo(manga)
+      if todo.size == 0
         puts 'there are no todo to download'
       else
-        # todo : ensure that the todo elements do not accumulate
-        puts "there is a total of #{todo} todo(s) to download"
+        puts "There is a total of #{todo.size} todo elements to download witch includes :"
+        buff = todo.map{|e| e[:page] == -1}
+        puts "#{buff.size} entire chapter#{buff.size == 1 ? '' : 's'}" if buff.size != 0
+        puts "#{todo.size - buff.size} independent page#{todo.size - buff.size == 1 ? '' : 's'}" if todo.size - buff.size != 0
       end
+      puts "\n"
     end
   end
 

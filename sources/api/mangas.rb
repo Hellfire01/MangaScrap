@@ -140,12 +140,12 @@ module MangaScrap_API
       db = Manga_database.instance
       path = Params.instance.download[:manga_path]
       manga_list.each do |manga|
-        db.delete_manga(manga)
         if delete_files
-          site_dir = Manga_data::get_dir_from_site(manga.site)
-          Utils_file::delete_files(path + site_dir + 'html/' + manga.name, '.html')
-          Utils_file::delete_files(path + site_dir + 'mangas/' + manga.name, '.jpg')
+          site_dir = manga[:website][:dir]
+          Utils_file::delete_files(path + site_dir + 'html/' + manga[:name], '.html')
+          Utils_file::delete_files(path + site_dir + 'mangas/' + manga[:name], '.jpg')
         end
+        db.delete_manga(manga)
       end
       puts 'deleted all elements'
       HTML.new.generate_index

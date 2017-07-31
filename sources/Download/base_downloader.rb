@@ -22,13 +22,13 @@ module Base_downloader
 
   def validate_data(description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max, cover_xpath)
     Utils_file::dir_create(@dir)
-    Utils_connection::write_cover(@doc, cover_xpath, @dir + 'cover.jpg', @params[:manga_path] + @manga_data.site_dir + 'mangas/' + @manga_data.name + '.jpg')
+    Utils_connection::write_cover(@manga_data[:index_page], cover_xpath, @dir + 'cover.jpg', @params[:manga_path] + @manga_data[:website][:dir] + 'mangas/' + @manga_data[:name] + '.jpg')
     File.open(@dir + 'description.txt', 'w') do |txt|
       txt << Utils_file::data_concatenation(@manga_data, Utils_file::description_manipulation(description), author, artist, type, status, genres, release, html_name, alternative_names)
     end
-    @aff.data_disp(@manga_data.in_db)
-    if @manga_data.in_db
-      @db.update_manga(@manga_data.name, description, author, artist, genres, html_name, alternative_names, rank, rating, rating_max)
+    @aff.data_disp(@manga_data[:in_db])
+    if @manga_data[:in_db]
+      @db.update_manga(@manga_data[:name], description, author, artist, genres, html_name, alternative_names, rank, rating, rating_max)
     else
       @db.add_manga(@manga_data, description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max)
     end
@@ -56,31 +56,33 @@ module Base_downloader
     true
   end
 
-  def get_chapter_from_link(link, prep_display, nb_pages_xpath, add_to_link)
-    data = @manga_data.extract_values_from_link(link)
+  def get_chapter_from_link(pre_link, prep_display, add_to_link)
+    data = @manga_data.extract_values_from_link(pre_link)
+    @aff.prepare_chapter("downloading #{values_to_string(data[0], data[1], -1)} of #{@manga_data[:name]}" + prep_display)
     if data[0] == -42
-      @aff.unmanaged_link(link)
+      @aff.unmanaged_link(pre_link)
       false
     end
+    end_of_link_pos = pre_link.rindex(/\//)
+    link = pre_link[0..end_of_link_pos].strip + '1' + add_to_link
     begin
-      if (page = Utils_connection::get_page(link, true)) == nil
+      page = Utils_connection::get_page(link, true)
+      if page == nil
         return link_err(data, true, 'X')
       end
     rescue RuntimeError
       return link_err(data, true, 'R')
     end
-    @aff.prepare_chapter("downloading #{data_to_string(data)} of #{@manga_data.name}" + prep_display)
-    number_of_pages = page.xpath(nb_pages_xpath).text.split.last.to_i
+    number_of_pages = yield page
     if number_of_pages == 0
       return link_err(data, true, '?')
     end
     page_nb = 1
     while page_nb <= number_of_pages
+      link = link[0..end_of_link_pos].strip + page_nb.to_s + add_to_link
       data[2] = page_nb
       page_link(link, data)
-      last_pos = link.rindex(/\//)
       page_nb += 1
-      link = link[0..last_pos].strip + page_nb.to_s + add_to_link
     end
     @aff.dump_chapter
     @db.add_trace(@manga_data, data[0], data[1], number_of_pages)
@@ -112,6 +114,14 @@ module Base_downloader
 
   public
   # takes the data array [volume, chapter, page] and casts it into a string
+  def self.data_extractor(link)
+    Utils_errors::critical_error('The "data_extractor" static method was not overridden after being included in a download class')
+  end
+
+  def self.volume_string_to_int(string)
+    Utils_errors::critical_error('The "volume_string_to_int" static method was not overridden after being included in a download class')
+  end
+
   def values_to_string(volume, chapter, page)
     volume_string = ''
     chapter_string = ''
@@ -129,8 +139,11 @@ module Base_downloader
         end
     end
     chapter_string = "chapter #{chapter}" if chapter != nil || chapter == -1
-    page_string = "page #{page}" if page != nil || page == -1
-    volume_string + chapter_string + ' ' + page_string
+    unless page == nil || page == -1
+      page_string = "page #{page}"
+      chapter_string += ' '
+    end
+    volume_string + chapter_string + page_string
   end
 
   def data_to_string(data)
@@ -201,23 +214,24 @@ module Base_downloader
   # @dir => the directory in witch the mangas are placed
   # @db => the database instance todo : delete the variable
   # @aff => the attached DownloadDisplay class
-  # @doc => the first page todo : regarder si le Manga_data ne peut pas faire ça au moment de son check_link
   # @_todo => an arry containing all of the _todo elements. Used to avoid downloading the same chapter twice when updating
   def initialize(manga, download_data = true)
     @manga_data = manga
     @downloaded_a_page = false
     @extracted_data = !download_data
     @params = Params.instance.download
-    @dir = @params[:manga_path] + manga.site_dir + 'mangas/' + manga.name + '/'
+    @dir = @params[:manga_path] + manga[:website][:dir] + 'mangas/' + manga[:name] + '/'
     @db = Manga_database.instance
     # doc is the variable that stores the raw data of the manga's page
-    @aff = DownloadDisplay.new(manga.site_dir, manga.name)
-    @doc = Utils_connection::get_page(manga.link, true)
+    @aff = DownloadDisplay.new(manga)
     @todo = []
-    if @doc == nil
-      raise 'failed to get manga ' + manga.name + "'s chapter index"
+    if manga[:index_page] == nil
+      manga.set_index_page(Utils_connection::get_page(manga[:link], true))
+      if manga[:index_page] == nil
+        raise 'failed to get manga ' + manga[:name] + "'s chapter index"
+      end
     end
     @links = extract_links(manga).reverse
-    data if download_data || !manga.in_db
+    data if download_data || !manga[:in_db]
   end
 end

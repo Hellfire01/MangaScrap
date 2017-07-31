@@ -9,7 +9,7 @@ class Manga_data_filter
   private
   def add_to_return(todo)
     # checking if the data is not already in the new array to avoid duplicates
-    if @ret.select{|elem| elem.link == todo.link}[0] == nil
+    if @ret.select{|elem| elem[:link] == todo[:link]}[0] == nil
       @ret << todo
     end
   end
@@ -26,7 +26,7 @@ class Manga_data_filter
 
   def no_connection(data_display)
     @array.each do |todo|
-      if todo.in_db
+      if todo[:in_db]
         add_to_return(todo)
       elsif todo.resolve(false, data_display)
         add_to_return(todo)
@@ -44,7 +44,7 @@ class Manga_data_filter
     else
       no_connection(data_display)
     end
-    @ret.sort{|a, b| a.link <=> b.link}
+    @ret.sort{|a, b| a[:link] <=> b[:link]}
     @ret
   end
 

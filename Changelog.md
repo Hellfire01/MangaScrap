@@ -1,12 +1,13 @@
 ### Changelog :
 
+0.12.7 : stability fix, optimisation and display : the download of multiple mangas is now faster ( the index was downloaded twice ) + multiple bug fixes + display fixes
 0.12.6 : optimisation and display : a chapter that is a todo will not be downloaded twice during an update if it is not in the traces satabase + a fex errors are now esier to read and understand<br />
 0.12.5 : stability fix : fixed a wrong path for the covers ( they were not displayed correctly on the local website ) + corrected a few errors with the todo elements and the related display<br />
 0.12.4 : stability fix : corrected an error with the instruction parsing<br />
 0.12.3 : stability fix : fixed an issue with the instrction parser + an issue where MangaScrap would download 0 pages for a chapter<br />
 0.12.2 : stability fix : fixed an issue when setting a param with a number<br />
-0.12.1 : stability increase + added the instruction "managed" to display the compatible websites<br />
-0.12.0 : huge optimisation : download is close to twice as fast + new management of the parameters + more understandable errors<br />
+0.12.1 : stability fix and new feature :  added the instruction "managed" to display the compatible websites + small fixes<br />
+0.12.0 : optimisation : download is close to twice as fast + new management of the parameters + more understandable errors<br />
 
 ###### Warning : the params database is not compatible<br />Please look at the file migration/0.11.x_to_0.12.x.txt<br />
 

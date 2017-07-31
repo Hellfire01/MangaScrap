@@ -2,22 +2,21 @@ class HTML
   private
   # generates the links for each manga ( cover + name ), used for the manga index
   def html_get_data(site, updated_recently = false)
-    mangas = @db.get_manga_list(site)
     ret = []
     i = 0
     # mangas = mangas.reject.... if updated_recently
-    mangas.sort{|a, b| a.link <=> b.link}.each do |manga|
+    @mangas.each do |manga|
       ret << "  <div class='manga'>"
       if updated_recently
-        ret << "    <a href=\"" + './html/' + manga.name + '.html' + '">'
+        ret << "    <a href=\"" + './html/' + manga[:name] + '.html' + '">'
       else
-        ret << "    <a onmouseover=\"displayData(#{i})\" onmouseout=\"clearData()\" href=\"" + './html/' + manga.name + '.html' + '">'
+        ret << "    <a onmouseover=\"displayData(#{i})\" onmouseout=\"clearData()\" href=\"" + './html/' + manga[:name] + '.html' + '">'
       end
-      source_buffer = '      <img src="./mangas/' + manga.name + '.jpg' + '">'
+      source_buffer = '      <img src="./mangas/' + manga[:name] + '.jpg' + '">'
       if @html_params[:nsfw_enabled]
         ret << source_buffer
       else
-        manga_genres = manga.data[9].split(', ')
+        manga_genres = manga[:data][9].split(', ')
         if (@html_params[:nsfw_categories].split(', ') & manga_genres).empty?
           ret << source_buffer
         else
@@ -26,7 +25,7 @@ class HTML
           ret << '      <img src="' + Dir.home + '/.MangaScrap/pictures/logos/mangafox.png">'
         end
       end
-      ret << '      <p>' + Utils_file::description_manipulation(manga.name.gsub('_', ' '), 25, 3).gsub('\n', '<br />') + '</p>'
+      ret << '      <p>' + Utils_file::description_manipulation(manga[:name].gsub('_', ' '), 25, 3).gsub('\n', '<br />') + '</p>'
       ret << '    </a>'
       ret << '  </div>'
       i += 1
@@ -37,19 +36,18 @@ class HTML
   # manages the js of the index
   def index_js_data(site)
     ret = "var data = [\n"
-    mangas = @db.get_manga_list(site)
-    mangas.sort{|a, b| a.link <=> b.link}.each do |manga|
-      ret += "  ['" + manga.data[11].gsub('; ', '<br />').gsub("'", '###guillemet###') + "', '"
-      ret += manga.data[12].gsub('; ', '<br />').gsub("'", '###guillemet###') + "', '"
-      ret += manga.data[2].gsub("\r", '<br />').gsub("\n", '<br />').gsub("'", '###guillemet###') + "', '"
-      ret += manga.data[5] + "', '"
-      ret += manga.data[6] + "', '"
-      ret += manga.data[8] + "', '"
-      ret += manga.data[9] + "', "
-      ret += manga.data[10].to_s + ", '"
-      ret += manga.data[7] + "', "
-      ret += manga.data[13].to_s + ', '
-      ret += (manga.data[14] * 100 / manga.data[15]).round(2).to_s + "],\n" # rating and rating max
+    @mangas.each do |manga|
+      ret += "  ['" + manga[:data][11].gsub('; ', '<br />').gsub("'", '###guillemet###') + "', '"
+      ret += manga[:data][12].gsub('; ', '<br />').gsub("'", '###guillemet###') + "', '"
+      ret += manga[:data][2].gsub("\r", '<br />').gsub("\n", '<br />').gsub("'", '###guillemet###') + "', '"
+      ret += manga[:data][5] + "', '"
+      ret += manga[:data][6] + "', '"
+      ret += manga[:data][8] + "', '"
+      ret += manga[:data][9] + "', "
+      ret += manga[:data][10].to_s + ", '"
+      ret += manga[:data][7] + "', "
+      ret += manga[:data][13].to_s + ', '
+      ret += (manga[:data][14] * 100 / manga[:data][15]).round(2).to_s + "],\n" # rating and rating max
     end
     ret += '];'
     ret
@@ -60,14 +58,14 @@ class HTML
   def generate_index
     if @html_params[:auto_generate_html]
       puts 'updating html of manga index'
-      sites = Manga_data::get_compatible_sites
+      sites = Web_data.instance.sites
       sites.each do |site|
-        site_dir = Manga_data::get_dir_from_site(site)
-        dir = @manga_path + site_dir
+        @mangas = @db.get_manga_list(site).sort{|a, b| a[:link] <=> b[:link]}
+        dir = @manga_path + site[:dir]
         HTML_utils::copy_html_related_files(site, dir)
         template = File.open('sources/templates/web/site_index/site_index_template.html').read
         template = template.gsub('#####list#####', html_get_data(site))
-        template = template.gsub('#####site_name#####', site_dir.chomp('/'))
+        template = template.gsub('#####site_name#####', site[:dir].chomp('/'))
         File.open(dir + 'index.html', 'w') {|f| f.write(template)}
         js = File.open('sources/templates/web//site_index/site_index_template.js').read
         js = js.gsub('#####tab#####', index_js_data(site))
@@ -85,19 +83,20 @@ class HTML
   # WARNING ======================================================================================================================================================
 
   def generate_updated
+=begin commented until it is enabled
     if @html_params[:auto_generate_html]
       puts 'generating updated index'
-      sites = Manga_data.get_compatible_sites
+      sites = Web_data.instance.sites
       sites.each do |site|
-        site_dir = Manga_data::get_dir_from_site(site)
-        dir = @manga_path + site_dir
+        dir = @manga_path + site[:dir]
         HTML_utils::copy_html_related_files(site, dir)
         template = File.open('sources/templates/web/manga_updated_index_template.html').read
         template = template.gsub('#####list#####', html_get_data(site, true))
-        template = template.gsub('#####site_name#####', site_dir.chomp('/'))
+        template = template.gsub('#####site_name#####', site[:dir].chomp('/'))
         File.open(dir + 'index_updated.html', 'w') {|f| f.write(template)}
       end
     end
+=end
   end
 
   # the constructor copies all the css and places them in the html dir
@@ -106,5 +105,6 @@ class HTML
     @manga_path = Params.instance.download[:manga_path]
     @html_params = Params.instance.html
     @db = Manga_database.instance
+    @mangas = []
   end
 end

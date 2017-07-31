@@ -52,8 +52,9 @@ class Init
   DB/sub_params/Download
   DB/sub_params/Misc
   DB/sub_params/Threads
+  DB/manga_data/Manga_data
+  DB/manga_data/Web_data
   DB/Params
-  DB/Manga_data
   DB/Manga_database)
   end
 
@@ -93,6 +94,8 @@ class Init
     Struct.new('Todo_value', :id, :manga_id, :volume, :chapter, :page, :date)
     Struct.new('Param_value', :string, :id, :type, :value, :class, :min_value, :max_value)
     Struct.new('Website', :link, :aliases, :dir, :to_complete, :class)
+    Struct.new('Manga_data_values', :name, :link, :id, :status, :website, :data, :download_class, :in_db, :index_page)
+    Struct.new('Download_display_ref', :total_failed_pages, :failed, :total_pages, :pages, :downloaded_page)
   end
 
   def self.initialize_mangascrap

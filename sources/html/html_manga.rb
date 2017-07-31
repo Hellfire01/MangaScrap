@@ -57,8 +57,8 @@ class HTML_manga
       template = template.gsub('#####prev#####', '')
       template = template.gsub('#####prev_url#####', '')
     end
-    chap_data = 'Chapter ' + ((arr[1][:chapter] % 1 == 0) ? arr[1][:chapter].to_i : arr[1][:chapter]).to_s + ' ' + Utils_file::volume_int_to_string(arr[1][:volume], true)
-    max_chap_data = 'Chapter ' + ((@traces[0][:chapter] % 1 == 0) ? @traces[0][:chapter].to_i : @traces[0][:chapter]).to_s + ' ' + Utils_file::volume_int_to_string(@traces[0][:volume], true)
+    chap_data = 'Chapter ' + ((arr[1][:chapter] % 1 == 0) ? arr[1][:chapter].to_i : arr[1][:chapter]).to_s + ' ' + Utils_file::volume_int_to_string(arr[1][:volume], false)
+    max_chap_data = 'Chapter ' + ((@traces[0][:chapter] % 1 == 0) ? @traces[0][:chapter].to_i : @traces[0][:chapter]).to_s + ' ' + Utils_file::volume_int_to_string(@traces[0][:volume], false)
     template = template.gsub('#####chapter_data#####', chap_data + ' / ' + max_chap_data)
     template = template.gsub('#####pictures#####', get_pictures_of_chapter(arr[1]))
     template = template.gsub('#####manga_index#####', @dir + 'index.html')
@@ -100,7 +100,7 @@ class HTML_manga
   #      exit 42
       ret += "<li>\n"
       chapter_buff = (chapter[:chapter] % 1 == 0) ? chapter[:chapter].to_i.to_s : chapter[:chapter].to_s
-      volume_buff = Utils_file::volume_int_to_string(chapter[:volume], true)
+      volume_buff = Utils_file::volume_int_to_string(chapter[:volume], false)
       buff = chapter[:href].gsub('#####html_path#####', @manga_data[1]).gsub('#####elem#####', volume_buff + ' Chapter ' + chapter_buff).gsub('#', '%23')
       ret += buff
       ret += "</li>\n"
@@ -142,16 +142,16 @@ class HTML_manga
     @db = Manga_database.instance
     @force_html = force_html
     @manga_data = []
-    if manga_data.in_db
-      @manga_data = manga_data.data
+    if manga_data[:in_db]
+      @manga_data = manga_data[:data]
     else
       @manga_data = @db.get_manga(manga_data)
     end
     @manga_name = @manga_data[11]
     @path_pictures = '/mangas/' + @manga_data[1] + '/'
-    @dir = Params.instance.download[:manga_path] + Manga_data::get_dir_from_site(manga_data.site)
+    @dir = Params.instance.download[:manga_path] + manga_data[:website][:dir]
     @path_html = @dir + 'html/' + @manga_data[1]
-    HTML_utils::copy_html_related_files(manga_data.site, @dir)
+    HTML_utils::copy_html_related_files(manga_data[:website][:link], @dir)
     @traces = get_traces(manga_data)
   end
 end

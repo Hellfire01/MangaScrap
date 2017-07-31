@@ -8,4 +8,12 @@ module Utils_misc
       return chapter_list.sort_by { |a| [((a[:volume] < 0) ? (biggest + a[:volume] * -1) : a[:volume]), a[:chapter]] }
     end
   end
+
+  def self.arrays_to_structures(struct, array_of_arrays)
+    ret = []
+    array_of_arrays.each do |array|
+      ret << struct.new(*array)
+    end
+    ret
+  end
 end

@@ -43,7 +43,7 @@ module Utils_file
     vol_buffer = ''
     if vol_value != -42
       if vol_value < 0
-        vol_buffer = volume_int_to_string(vol_value)
+        vol_buffer = volume_int_to_string(vol_value, true)
       else
         vol_buffer = ((vol_value >= 1000) ? '' : ((vol_value >= 100) ? '0' : ((vol_value >= 10) ? '00' : '000')))
         vol_buffer += vol_value.to_s
@@ -53,19 +53,19 @@ module Utils_file
   end
 
   # function used to 'translate' the volume value (int) from the database as a string
-  def self.volume_int_to_string(vol_value, html = false)
+  def self.volume_int_to_string(vol_value, for_file_name)
     volume_buffer = ''
     case vol_value
     when -1
-      volume_buffer = (!html) ? '####' : ''
+      volume_buffer = (for_file_name) ? '####' : ''
     when -2
-      volume_buffer = (!html) ? '_TBD' : 'Volume TBD'
+      volume_buffer = (for_file_name) ? '_TBD' : 'Volume TBD'
     when -3
-      volume_buffer = (!html) ? '__NA' : 'Volume NA'
+      volume_buffer = (for_file_name) ? '__NA' : 'Volume NA'
     when -4
-      volume_buffer = (!html) ? '_ANT' : 'Volume ANT'
+      volume_buffer = (for_file_name) ? '_ANT' : 'Volume ANT'
     else
-      if html
+      if for_file_name
         buffer = ((vol_value >= 1000) ? '' : ((vol_value >= 100) ? '&nbsp;' : ((vol_value >= 10) ? '&nbsp;&nbsp;' : '&nbsp;&nbsp;&nbsp;')))
         volume_buffer = 'Volume ' + vol_value.to_s + buffer
       else
@@ -133,7 +133,7 @@ module Utils_file
 
   # used for the description.txt file of every manga
   def self.data_concatenation(manga_data, description, author, artist, type, status, genres, release, html_name, alternative_names)
-    ret =  'name         = ' + manga_data.name + "\n"
+    ret =  'name         = ' + manga_data[:name] + "\n"
     ret += 'html name    = ' + html_name + "\n"
     ret += 'other names  = ' + alternative_names + "\n"
     ret += 'author       = ' + author + "\n"
@@ -143,8 +143,8 @@ module Utils_file
     ret += 'status       = ' + status + "\n"
     ret += 'genres       = ' + genres + "\n"
     ret += "\n"
-    ret += 'site = ' + manga_data.site + "\n"
-    ret += 'link = ' + manga_data.link + "\n"
+    ret += 'site = ' + manga_data[:website][:link] + "\n"
+    ret += 'link = ' + manga_data[:link] + "\n"
     ret += "\n"
     ret += "description :\n"
     ret += "\n"
