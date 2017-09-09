@@ -66,10 +66,9 @@ module Utils_file
       volume_buffer = (for_file_name) ? '_ANT' : 'Volume ANT'
     else
       if for_file_name
-        buffer = ((vol_value >= 1000) ? '' : ((vol_value >= 100) ? '&nbsp;' : ((vol_value >= 10) ? '&nbsp;&nbsp;' : '&nbsp;&nbsp;&nbsp;')))
-        volume_buffer = 'Volume ' + vol_value.to_s + buffer
-      else
         volume_buffer = vol_value.to_s
+      else
+        volume_buffer = 'Volume ' + vol_value.to_s
       end
     end
     volume_buffer

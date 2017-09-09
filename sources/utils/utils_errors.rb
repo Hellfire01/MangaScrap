@@ -14,4 +14,18 @@ module Utils_errors
     puts "\nplease report this on github (unless you edited the code)\n\n".yellow
     exit 4
   end
+
+  def self.manage_redirection_error(manga_data)
+    begin
+      yield
+    rescue => e
+      puts ''
+      puts 'Error :'.red
+      puts 'Got redirected while downloading ' + manga_data[:name].yellow + "'s chapter index"
+      puts 'It seems the link ' + manga_data[:link].yellow + ' is no longer valid'
+      puts ''
+      return false
+    end
+    return true
+  end
 end

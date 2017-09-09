@@ -48,7 +48,7 @@ module Utils_connection
           if tries == nil
             break
           end
-        elsif response.code == 302 # redirection
+        elsif response.code == 301 || response.code == 302 # redirections
           raise 'redirection'
         else # all other errors
           tries = download_rescue(tries, link, "http code error #{response.code}", error_message, silent)
@@ -59,7 +59,7 @@ module Utils_connection
       end
       request.run
     end
-    return nil
+    raise 'could not connect'
   end
 
   # connects to link and download page

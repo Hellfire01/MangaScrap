@@ -9,10 +9,11 @@ module MangaScrap_API
     puts 'adding ' + mangas.size.to_s + ' element(s) to database'
     html = HTML.new
     mangas.each do |manga|
-      dw = manga.get_download_class
-      if dw == nil
+      if manga[:download_class] == nil
         next
       end
+      manga[:download_class].get_web_data
+      manga[:download_class].data
       if generate_html
         html_manga = HTML_manga.new(manga)
         html_manga.generate_chapter_index
@@ -34,11 +35,14 @@ module MangaScrap_API
     end
     puts 'updating ' + mangas.size.to_s + ' element(s)'
     mangas.each do |manga|
-      dw = manga.get_download_class(false)
+      dw = manga[:download_class]
       if dw == nil
         next
       end
-      generate_html = (todo_only ? dw.todo : dw.update)
+      generate_html = false
+      next unless Utils_errors::manage_redirection_error(manga) do ||
+        generate_html = (todo_only ? dw.todo : dw.update)
+      end
       if params[:delete_diff]
         if Delete_diff::delete_diff(dw.links, manga) || generate_html
           html_manga = HTML_manga.new(manga)
@@ -75,8 +79,8 @@ module MangaScrap_API
       chapter = _chapter[0].to_i
     end
     parser.on('v', 1) do |_volume|
-      # todo => if site = mangafox
-      volume = Utils_website_specific::Mangafox::volume_string_to_int(_volume[0])
+      # as it is, the volume is a string that needs to be cast as int / float when the download class is availabl
+      volume = _volume[0]
     end
     parser.parse args
     data_to_prepare = instruction_class.data_to_prepare
@@ -89,7 +93,10 @@ module MangaScrap_API
     elements = filter.run(false, true)
     instruction_class.clear_data
     elements.each do |e|
-      if Re_download_module::redl_manager(e, volume, chapter, page)
+      next unless Utils_errors::manage_redirection_error(e) do ||
+        e[:download_class].get_web_data
+      end
+      if Re_download_module::redl_manager(e, e[:website][:class]::volume_string_to_int(volume), chapter, page)
         html_manga = HTML_manga.new(e)
         html_manga.generate_chapter_index
       else
@@ -104,11 +111,13 @@ module MangaScrap_API
     puts 'downloading data of ' + mangas.size.to_s + ' element(s)'
     html = HTML.new
     mangas.each do |manga|
-      dw = manga.get_download_class
-      if dw == nil
+      if manga[:download_class] == nil
         next
       end
-      dw.data
+      next unless Utils_errors::manage_redirection_error(manga) do ||
+        manga[:download_class].get_web_data
+      end
+      manga[:download_class].data
       html_manga = HTML_manga.new(manga)
       html_manga.generate_chapter_index
     end

@@ -41,11 +41,11 @@ module Base_downloader
       return link_err(data, false, 'r')
     end
     if page == nil
-      return false
+      return link_err(data, false, 'x')
     end
     pic_link = page.xpath(xpath).map{|img| img['src']}
     if pic_link[0] == nil
-      return link_err(data, false, 'x')
+      return link_err(data, false, '!')
     end
     pic_buffer = Utils_connection::get_pic(pic_link[0], true)
     if pic_buffer == nil || Utils_file::write_pic(pic_buffer, data, @dir) == false
@@ -188,9 +188,24 @@ module Base_downloader
     @downloaded_a_page
   end
 
+  # downloads the index page of the manga and extracts the links
+  def get_web_data
+    unless @got_web_data
+      if @manga_data[:index_page] == nil
+        @manga_data.set_index_page(Utils_connection::get_page(@manga_data[:link], true))
+        if @manga_data[:index_page] == nil
+          raise 'failed to get manga ' + @manga_data[:name] + "'s chapter index"
+        end
+      end
+      @links = extract_links(@manga_data).reverse
+      @got_web_data = true
+    end
+  end
+
   # the update method will first check for _todo elements to download then check for missing chapters
   # it only calls the data method if a page was downloaded
   def update
+    get_web_data
     todo
     missing_chapters
     if @downloaded_a_page
@@ -206,32 +221,24 @@ module Base_downloader
   end
 
   # all download classes use the same initializer with a Manga_data as argument ( it must be resolved )
-  # variables are :0
-  # @manga_data => the Manga_data class
-  # @downloaded_a_page => allows the class to know if a page was ( or not ) downloaded
-  # @extracted_data => used to block multiple calls to the data method, does not download if set to true
-  # @params => all of the download parameters
-  # @dir => the directory in witch the mangas are placed
-  # @db => the database instance todo : delete the variable
-  # @aff => the attached DownloadDisplay class
-  # @_todo => an arry containing all of the _todo elements. Used to avoid downloading the same chapter twice when updating
-  def initialize(manga, download_data = true)
+  # variables are :
+  #   @manga_data => the Manga_data class
+  #   @downloaded_a_page => allows the class to know if a page was ( or not ) downloaded
+  #   @extracted_data => used to block multiple calls to the data method, does not download if set to true
+  #   @params => all of the download parameters
+  #   @dir => the directory in witch the mangas are placed
+  #   @db => the database instance todo : delete the variable
+  #   @aff => the attached DownloadDisplay class
+  #   @_todo => an arry containing all of the _todo elements. Used to avoid downloading the same chapter twice when updating
+  def initialize(manga)
     @manga_data = manga
     @downloaded_a_page = false
-    @extracted_data = !download_data
     @params = Params.instance.download
     @dir = @params[:manga_path] + manga[:website][:dir] + 'mangas/' + manga[:name] + '/'
     @db = Manga_database.instance
-    # doc is the variable that stores the raw data of the manga's page
     @aff = DownloadDisplay.new(manga)
     @todo = []
-    if manga[:index_page] == nil
-      manga.set_index_page(Utils_connection::get_page(manga[:link], true))
-      if manga[:index_page] == nil
-        raise 'failed to get manga ' + manga[:name] + "'s chapter index"
-      end
-    end
-    @links = extract_links(manga).reverse
-    data if download_data || !manga[:in_db]
+    @links = nil
+    @got_web_data = false
   end
 end

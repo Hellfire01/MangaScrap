@@ -20,8 +20,16 @@ class Manga_data
     end
     begin
       @data[:index_page] = Utils_connection::get_page(@data[:link], true)
-    rescue RuntimeError
-      puts 'Warning :'.yellow + ' could not connect to ' + @data[:link].yellow if display
+    rescue RuntimeError => e
+      if e.message == 'could not connect'
+        puts 'Warning :'.yellow + ' could not connect to ' + @data[:link].yellow if display
+      elsif e.message == 'redirection'
+        puts 'Warning :'.yellow + ' got redirected while trying to connect to ' + @data[:link].yellow if display
+        puts 'Please check if ' + Web_data::extract_name_from_link(@data[:link]).yellow + ' exists at ' + Web_data::extract_site_from_link(@data[:link]).yellow
+        puts ''
+      else
+        raise e
+      end
       return false
     end
     true
@@ -97,12 +105,34 @@ class Manga_data
     end
   end
 
+  # returns the class used to download the manga
+  # will exit if the resolve method was not called before and did not return true
+  def get_download_class
+    begin
+      @data[:download_class] = @data[:website][:class].new(self)
+    rescue RuntimeError => e
+      puts 'Exception while trying to get '.red + @data[:name].yellow + ' (' + e.message + ')'
+      return nil
+    rescue ArgumentError => e
+      puts 'Exception while trying to get '.red + @data[:name].yellow
+      Utils_errors::critical_error('Argument error ( something is wrong with the code )', e)
+    rescue => e
+      puts 'Exception while trying to get '.red + @data[:name].yellow
+      puts 'exception is : ' + e.class.to_s
+      puts 'reason is : '.yellow + e.message
+      return nil
+    end
+  end
+
   public
   # this method ensures that all of the data is correct
   # connect = bool, determines if the class can try to use internet if it could not find in the database
   # display = bool, used to allow writing on the standard output or not
   def resolve(connect, display)
     @data[:status] = extract_data(display) && validate_data(connect, display)
+    if @data[:status]
+      get_download_class
+    end
     @data[:status]
   end
 
@@ -118,31 +148,6 @@ class Manga_data
       Utils_errors::critical_error('the extract_values_from_link method was called when the data class was invalid or not resolved')
     end
     @data[:website][:class]::data_extractor(link)
-  end
-
-  # returns the class used to download the manga
-  # will exit if the resolve method was not called before and did not return true
-  def get_download_class(download_data = true)
-    unless @data[:status]
-     Utils_errors::critical_error('the get_download_class method was called when the data class was not resolved or invalid')
-    end
-    if @data[:download_class] == nil
-      begin
-        @data[:download_class] = @data[:website][:class].new(self, download_data)
-      rescue RuntimeError => e
-        puts 'Exception while trying to get '.red + @data[:name].yellow + ' (' + e.message + ')'
-        return nil
-      rescue ArgumentError => e
-        puts 'Exception while trying to get '.red + @data[:name].yellow
-        Utils_errors::critical_error('Argument error ( something is wrong with the code', e)
-      rescue => e
-        puts 'Exception while trying to get '.red + @data[:name].yellow
-        puts 'exception is : ' + e.class.to_s
-        puts 'reason is : '.yellow + e.message
-        return nil
-      end
-    end
-    @data[:download_class]
   end
 
   # only setter for Manga_data to allow write access on @data[:index_page] and avoid it being downloaded twice

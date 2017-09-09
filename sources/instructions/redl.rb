@@ -1,8 +1,18 @@
 module Re_download_module
+  # used for return
+  def self.return_management(failure, element)
+    if failure
+      puts 'did not find any links in the chapter index with the requested volume for ' + element[:name] + ' of ' + element[:website][:link]
+    else
+      puts 'done'
+    end
+    !failure
+  end
+
   # used to redownload an entire volume
   def self.redl_volume(element, volume)
     failure = true
-    dw = element.get_download_class
+    dw = element[:download_class]
     if dw == nil
       return false
     end
@@ -18,19 +28,14 @@ module Re_download_module
         dw.chapter_link(link)
       end
     end
-    if failure
-      puts 'did not find any links in the chapter index with the requested volume for ' + element[:name] + ' of ' + element[:website][:link]
-    else
-      puts 'done'
-    end
-    !failure
+    return_management(failure, element)
   end
 
   # used to re-download a chapter
   # todo : generate the required link and use it directly
   def self.redl_chapter(element, chapter, volume)
     failure = true
-    dw = element.get_download_class
+    dw = element[:download_class]
     if dw == nil
       return false
     end
@@ -43,19 +48,14 @@ module Re_download_module
         break
       end
     end
-    if failure
-      puts 'did not find any links in the chapter index with the requested chapter for ' + element[:name] + ' of ' + element[:website][:link]
-    else
-      puts 'done'
-    end
-    !failure
+    return_management(failure, element)
   end
 
   # used to re-download just a page
   # todo : generate the required link and use it directly
   def self.redl_page(element, page, chapter, volume)
     failure = true
-    dw = element.get_download_class
+    dw = element[:download_class]
     if dw == nil
       return false
     end
@@ -67,15 +67,11 @@ module Re_download_module
         failure = false
         puts "downloading page #{page} of chapter #{chapter}" + ((volume == -1) ? '' : ((volume == -2) ? ' of volume TBD' : " of volume #{volume}"))
         dw.page_link(new_link, element.extract_values_from_link(new_link))
+        puts "\n\n"
         break
       end
     end
-    if failure
-      puts 'did not find any links in the chapter index with the requested page for ' + element[:name] + ' of ' + element[:website][:link]
-    else
-      puts 'done'
-    end
-    !failure
+    return_management(failure, element)
   end
 
   # this function calls the right function (page, chapter or volume) depending on the arguments
@@ -94,7 +90,7 @@ module Re_download_module
 
   # ensures that the values are correctly given to the re-download function
   def self.check_redl_options(volume, chapter, page)
-    if volume != nil && volume < -4
+    if volume != nil && volume.to_i < -4 # does not need to consider the mangafox special case
       puts 'volume value cannot be < -4'
       puts 'values as :'
       puts '-2 => TBD'

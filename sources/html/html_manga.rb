@@ -96,8 +96,6 @@ class HTML_manga
     buff = ''
     @traces = Utils_misc::sort_chapter_list(@traces).reverse
     @traces.each do |chapter|
-  #      pp chapter
-  #      exit 42
       ret += "<li>\n"
       chapter_buff = (chapter[:chapter] % 1 == 0) ? chapter[:chapter].to_i.to_s : chapter[:chapter].to_s
       volume_buff = Utils_file::volume_int_to_string(chapter[:volume], false)

@@ -38,11 +38,19 @@ class Web_data
   end
 
   # gets the name of the manga / light novel / ... from the link
-  # may need to be adapted if the last element of the url is not the name for a site
   def self.extract_name_from_link(link)
     tmp = link.gsub('http://', '')
     tmp = tmp.gsub('https://', '')
-    tmp.split('/').last # todo : ============================= adapter de façon à gerer des liens avec des valeurs en chapitres et pages ( genre un lien de lecture en cours )
+    site_string = extract_site_from_link(link)
+    site = instance.get_site(site_string)
+    if site == nil
+      return nil
+    end
+    if site[:to_complete] == ''
+      return tmp.split('/')[1]
+    else
+      return tmp.split('/')[2]
+    end
   end
 
   # gets the site of the manga / light novel / ... from the link

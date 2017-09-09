@@ -28,8 +28,6 @@ class Init
   utils/utils_html
   utils/utils_debug
   utils/utils_user_input
-  utils/website_specific/mangafox_utils
-  utils/website_specific/mangareader_mangapanda_utils
   html/html
   html/html_manga
   Download/base_downloader
@@ -66,7 +64,7 @@ class Init
       puts "exception while trying to load #{gem}, please follow the installation instructions in the install directory"
       puts 'message is : ' + e.message
       puts ''
-      puts 'please note that a ruby update may require a re-download of the gems'.yellow
+      puts 'please note that a ruby update may require a re-download of the gems'
       puts ''
       exit 1
     end

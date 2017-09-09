@@ -61,22 +61,19 @@ class Download_Mangareader_Pandamanga
   end
 
   def data
-    unless @extracted_data
-      @extracted_data = true
-      tmp = @manga_data[:index_page].xpath('//div[@id="mangaproperties"]/table/tr')
-      alternative_names = tmp[1].text.split(':')[1].strip
-      release = tmp[2].text.split(':')[1].strip.to_i
-      author = tmp[4].text.split(':')[1].strip
-      artist = tmp[5].text.split(':')[1].strip
-      genres = tmp[7].text.split(':')[1].strip
-      description = @manga_data[:index_page].xpath('//div[@id="readmangasum"]/p')[0].text
-      status = tmp[3].text.split(':')[1].strip
-      rank = -1
-      rating = -1
-      rating_max = -1
-      type = (tmp[6].text.split(':')[1].strip == 'Right to Left') ? 'Manga' : 'Manhwa'
-      html_name = @manga_data[:index_page].xpath('//h2')[0].text
-      validate_data(description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max, '//div[@id="mangaimg"]/img')
-    end
+    tmp = @manga_data[:index_page].xpath('//div[@id="mangaproperties"]/table/tr')
+    alternative_names = tmp[1].text.split(':')[1].strip
+    release = tmp[2].text.split(':')[1].strip.to_i
+    author = tmp[4].text.split(':')[1].strip
+    artist = tmp[5].text.split(':')[1].strip
+    genres = tmp[7].text.split(':')[1].strip
+    description = @manga_data[:index_page].xpath('//div[@id="readmangasum"]/p')[0].text
+    status = tmp[3].text.split(':')[1].strip
+    rank = -1
+    rating = -1
+    rating_max = -1
+    type = (tmp[6].text.split(':')[1].strip == 'Right to Left') ? 'Manga' : 'Manhwa'
+    html_name = @manga_data[:index_page].xpath('//h2')[0].text
+    validate_data(description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max, '//div[@id="mangaimg"]/img')
   end
 end

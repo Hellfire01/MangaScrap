@@ -22,11 +22,11 @@ class Download_Mangafox
   public
   def self.volume_string_to_int(string)
     case string
-      when (string == 'TBD')
+      when 'TBD'
         volume = -2
-      when (string == 'NA')
+      when 'NA'
         volume = -3
-      when (string == 'ANT')
+      when 'ANT'
         volume = -4
       else
         volume = string.to_i
@@ -102,24 +102,21 @@ class Download_Mangafox
   end
 
   def data
-    unless @extracted_data
-      @extracted_data = true
-      alternative_names = @manga_data[:index_page].xpath('//div[@id="title"]/h3').text
-      release_author_artist_genres = @manga_data[:index_page].xpath('//td[@valign="top"]')
-      release = release_author_artist_genres[0].text.to_i
-      author = release_author_artist_genres[1].text.gsub(/\s+/, '').gsub(',', ', ')
-      artist = release_author_artist_genres[2].text.gsub(/\s+/, '').gsub(',', ', ')
-      genres = release_author_artist_genres[3].text.gsub(/\s+/, '').gsub(',', ', ')
-      description = @manga_data[:index_page].xpath('//p[@class="summary"]').text
-      data = @manga_data[:index_page].xpath('//div[@class="data"]/span')
-      status = data[0].text.gsub(/\s+/, '').split(',')[0]
-      rank = data[1].text[/\d+/]
-      rating = data[2].text[/\d+[.,]\d+/]
-      rating_max = 5 # rating max is a constant in mangafox
-      tmp_type = @manga_data[:index_page].xpath('//div[@id="title"]/h1')[0].text.split(' ')
-      type = tmp_type[tmp_type.size - 1]
-      html_name = tmp_type.take(tmp_type.size - 1).join(' ')
-      validate_data(description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max, '//div[@class="cover"]/img')
-    end
+    alternative_names = @manga_data[:index_page].xpath('//div[@id="title"]/h3').text
+    release_author_artist_genres = @manga_data[:index_page].xpath('//td[@valign="top"]')
+    release = release_author_artist_genres[0].text.to_i
+    author = release_author_artist_genres[1].text.gsub(/\s+/, '').gsub(',', ', ')
+    artist = release_author_artist_genres[2].text.gsub(/\s+/, '').gsub(',', ', ')
+    genres = release_author_artist_genres[3].text.gsub(/\s+/, '').gsub(',', ', ')
+    description = @manga_data[:index_page].xpath('//p[@class="summary"]').text
+    data = @manga_data[:index_page].xpath('//div[@class="data"]/span')
+    status = data[0].text.gsub(/\s+/, '').split(',')[0]
+    rank = data[1].text[/\d+/]
+    rating = data[2].text[/\d+[.,]\d+/]
+    rating_max = 5 # rating max is a constant in mangafox
+    tmp_type = @manga_data[:index_page].xpath('//div[@id="title"]/h1')[0].text.split(' ')
+    type = tmp_type[tmp_type.size - 1]
+    html_name = tmp_type.take(tmp_type.size - 1).join(' ')
+    validate_data(description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max, '//div[@class="cover"]/img')
   end
 end
