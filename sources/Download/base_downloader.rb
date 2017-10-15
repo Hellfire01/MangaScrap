@@ -1,6 +1,6 @@
 # this module is used by every download class
 module Base_downloader
-  attr_reader :links
+  attr_reader :links, :downloaded_a_page
 
   private
   def extract_links(manga)
@@ -20,6 +20,7 @@ module Base_downloader
     false
   end
 
+  # prepares all of the manga data to send it to the database
   def validate_data(description, author, artist, type, status, genres, release, html_name, alternative_names, rank, rating, rating_max, cover_xpath)
     Utils_file::dir_create(@dir)
     Utils_connection::write_cover(@manga_data[:index_page], cover_xpath, @dir + 'cover.jpg', @params[:manga_path] + @manga_data[:website][:dir] + 'mangas/' + @manga_data[:name] + '.jpg')
@@ -34,23 +35,23 @@ module Base_downloader
     end
   end
 
+  # first gets the htlm page, then extracts the picture link to download it
   def get_page_from_link(link, data, xpath)
     begin
-      page = Utils_connection::get_page(link, true)
-    rescue RuntimeError
-      return link_err(data, false, 'r')
-    end
-    if page == nil
-      return link_err(data, false, 'x')
+      page = Utils_connection::get_page(link, Download_type::PAGE, true)
+    rescue Connection_exception => e
+      return link_err(data, false, e.data[:error_code])
     end
     pic_link = page.xpath(xpath).map{|img| img['src']}
     if pic_link[0] == nil
-      return link_err(data, false, '!')
+      return link_err(data, false, 'e')
     end
-    pic_buffer = Utils_connection::get_pic(pic_link[0], true)
-    if pic_buffer == nil || Utils_file::write_pic(pic_buffer, data, @dir) == false
-      return link_err(data, false, '!')
+    begin
+      pic_buffer = Utils_connection::get_pic(pic_link[0], Download_type::PICTURE, true)
+    rescue Connection_exception => e
+      return link_err(data, false, e.data[:error_code])
     end
+    Utils_file::write_pic(pic_buffer, data, @dir)
     @downloaded_a_page = true
     @aff.downloaded_page(data[2])
     true
@@ -66,12 +67,9 @@ module Base_downloader
     end_of_link_pos = pre_link.rindex(/\//)
     link = pre_link[0..end_of_link_pos].strip + '1' + add_to_link
     begin
-      page = Utils_connection::get_page(link, true)
-      if page == nil
-        return link_err(data, true, 'X')
-      end
-    rescue RuntimeError
-      return link_err(data, true, 'R')
+      page = Utils_connection::get_page(link, Download_type::PAGE, true)
+    rescue Connection_exception => e
+      return link_err(data, true, e.data[:error_code])
     end
     number_of_pages = yield page
     if number_of_pages == 0
@@ -191,21 +189,21 @@ module Base_downloader
   # downloads the index page of the manga and extracts the links
   def get_web_data
     unless @got_web_data
-      if @manga_data[:index_page] == nil
-        @manga_data.set_index_page(Utils_connection::get_page(@manga_data[:link], true))
-        if @manga_data[:index_page] == nil
-          raise 'failed to get manga ' + @manga_data[:name] + "'s chapter index"
-        end
+      unless @manga_data.get_index(true)
+        return false
       end
       @links = extract_links(@manga_data).reverse
       @got_web_data = true
     end
+    true
   end
 
   # the update method will first check for _todo elements to download then check for missing chapters
   # it only calls the data method if a page was downloaded
   def update
-    get_web_data
+    unless get_web_data
+      return false
+    end
     todo
     missing_chapters
     if @downloaded_a_page

@@ -27,14 +27,27 @@ class Web_data
 
   # ensures that the link is correct to avoid pointless redirection
   # ex : a missing '/' at the end of the link can cause a redirection
-  def self.link_correction(link)
-    unless link.start_with?('http://', 'https://')
-      link = 'http://' + link
+  # and then extracts the name and the site
+  def get_web_info_from_link(data, display)
+    unless data[:link].start_with?('http://', 'https://')
+      data[:link] = 'http://' + data[:link]
     end
-    unless link.end_with?('/')
-      link += '/'
+    unless data[:link].end_with?('/')
+      data[:link] += '/'
     end
-    link
+    buff = data[:link].split('/')
+    tmp_site = buff[2]
+    data[:website] = is_site_compatible?(tmp_site, display)
+    if data[:website] == nil
+      return false
+    end
+    if data[:website][:to_complete] == ''
+      data[:name] = buff[3]
+    else
+      data[:name] = buff[4]
+    end
+    data[:link] = data[:website][:link] + data[:website][:to_complete] + data[:name] + '/'
+    true
   end
 
   # gets the name of the manga / light novel / ... from the link

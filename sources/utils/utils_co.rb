@@ -12,20 +12,35 @@ module Utils_connection
   end
 
   # exception manager for the utils_co.rb functions
-  def self.download_rescue(tries, link, error, message, silent = false)
+  def self.download_rescue(tries, link, error, http_code, silent, type)
     if tries > 0
       tries -= 1
       sleep_manager(error)
       tries
     else
-      unless silent
-        print "\n"
-        STDOUT.flush
-        puts message + ' ' + link + ' after ' + $download_params[:nb_tries_on_fail].to_s + ' tries'
-        puts 'message is : ' + error
-      end
-      nil
+      raise Connection_exception.new(Struct::Connection_error.new(tries, link, error, http_code, silent, Download_type::related_char_error(type)))
     end
+  end
+
+  def self.download(link, silent, type)
+    tries ||= $download_params[:nb_tries_on_fail]
+    while tries != 0
+      sleep($download_params[:between_sleep])
+      request = Typhoeus::Request.new(link, accept_encoding: 'gzip', connecttimeout: $download_params[:connect_timeout], timeout: $download_params[:download_timeout], followlocation: false)
+      request.on_complete do |response|
+        if response.success?
+          return response.body
+        elsif response.timed_out?
+          tries = download_rescue(tries, link, 'time out', response.code, silent, type)
+        elsif response.code == 301 || response.code == 302 # redirections
+          raise Connection_exception.new(Struct::Connection_error.new(link, 'redirection', tries, silent, response.code, 'r'))
+        else # all other errors
+          tries = download_rescue(tries, link, 'http error', response.code, silent, type)
+        end
+      end
+      request.run
+    end
+    raise Connection_exception.new(Struct::Connection_error.new(link, 'could not connect', tries, silent, -1, '/'))
   end
 
   public
@@ -34,46 +49,14 @@ module Utils_connection
     $download_params = Params.instance.download
   end
 
-  def self.download(link, silent, error_message)
-    tries ||= $download_params[:nb_tries_on_fail]
-    while tries != 0
-      sleep($download_params[:between_sleep])
-      request = Typhoeus::Request.new(link, accept_encoding: 'gzip', connecttimeout: $download_params[:connect_timeout],
-                                      timeout: $download_params[:download_timeout], followlocation: false)
-      request.on_complete do |response|
-        if response.success?
-          return response.body
-        elsif response.timed_out? # time out
-          tries = download_rescue(tries, link, 'time out', error_message, silent)
-          if tries == nil
-            break
-          end
-        elsif response.code == 301 || response.code == 302 # redirections
-          raise 'redirection'
-        else # all other errors
-          tries = download_rescue(tries, link, "http code error #{response.code}", error_message, silent)
-          if tries == nil
-            break
-          end
-        end
-      end
-      request.run
-    end
-    raise 'could not connect'
-  end
-
   # connects to link and download page
-  def self.get_page(link, silent = false)
-    html = download(link, silent, 'could not download picture')
-    if html == nil
-      return nil
-    end
-    Nokogiri::HTML(html, 'utf-8')
+  def self.get_page(link, type, silent)
+    Nokogiri::HTML(download(link, silent, type), 'utf-8')
   end
 
   # connects to link and download picture
-  def self.get_pic(link, silent = false)
-    download(link, silent, 'could not download picture')
+  def self.get_pic(link, type, silent)
+    download(link, silent, type)
   end
 
   # extracts the cover link, downloads it and writes it twice
@@ -82,8 +65,9 @@ module Utils_connection
     if cover_link.size == 0
       Utils_errors::critical_error('Could not extract of element using the following xpath : "' + xpath + '"')
     end
-    cover_buffer = get_pic(cover_link[0], true)
-    if cover_buffer == nil
+    begin
+      cover_buffer = get_pic(cover_link[0], Download_type::COVER, true)
+    rescue Connection_exception
       cover_buffer = File.open('./pictures/other/404.png')
     end
     if cover_buffer != nil

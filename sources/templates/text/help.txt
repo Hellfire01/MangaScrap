@@ -155,6 +155,9 @@
  ; => downloaded a page ( multiple of 50 )
  errors ( get placed in the todo database ), small letter for a page, capital letter for a chapter
  x => could not download the html page ( needed to get to the image )
+ e => could not extract the link of the picture from the html page
  ! => could not download the image
  r => got redirected when trying to connect to the link
- ? => could not extract the pages from the html
+ X => could not download the index
+ ? => could not extract the chapter links from the index
+ / => could not connect at all ( connection error )

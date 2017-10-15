@@ -28,4 +28,15 @@ module Utils_errors
     end
     return true
   end
+
+  def self.manage_exceptions(manga_data)
+    begin
+      yield
+    rescue => e
+      puts 'Error'.red
+      puts e.message
+      return false
+    end
+    return true
+  end
 end

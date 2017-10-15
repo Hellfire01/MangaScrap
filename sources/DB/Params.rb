@@ -2,6 +2,26 @@ class Params
   include Singleton
   attr_reader :download, :html, :misc, :threads
 
+  private
+  def initialize
+    @display = true
+    unless Dir.exists?(Dir.home + '/.MangaScrap/db/')
+      Utils_file::dir_create(Dir.home + '/.MangaScrap/db/')
+    end
+    unless File.exist?(Dir.home + '/.MangaScrap/db/params.db')
+      introduction
+    end
+    @threads = Params_threads.new
+    @download = Params_download.new
+    @html = Params_HTML.new
+    @misc = Params_misc.new
+    @param_classes = [] << @download << @html << @misc << @threads
+    @params = []
+    @param_classes.each do |param|
+      @params += param.params_list
+    end
+  end
+
   public
   # used to check if the user really wants to reset
   def param_reset (require_confirmation = true)
@@ -73,24 +93,5 @@ class Params
     puts ''
     puts ''
     puts ''
-  end
-
-  def initialize
-    @display = true
-    unless Dir.exists?(Dir.home + '/.MangaScrap/db/')
-      Utils_file::dir_create(Dir.home + '/.MangaScrap/db/')
-    end
-    unless File.exist?(Dir.home + '/.MangaScrap/db/params.db')
-      introduction
-    end
-    @threads = Params_threads.new
-    @download = Params_download.new
-    @html = Params_HTML.new
-    @misc = Params_misc.new
-    @param_classes = [] << @download << @html << @misc << @threads
-    @params = []
-    @param_classes.each do |param|
-      @params += param.params_list
-    end
   end
 end

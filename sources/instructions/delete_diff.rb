@@ -1,22 +1,13 @@
 module Delete_diff
-  # todo
-  def self.delete_bad_files(traces, data, dir)
-    # manage external files ( -42 ) here
-    p data[0]
-    abort
-    data.each
-  end
-
-  #todo => attention à ce que le fichier repéré soit bel et bien celui supprimé
-  def self.delete_diff(chap_list, manga_data)
+  def self.delete_diff(manga)
     params = Params.instance.download
     db = Manga_database.instance
-    dir = params[1] + manga_data[:website][:dir] + 'mangas/' + manga_data[:name] + '/'
+    dir = params[1] + manga[:website][:dir] + 'mangas/' + manga[:name] + '/'
     unless File.directory?(dir)
       return false
     end
-    chap_list = chap_list.map{|link| manga_data.extract_values_from_link(link).shift(2)}.reverse
-    tmp_trace = db.get_trace(manga_data)
+    chap_list = manga[:download_class].links.map{|link| manga.extract_values_from_link(link).shift(2)}.reverse
+    tmp_trace = db.get_trace(manga)
     trace = []
     tmp_trace.each do |e|
       # creating an array that contains only volume and chapter values
@@ -30,11 +21,12 @@ module Delete_diff
         puts 'deleting file : '.yellow + file
         File.delete(file)
       end
-      Dir.glob(params[:manga_path] + manga_data[:website][:dir] + 'html/' + manga_data[:name] + HTML_utils::html_chapter_filename(chap[1], chap[0])).each do |file|
+      Dir.glob(params[:manga_path] + manga[:website][:dir] + 'html/' + manga[:name] +
+                 HTML_utils::html_chapter_filename(chap[1], chap[0])).each do |file|
         puts 'deleting file : '.yellow + file
         File.delete(file)
       end
-      db.delete_trace(manga_data, chap)
+      db.delete_trace(manga, chap)
       deleted = true
     end
     deleted

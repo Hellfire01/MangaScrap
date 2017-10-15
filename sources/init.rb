@@ -42,6 +42,8 @@ class Init
   instructions/query
   instructions/Instructions_exec
   instructions/Manga_data_filter
+  Enums/download_types
+  exceptions/Connection_exception
   DB/sub_data/data_module
   DB/sub_data/History
   DB/sub_data/Macro
@@ -94,6 +96,7 @@ class Init
     Struct.new('Website', :link, :aliases, :dir, :to_complete, :class)
     Struct.new('Manga_data_values', :name, :link, :id, :status, :website, :data, :download_class, :in_db, :index_page)
     Struct.new('Download_display_ref', :total_failed_pages, :failed, :total_pages, :pages, :downloaded_page)
+    Struct.new('Connection_error', :link, :message, :nb_tries, :silent, :http_code, :error_code)
   end
 
   def self.initialize_mangascrap

@@ -9,14 +9,15 @@ module MangaScrap_API
     puts 'adding ' + mangas.size.to_s + ' element(s) to database'
     html = HTML.new
     mangas.each do |manga|
-      if manga[:download_class] == nil
-        next
-      end
-      manga[:download_class].get_web_data
-      manga[:download_class].data
-      if generate_html
-        html_manga = HTML_manga.new(manga)
-        html_manga.generate_chapter_index
+      next unless Utils_errors::manage_exceptions(manga) do ||
+        if manga[:download_class] == nil || manga[:download_class].get_web_data == false
+          next
+        end
+        manga[:download_class].data
+        if generate_html
+          html_manga = HTML_manga.new(manga)
+          html_manga.generate_chapter_index
+        end
       end
     end
     html.generate_index if generate_html
@@ -39,12 +40,9 @@ module MangaScrap_API
       if dw == nil
         next
       end
-      generate_html = false
-      next unless Utils_errors::manage_redirection_error(manga) do ||
-        generate_html = (todo_only ? dw.todo : dw.update)
-      end
+      generate_html = (todo_only ? dw.todo : dw.update)
       if params[:delete_diff]
-        if Delete_diff::delete_diff(dw.links, manga) || generate_html
+        if Delete_diff::delete_diff(manga) || generate_html # update the HTML if a page / chapter was added or removed
           html_manga = HTML_manga.new(manga)
           html_manga.generate_chapter_index
         end
@@ -93,9 +91,7 @@ module MangaScrap_API
     elements = filter.run(false, true)
     instruction_class.clear_data
     elements.each do |e|
-      next unless Utils_errors::manage_redirection_error(e) do ||
-        e[:download_class].get_web_data
-      end
+      next unless e[:download_class].get_web_data
       if Re_download_module::redl_manager(e, e[:website][:class]::volume_string_to_int(volume), chapter, page)
         html_manga = HTML_manga.new(e)
         html_manga.generate_chapter_index
@@ -114,9 +110,7 @@ module MangaScrap_API
       if manga[:download_class] == nil
         next
       end
-      next unless Utils_errors::manage_redirection_error(manga) do ||
-        manga[:download_class].get_web_data
-      end
+      next unless manga[:download_class].get_web_data
       manga[:download_class].data
       html_manga = HTML_manga.new(manga)
       html_manga.generate_chapter_index

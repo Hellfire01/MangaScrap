@@ -66,6 +66,8 @@ class UT_Init
     puts '' if @verbose
   end
 
+# old tests that can only be used if there are elements in the database
+=begin
   def get_content_of_database
     puts '======================> 5 getting the content of the database ( all of it )' if @verbose
     begin
@@ -117,6 +119,17 @@ class UT_Init
     puts 'ok' if @verbose
     puts '' if @verbose
   end
+=end
+
+  def prepare_databases
+    puts '======================> 5 preparing the databases' if @verbose
+    Manga_database::set_unit_tests_env('unitTests/')
+    Params_module::set_unit_tests_env('unitTests/')
+    Manga_database.instance
+    Params.instance
+    puts 'ok' if @verbose
+    puts '' if @verbose
+  end
 
   public
   def run
@@ -126,13 +139,20 @@ class UT_Init
     require_all_gems
     require_all_mangascrap_files
     get_structures
-    get_content_of_database
-    get_params
+    prepare_databases
     puts '####################### all good'
   end
 
   def initialize(verbose = true, high_verbose = true)
     @verbose = verbose
     @high_verbose = high_verbose
+    puts '======================> 0 clearing unit tests environment' if @verbose
+    Utils_file::dir_create(Dir.home + '/.MangaScrap/unitTests')
+    File.glob(Dir.home + '/.MangaScrap/unitTests/*').each do |file|
+      puts 'deleting file : ' + file if @verbose && @high_verbose
+      File.delete(file)
+    end
+    puts 'ok' if @verbose
+    puts '' if @verbose
   end
 end

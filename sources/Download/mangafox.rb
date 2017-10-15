@@ -3,18 +3,9 @@ class Download_Mangafox
 
   private
   def extract_links(manga)
-    tries = @params[4]
     links = @manga_data[:index_page].xpath('//a[@class="tips"]').map{ |link| link['href'] }
-    while (links == nil || links.size == 0) && tries > 0
-      puts ('error while retrieving chapter index of ' + manga.name).yellow
-      doc = Utils_connection::get_page(manga.link)
-      if doc != nil
-        links = doc.xpath('//a[@class="tips"]').map{ |link| link['href'] }
-      end
-      tries -= 1
-    end
     if links == nil || links.size == 0
-      raise ('failed to get manga '.red + manga.name.yellow + ' chapter index'.red)
+      raise ('failed to get manga '.red + manga[:name].yellow + ' chapter index'.red)
     end
     links
   end

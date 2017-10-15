@@ -13,28 +13,6 @@ false if it could not validate the data
 
 class Manga_data
   private
-  # see if the link exists ( is it redirected ? )
-  def check_link(display)
-    if @data[:link] == nil
-      @data[:link] = @data[:website][:link] + @data[:website][:to_complete] + @data[:name]
-    end
-    begin
-      @data[:index_page] = Utils_connection::get_page(@data[:link], true)
-    rescue RuntimeError => e
-      if e.message == 'could not connect'
-        puts 'Warning :'.yellow + ' could not connect to ' + @data[:link].yellow if display
-      elsif e.message == 'redirection'
-        puts 'Warning :'.yellow + ' got redirected while trying to connect to ' + @data[:link].yellow if display
-        puts 'Please check if ' + Web_data::extract_name_from_link(@data[:link]).yellow + ' exists at ' + Web_data::extract_site_from_link(@data[:link]).yellow
-        puts ''
-      else
-        raise e
-      end
-      return false
-    end
-    true
-  end
-
   # if the manga is already in the database, get all the information
   # there is no need to re-get the name and site as they are used to get all of the elements
   def get_data_in_db
@@ -64,10 +42,7 @@ class Manga_data
       end
       @data[:link] = @data[:website][:link] + @data[:website][:to_complete] + @data[:name]
     elsif @data[:link] != nil # got manga_data with link
-      @data[:link] = Web_data::link_correction(@data[:link])
-      @data[:name] = Web_data::extract_name_from_link(@data[:link])
-      @data[:website] = Web_data.instance.is_site_compatible?(Web_data::extract_site_from_link(@data[:link]), true)
-      if @data[:website] == nil
+      unless Web_data.instance.get_web_info_from_link(@data, display)
         return false
       end
     else # Error => the data was not fed correctly to the class
@@ -82,7 +57,7 @@ class Manga_data
   def validate_data(connect, display)
     ret = get_data_in_db
     if !ret && connect # if it is not in the database and a connection is required, then it is good
-      if check_link(display)
+      if get_index(display)
         @data[:status] = true
         return true
       end
@@ -98,7 +73,7 @@ class Manga_data
     end
     # should the manga not be in the database and Manga_data require connection,
     #    it will try to valid / invalid the link
-    if !ret && connect && @data[:link] != nil && !check_link(display)
+    if !ret && connect && @data[:link] != nil && !get_index(display)
       false
     else
       ret
@@ -139,6 +114,24 @@ class Manga_data
   def to_s
     'link = ' + ((@data[:link] == nil) ? '/' : '"' + @data[:link] + '"') + ', name = ' + ((@data[:name] == nil) ? '/' : '"' + @data[:name] + '"') +
       ', site = ' + ((@data[:website] == nil) ? '/' : '"' + @data[:website] + '"')
+  end
+
+  # tries to get the index page and sees if the link exists ( is it redirected ? )
+  def get_index(display)
+    if @data[:link] == nil
+      @data[:link] = @data[:website][:link] + @data[:website][:to_complete] + @data[:name]
+    end
+    begin
+      @data[:index_page] = Utils_connection::get_page(@data[:link], Download_type::INDEX, true) if @data[:index_page] == nil
+    rescue Connection_exception => e
+      if display
+        puts 'Error'.red + ' while trying to get ' + @data[:name].red + " chapter's index"
+        puts 'Message : ' + e.data[:message].yellow + (e.data[:http_code] != -1 ? ' Code : ' + e.data[:http_code].to_s.yellow : '')
+        puts 'Link : ' + e.data[:link].yellow if e.data[:http_code] == 301 || e.data[:http_code] == 302
+      end
+      return false
+    end
+    true
   end
 
   # used to get an array containing the volume / chapter / page values from a link

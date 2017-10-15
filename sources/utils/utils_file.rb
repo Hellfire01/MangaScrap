@@ -91,25 +91,16 @@ module Utils_file
   def self.write_pic(pic_buffer, data, dir)
     Utils_file::dir_create(dir)
     name_buffer = file_name(dir, data[0], data[1], data[2])
-    if pic_buffer != nil
-      begin
-        File.open(name_buffer + '.jpg', 'wb') do |pic|
-          pic << pic_buffer
-        end
-        if File.exist?(name_buffer + '.txt')
-          File.delete(name_buffer + '.txt')
-        end
-      rescue Errno::EROFS => e
-        Utils_errors::critical_error('could not write image', e)
+    begin
+      File.open(name_buffer + '.jpg', 'wb') do |pic|
+        pic << pic_buffer
       end
-    else
-      File.open(name_buffer + '.txt', 'w') do |pic|
-        pic << 'could not be downloaded'
+      if File.exist?(name_buffer + '.txt')
+        File.delete(name_buffer + '.txt')
       end
-      puts 'Error : no picture to save'
-      return false
+    rescue Errno::EROFS => e
+      Utils_errors::critical_error('could not write image', e)
     end
-    true
   end
 
   def self.delete_files(path, extension)

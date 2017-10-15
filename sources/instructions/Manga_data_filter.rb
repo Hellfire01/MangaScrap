@@ -18,6 +18,7 @@ class Manga_data_filter
     @array.each do |todo|
       if todo.resolve(true, data_display)
         add_to_return(todo)
+        puts 'got data for ' + todo[:name]
       else # the data cannot be resolved, ignoring it
         next
       end

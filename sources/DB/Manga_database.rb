@@ -1,3 +1,5 @@
+$db_path = 'db/'
+
 #manga database
 class Manga_database
   include Singleton
@@ -9,7 +11,7 @@ class Manga_database
   #init database
   def initialize
     begin
-      @db = SQLite3::Database.new(Dir.home + '/.MangaScrap/db/manga.db')
+      @db = SQLite3::Database.new(Dir.home + '/.MangaScrap/' + $db_path + 'manga.db')
       # manga_db
       @db.execute 'CREATE TABLE IF NOT EXISTS manga_list (
         Id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, site TEXT,
@@ -32,6 +34,11 @@ class Manga_database
   end
 
   public
+  # used to set unit tests environment
+  def self.set_unit_tests_env(db_path)
+    $db_path = db_path
+  end
+
   # used to cast the lin of manga_list into a Manga_data
   def data_to_manga_data(data)
     Manga_data.new(data[0], data[1], data[3], data[4], data)

@@ -12,7 +12,7 @@ class DownloadDisplay
       puts ('downloaded ' + @ref[:pages].to_s + ' page' + ((@ref[:pages] > 1) ? 's' : '')).green
     end
     if @ref[:failed] != 0
-      puts 'could not download '.yellow + @ref[:failed].to_s.red + ' out of '.yellow + @ref[:pages].to_s
+      puts 'could not download '.yellow + @ref[:failed].to_s.red + ' out of '.yellow + (@ref[:pages] + @ref[:failed]).to_s
       unless @todo
         puts 'all pages were added to the todo database'
       end
@@ -26,7 +26,7 @@ class DownloadDisplay
     if @introduced == true && @ref[:downloaded_page] == true
       puts ('downloaded a total of ' + @ref[:total_pages].to_s + ' page' + ((@ref[:total_pages] != 1) ? 's' : '')).green
       if @ref[:total_failed_pages] > 0
-        puts @ref[:total_failed_pages].to_s.red + (' page' + ((@ref[:total_failed_pages] != 1) ? 's' : '') + ' could not be downloaded and ' + ((@total_failed_pages > 1) ? 'where' : 'was') + ' added to the todo database').yellow
+        puts @ref[:total_failed_pages].to_s.red + (' page' + ((@ref[:total_failed_pages] != 1) ? 's' : '') + ' could not be downloaded and ' + ((@ref[:total_failed_pages] > 1) ? 'where' : 'was') + ' added to the todo database').yellow
       end
       @unmanaged_volume_types = []
       @ref[:total_failed_pages] = 0

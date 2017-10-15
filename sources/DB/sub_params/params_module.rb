@@ -1,3 +1,5 @@
+$db_path = 'db/'
+
 module Params_module
   attr_reader :params, :params_list, :db_name
 
@@ -114,7 +116,7 @@ module Params_module
 
   # gets all of the data form the database
   def get_data_from_db(init_exec)
-    @db = SQLite3::Database.new(Dir.home + '/.MangaScrap/db/params.db')
+    @db = SQLite3::Database.new(Dir.home + '/.MangaScrap/' + $db_path + 'params.db')
     @db.execute init_exec
     data = Utils_database::db_exec("Select * from #{@db_name}", "could not get params from the #{@db_name} table", @db)[0]
     if data == nil || data.size == 0 # if the database is empty, the parameters are initialized with the default values
@@ -150,6 +152,11 @@ module Params_module
   end
 
   public # ========================================================================================================= public
+  # used to set unit tests environment
+  def self.set_unit_tests_env(db_path)
+    $db_path = db_path
+  end
+
   # used to access the params directly from the class ( you can see it as some sort of glorified getter )
   def [](id)
     begin
