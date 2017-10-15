@@ -42,7 +42,7 @@ module MangaScrap_API
       end
       generate_html = (todo_only ? dw.todo : dw.update)
       if params[:delete_diff]
-        if Delete_diff::delete_diff(manga) || generate_html # update the HTML if a page / chapter was added or removed
+        if manga[:download_class].links != nil && (Delete_diff::delete_diff(manga) || generate_html) # update the HTML if a page / chapter was added or removed
           html_manga = HTML_manga.new(manga)
           html_manga.generate_chapter_index
         end
