@@ -95,7 +95,11 @@ class Instructions_exec
     end
     @parser.on 'details' do |args|
       buff = get_valid_data('list', false, args, false)
-      MangaScrap_API::details(buff) unless buff.empty?
+      MangaScrap_API::details(buff, false) unless buff.empty?
+    end
+    @parser.on 'many-details' do |args|
+      buff = get_valid_data('list', false, args, false)
+      MangaScrap_API::details(buff, true) unless buff.empty?
     end
     @parser.on 'managed' do ||
       puts "managed websites are :\n\n"

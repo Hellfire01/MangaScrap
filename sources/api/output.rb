@@ -14,7 +14,7 @@ module MangaScrap_API
   # infos is used to get all the available information on the manga from the database
   # this includes traces and _todo
   # mangas = array of Manga_Data where status = true and in_db = true
-  def self.details(mangas)
+  def self.details(mangas, detail)
     database = Manga_database.instance
     mangas.sort{|a, b| a[:link] <=> b[:link]}.each do |manga|
       puts 'Details for : ' + manga[:name].yellow
@@ -46,10 +46,24 @@ module MangaScrap_API
       if todo.size == 0
         puts 'there are no todo to download'
       else
-        puts "There is a total of #{todo.size} todo elements to download witch includes :"
-        buff = todo.map{|e| e[:page] == -1}
-        puts "#{buff.size} entire chapter#{buff.size == 1 ? '' : 's'}" if buff.size != 0
-        puts "#{todo.size - buff.size} independent page#{todo.size - buff.size == 1 ? '' : 's'}" if todo.size - buff.size != 0
+        if detail
+          puts "There is a total of #{todo.size} todo elements to download witch includes :"
+          todo.each do |e|
+            if e[:volume] != nil
+              buff = Utils_file::volume_int_to_string(e[:volume], false) + ' '
+            else
+              buff = ''
+            end
+            buff += "chapter #{((e[:chapter] % 1 == 0) ? e[:chapter].to_i : e[:chapter])}"
+            buff += ((e[:page] != -1) ? " page #{e[:page]}" : '')
+            puts buff
+          end
+        else
+          puts "There is a total of #{todo.size} todo elements to download witch includes :"
+          buff = todo.map{|e| e[:page] != -1}
+          puts "#{buff.size} entire chapter#{buff.size == 1 ? '' : 's'}" if buff.size != 0
+          puts "#{todo.size - buff.size} independent page#{todo.size - buff.size == 1 ? '' : 's'}" if todo.size - buff.size != 0
+        end
       end
       puts "\n"
     end
@@ -75,7 +89,7 @@ module MangaScrap_API
       file = File.open('sources/templates/text/help.txt', 'r')
       content = file.read
       content = content.gsub('_todo', 'todo')
-      instructions = %w(link id file query all add update fast-update download redl re-download p c v param version help list output delete delete-db details html todo clear todo reset set data managed)
+      instructions = %w(link id file query all add update fast-update download redl re-download p c v param version help list output delete delete-db details many-details html todo clear todo reset set data managed)
       instructions.each do |instruction|
         content = content.gsub('[' + instruction + ']g', instruction.green).gsub('[' + instruction + ']y', instruction.yellow)
       end

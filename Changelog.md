@@ -1,5 +1,6 @@
 ### Changelog :
 
+0.12.10 : debug and new instruction : corrected an issue with the "details" instruction and added a "many-details" instruction to output all of the todo database content<br />
 0.12.9 : stability fix : multiple minor bug fixes<br />
 0.12.8 : stability fix and new feature : it is now possible to add a manga using a link that contains page and chapter values + better management of the redirections<br />
 0.12.7 : stability fix, optimisation and display : the download of multiple mangas is now faster ( the index was downloaded twice ) + multiple bug fixes + display fixes

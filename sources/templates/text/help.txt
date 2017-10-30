@@ -68,6 +68,11 @@
 
     [details]g [data arguments compatible] [elements required] [in database]
         gives all of the available data on the element this includes anything that is available in the database
+	just gives the count of the elements in the database
+
+    [many-details]g [data arguments compatible] [elements required] [in database]
+        gives all of the available data on the element this includes anything that is available in the database
+        outputs absolutly all of the toto information
 
     [param]g [own arguments]
         Allows you to configure the way MangaScrap works.
