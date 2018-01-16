@@ -34,6 +34,11 @@ class Manga_database
   end
 
   public
+  # allows execution of queries from external parts of the program ( mainly used for debugging and updates )
+  def exec_query(query, error, args)
+    Utils_database::db_exec(query, error, @db, args)
+  end
+
   # used to set unit tests environment
   def self.set_unit_tests_env(db_path)
     $db_path = db_path

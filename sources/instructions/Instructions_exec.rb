@@ -221,7 +221,7 @@ class Instructions_exec
 
   # executes the instructions
   def run argv
-    if argv.size == 0
+    if argv.size == 0 # executing default instruction ( update )
       puts 'no arguments, executing default'
       puts ''
       puts '' 'executing : ' + 'update'.green + ' ' + 'all'.yellow

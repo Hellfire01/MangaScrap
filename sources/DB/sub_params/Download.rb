@@ -1,3 +1,5 @@
+# only directly used by the Params class, must NOT be directly called elsewhere
+
 $default_manga_path = Dir.home + '/Documents/mangas/'
 
 class Params_download
@@ -11,6 +13,8 @@ class Params_download
       critical_error("param_set was called with the id #{id} but the Params_download database does not posses it")
     end
     case id
+      when 'lt'
+        return param_check_bool(param, value)
       when 'bs', 'fs', 'nbf', 'es', 'ct', 'dt'
         return param_check_nb(param, value)
       when 'mp'
@@ -37,6 +41,7 @@ class Params_download
     ret << Struct::Param_value.new('error_sleep', 'es', 'float', ((default) ? 20 : @params[:error_sleep]), self, 0.1, 300)
     ret << Struct::Param_value.new('connect_timeout', 'cto', 'int', ((default) ? 20 : @params[:connect_timeout]), self, 1, 300)
     ret << Struct::Param_value.new('download_timeout', 'dt', 'int', ((default) ? 300 : @params[:download_timeout]), self, 0, 300)
+    ret << Struct::Param_value.new('loop_on_todo', 'lt', 'bool', ((default) ? true : @params[:loop_on_todo]), self)
   end
 
   def initialize
@@ -44,7 +49,7 @@ class Params_download
     @db_name = 'Download'
     @template_file = 'sources/templates/text/params/download.txt'
     Struct.new('Download_params', :id, :manga_path, :between_sleep, :failure_sleep, :nb_tries_on_fail, :error_sleep,
-               :connect_timeout, :download_timeout)
+               :connect_timeout, :download_timeout, :loop_on_todo)
     init("CREATE TABLE IF NOT EXISTS #{@db_name} (
       Id INTEGER PRIMARY KEY AUTOINCREMENT,
         manga_path TEXT,
@@ -53,7 +58,8 @@ class Params_download
         nb_tries_on_fail INT,
         error_sleep FLOAT,
         connect_timeout INT,
-        download_timeout INT)") do |data|
+        download_timeout INT,
+        loop_on_todo VARCHAR(5))") do |data|
       @params = Struct::Download_params.new(*data)
     end
   end

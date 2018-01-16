@@ -1,6 +1,6 @@
 # this module is used by every download class
 module Base_downloader
-  attr_reader :links, :downloaded_a_page
+  attr_reader :links, :downloaded_a_page, :generated_todo
 
   private
   def extract_links(manga)
@@ -13,9 +13,11 @@ module Base_downloader
       @db.add_todo(@manga_data, data[0], data[1], -1)
       @aff.error_on_page_download(disp)
       @aff.dump_chapter
+      @generated_todo = true
     else
       @db.add_todo(@manga_data, data[0], data[1], data[2])
       @aff.error_on_page_download(disp)
+      @generated_todo = true
     end
     false
   end
@@ -160,6 +162,12 @@ module Base_downloader
     Utils_errors::critical_error('The "chapter_link" method was not overridden after being included in a download class')
   end
 
+  # method used in order to allow MangaScrap to loop on todo elements
+  def todo_reset
+    @generated_todo = false
+    @downloaded_a_page = false
+  end
+
   # _todo is the method that downloads all the pages / chapters that could not be downloaded previously and where placed
   #     in the _todo database
   # once successfully downloaded, the _todo element is deleted from the _todo database
@@ -174,10 +182,12 @@ module Base_downloader
           data = [] << elem[:volume] << elem[:chapter] << elem[:page]
           if page_link(link_generator(elem[:volume], elem[:chapter], elem[:page]), data)
             @db.delete_todo(elem[:id])
+            @downloaded_a_page = true
           end
         else # if chapter
           if chapter_link(link_generator(elem[:volume], elem[:chapter], 1))
             @db.delete_todo(elem[:id])
+            @downloaded_a_page = true
           end
         end
       end
@@ -231,6 +241,7 @@ module Base_downloader
   def initialize(manga)
     @manga_data = manga
     @downloaded_a_page = false
+    @generated_todo = false
     @params = Params.instance.download
     @dir = @params[:manga_path] + manga[:website][:dir] + 'mangas/' + manga[:name] + '/'
     @db = Manga_database.instance

@@ -1,0 +1,8 @@
+1. update the param.db database in order to add the new parameter
+ALTER TABLE Download ADD loop_on_todo VARCHAR(5);
+
+2. set the value of the new parameter using MangaScrap
+ruby MangaScrap.rb param set lt true
+
+3. use the tool to update the database and ensure that MangaScrap will be able to continue to update your mangas
+ruby tools/mangafox_me_to_la.rb

@@ -1,3 +1,5 @@
+# only directly used by the Params class, must NOT be directly called elsewhere
+
 class Params_misc
   include Params_module
 

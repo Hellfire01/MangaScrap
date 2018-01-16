@@ -30,7 +30,7 @@ module MangaScrap_API
   # fast_update = bool, if true, the update function will ignore all mangas with the 'Completed' status
   def self.update(mangas, todo_only = false, fast_update = false)
     html = HTML.new
-    params = Params.instance.misc
+    params = Params.instance
     if fast_update
       mangas = mangas.reject{|manga| manga.data[8] == 'Completed'}
     end
@@ -40,8 +40,18 @@ module MangaScrap_API
       if dw == nil
         next
       end
-      generate_html = (todo_only ? dw.todo : dw.update)
-      if params[:delete_diff]
+      begin
+        generate_html = (todo_only ? dw.todo : dw.update)
+        if params.download[:loop_on_todo] && (dw.generated_todo || dw.downloaded_a_page)
+          dw.todo_reset
+          puts 're-trying to download todo' + ' (loop-on-todo is set to true)'.yellow
+          dw.todo
+        end
+      rescue RuntimeError => e
+        puts e.message
+        next
+      end
+      if params.misc[:delete_diff]
         if manga[:download_class].links != nil && (Delete_diff::delete_diff(manga) || generate_html) # update the HTML if a page / chapter was added or removed
           html_manga = HTML_manga.new(manga)
           html_manga.generate_chapter_index

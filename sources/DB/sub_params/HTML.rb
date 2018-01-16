@@ -1,5 +1,4 @@
 # only directly used by the Params class, must NOT be directly called elsewhere
-# stores all of the macros the scrapper can execute
 class Params_HTML
   include Params_module
 

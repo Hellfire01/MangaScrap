@@ -25,3 +25,7 @@ Values range from 1 to 300 seconds
 Allows you to decide how much time MangaScrap will try to download the web page / comic page / ...
 Warning : this time value includes the |cto| time
 Values from 0 ( no timeout ) to 300 seconds
+
+[lt] (lt) = {lt}
+if set to true, will allow MangaScrap to loop on a manga if a todo was generated or downloaded
+it will try to re-download the todo elements if it succeded to download a todo on the previous try

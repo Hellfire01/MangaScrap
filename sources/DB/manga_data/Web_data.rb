@@ -8,7 +8,7 @@ class Web_data
   # private instance methods
   def initialize
     @sites = []
-    @sites << Struct::Website.new('http://mangafox.me/', %w(http://mangafox.me mangafox.me mangafox),
+    @sites << Struct::Website.new('http://mangafox.la/', %w(http://mangafox.la mangafox.la mangafox),
                                   'mangafox/', 'manga/', Download_Mangafox)
     @sites << Struct::Website.new('http://www.mangareader.net/', %w(http://www.mangareader.net www.mangareader.net mangareader.net mangareader),
                                   'mangareader/', '', Download_Mangareader_Pandamanga)

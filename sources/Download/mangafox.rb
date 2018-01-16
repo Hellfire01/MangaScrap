@@ -77,7 +77,7 @@ class Download_Mangafox
     else
       link += chapter.to_s
     end
-    link + '/' + page.to_s + '.html'
+    link + '/' + ((page < 10) ? '0' : '') + page.to_s + '.html'
   end
 
   # downloads a page, with link = the link, data = [volume, chapter, page]
