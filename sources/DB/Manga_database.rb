@@ -72,7 +72,12 @@ class Manga_database
       puts 'Error '.red + ': while trying to get manga in database => Data is nil'
       exit 2
     end
-    Utils_database::db_exec('SELECT * FROM manga_list WHERE link=?', "Exception while getting #{manga_data[:name]} in database", @db, [manga_data[:link]])[0]
+    buff = nil
+    if manga_data[:id] != nil
+      Utils_database::db_exec('SELECT * FROM manga_list WHERE id=?', "Exception while getting #{manga_data[:name]} in database", @db, [manga_data[:id]])[0]
+    else
+      Utils_database::db_exec('SELECT * FROM manga_list WHERE link=?', "Exception while getting #{manga_data[:name]} in database", @db, [manga_data[:link]])[0]
+    end
   end
 
   def manga_in_data?(manga_data)

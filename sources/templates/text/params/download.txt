@@ -29,3 +29,7 @@ Values from 0 ( no timeout ) to 300 seconds
 [lt] (lt) = {lt}
 if set to true, will allow MangaScrap to loop on a manga if a todo was generated or downloaded
 it will try to re-download the todo elements if it succeded to download a todo on the previous try
+
+[ltt] (ltt) = {ltt}
+should |lt| be set to true, this parameter will allow the scrapper to know how many times it can loop at most
+values range from 1 to 10

@@ -8,8 +8,8 @@ class Web_data
   # private instance methods
   def initialize
     @sites = []
-    @sites << Struct::Website.new('http://mangafox.la/', %w(http://mangafox.la mangafox.la mangafox),
-                                  'mangafox/', 'manga/', Download_Mangafox)
+    @sites << Struct::Website.new('http://fanfox.net/', %w(http://fanfox.net fanfox.net fanfox),
+                                  'mangafox/', 'manga/', Download_Mangafox) # purposely left in the old directory
     @sites << Struct::Website.new('http://www.mangareader.net/', %w(http://www.mangareader.net www.mangareader.net mangareader.net mangareader),
                                   'mangareader/', '', Download_Mangareader_Pandamanga)
     @sites << Struct::Website.new('http://www.mangapanda.com/', %w(http://www.mangapanda.com www.mangapanda.com mangapanda.com mangapanda),
@@ -21,7 +21,7 @@ class Web_data
 
   def extract_values_from_link(link)
     # get site
-    # throw exception if bad site
+    # throw exception if bad sites
     # call static method of download class
   end
 

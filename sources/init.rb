@@ -31,7 +31,7 @@ class Init
   html/html
   html/html_manga
   Download/base_downloader
-  Download/mangafox
+  Download/fanfox
   Download/mangareader_mangapanda
   DownloadDisplay
   instructions/Parsers/exec/Instruction_parser

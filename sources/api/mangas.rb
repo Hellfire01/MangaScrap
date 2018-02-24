@@ -42,9 +42,12 @@ module MangaScrap_API
       end
       begin
         generate_html = (todo_only ? dw.todo : dw.update)
-        if params.download[:loop_on_todo] && (dw.generated_todo || dw.downloaded_a_page)
+        i = 0
+        i_max = params.download[:loop_on_todo_times]
+        while params.download[:loop_on_todo] && (dw.generated_todo || dw.downloaded_a_page) && i < i_max
+          i += 1
           dw.todo_reset
-          puts 're-trying to download todo' + ' (loop-on-todo is set to true)'.yellow
+          puts 're-trying to download todo' + ' (loop-on-todo is set to true) '.yellow + i.to_s + ' / ' + i_max.to_s
           dw.todo
         end
       rescue RuntimeError => e

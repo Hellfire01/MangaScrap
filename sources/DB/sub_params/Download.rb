@@ -15,7 +15,7 @@ class Params_download
     case id
       when 'lt'
         return param_check_bool(param, value)
-      when 'bs', 'fs', 'nbf', 'es', 'ct', 'dt'
+      when 'bs', 'fs', 'nbf', 'es', 'ct', 'dt', 'ltt'
         return param_check_nb(param, value)
       when 'mp'
         begin
@@ -42,6 +42,7 @@ class Params_download
     ret << Struct::Param_value.new('connect_timeout', 'cto', 'int', ((default) ? 20 : @params[:connect_timeout]), self, 1, 300)
     ret << Struct::Param_value.new('download_timeout', 'dt', 'int', ((default) ? 300 : @params[:download_timeout]), self, 0, 300)
     ret << Struct::Param_value.new('loop_on_todo', 'lt', 'bool', ((default) ? true : @params[:loop_on_todo]), self)
+    ret << Struct::Param_value.new('loop_on_todo_times', 'ltt', 'int', ((default) ? 5 : @params[:loop_on_todo_times]), self, 1, 10)
   end
 
   def initialize
@@ -49,7 +50,7 @@ class Params_download
     @db_name = 'Download'
     @template_file = 'sources/templates/text/params/download.txt'
     Struct.new('Download_params', :id, :manga_path, :between_sleep, :failure_sleep, :nb_tries_on_fail, :error_sleep,
-               :connect_timeout, :download_timeout, :loop_on_todo)
+               :connect_timeout, :download_timeout, :loop_on_todo, :loop_on_todo_times)
     init("CREATE TABLE IF NOT EXISTS #{@db_name} (
       Id INTEGER PRIMARY KEY AUTOINCREMENT,
         manga_path TEXT,
@@ -59,7 +60,8 @@ class Params_download
         error_sleep FLOAT,
         connect_timeout INT,
         download_timeout INT,
-        loop_on_todo VARCHAR(5))") do |data|
+        loop_on_todo VARCHAR(5),
+        loop_on_todo_times INT)") do |data|
       @params = Struct::Download_params.new(*data)
     end
   end

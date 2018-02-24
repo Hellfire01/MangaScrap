@@ -40,7 +40,7 @@ class Manga_data
       if @data[:website] == nil
         return false
       end
-      @data[:link] = @data[:website][:link] + @data[:website][:to_complete] + @data[:name]
+      @data[:link] = @data[:website][:link] + @data[:website][:to_complete] + @data[:name] + '/'
     elsif @data[:link] != nil # got manga_data with link
       unless Web_data.instance.get_web_info_from_link(@data, display)
         return false
@@ -64,11 +64,11 @@ class Manga_data
       return false
     end
     if ret && connect # if connect is true, the manga should not be found in the database
-      puts 'Warning :'.yellow + ' ' + @data[:name] + ' of ' + @data[:website][:link] + ' is already in the database, ignoring it'
+      puts 'Warning :'.yellow + ' ' + @data[:name] + ' / ' + @data[:link] + ' is already in the database, ignoring it'
       return false
     end
     if !ret && !connect # if connect is false, it should be in the database
-      puts 'Warning :'.yellow + ' ' + @data[:name] + ' of ' + @data[:website][:link] + ' is not in the database, ignoring it'
+      puts 'Warning :'.yellow + ' ' + @data[:name] + ' / ' + @data[:link] + ' is not in the database, ignoring it'
       return false
     end
     # should the manga not be in the database and Manga_data require connection,

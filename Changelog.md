@@ -1,5 +1,9 @@
 ### Changelog :
 
+0.14.0 : stability : corrected the scraper in order to allow it to continue to use mangafox ho changed name ( mangafox.la to fanfox.net ) +implemented a parameter ( loop_on_todo_qt ) to allow configuration of the loop_on_todo option<br />
+
+###### Warning : the params database is not compatible<br />Please look at the file migration/0.12.x_to_0.13.x.txt<br />
+
 0.13.0 : stability : corrected the scraper in order to allow it to continue to use mangafox ho changed domain name ( .me to .la ) + implemented a new param loop_on_todo in order to allow MangaScrap to download a maximum of todo pages in one go without having to put multiple instructions together<br />
 
 ###### Warning : the params database is not compatible<br />Please look at the file migration/0.12.x_to_0.13.x.txt<br />

@@ -1,0 +1,7 @@
+1. update the params database with this instruction :
+ALTER TABLE Download ADD loop_on_todo_times INT;
+
+2. give the new parameter ( ltt ) a value. Recommended is 5
+
+3. use the tool to update the database and ensure that MangaScrap will be able to continue to update your mangas
+ruby tools/mangafox_to_fanfox.rb

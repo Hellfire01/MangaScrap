@@ -6,7 +6,7 @@ require_relative '../sources/../sources/init'
 $0="MangaScrap's mangafox migration"
 
 def get_mangafox_mangas(db)
-  db.exec_query('SELECT * FROM manga_list WHERE site=? ORDER BY name COLLATE NOCASE', 'error while getting the manga list', ['http://mangafox.me/'])
+  db.exec_query('SELECT * FROM manga_list WHERE site=? ORDER BY name COLLATE NOCASE', 'error while getting the manga list', ['http://mangafox.la/'])
 end
 
 def update_mangafox_mangas(db, mangas)
@@ -17,7 +17,10 @@ def update_mangafox_mangas(db, mangas)
       puts 'updating ' + i.to_s + ' / ' + mangas.size.to_s + '   ' + manga[1]
       # update website
       # update link
-      args = ['http://mangafox.la/', manga[4].gsub('mangafox.me', 'mangafox.la'), manga[0]]
+      args = ['http://fanfox.net/', manga[4].gsub('mangafox.la', 'fanfox.net'), manga[0]]
+      if args[1][-1, 1] != '/'
+        args[1] += '/'
+      end
       db.exec_query('UPDATE manga_list SET site=?, link=? WHERE id=?',
                     'could not update ' + manga[1], args)
       i += 1

@@ -148,7 +148,7 @@ module Params_module
     data = get_data_from_db(init_exec)
     data = prepare_data(data)
     yield(data)
-    @params_list = get_params # todo : les params ont déjà été get avec les valeurs par défaut, regarder s'il ne serait pas possible de faire usae du tableau de structures plutot que d'en demander un autre
+    @params_list = get_params # todo : les params ont déjà été get avec les valeurs par défaut, regarder s'il ne serait pas possible de faire usage du tableau de structures plutot que d'en demander un autre
   end
 
   public # ========================================================================================================= public
