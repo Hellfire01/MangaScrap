@@ -23,6 +23,9 @@ module Utils_connection
   end
 
   def self.download(link, silent, type)
+
+    puts link
+
     tries ||= $download_params[:nb_tries_on_fail]
     while tries != 0
       sleep($download_params[:between_sleep])

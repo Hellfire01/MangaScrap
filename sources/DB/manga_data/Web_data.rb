@@ -9,11 +9,11 @@ class Web_data
   def initialize
     @sites = []
     @sites << Struct::Website.new('http://fanfox.net/', %w(http://fanfox.net fanfox.net fanfox),
-                                  'mangafox/', 'manga/', Download_Mangafox) # purposely left in the old directory
-    @sites << Struct::Website.new('http://www.mangareader.net/', %w(http://www.mangareader.net www.mangareader.net mangareader.net mangareader),
-                                  'mangareader/', '', Download_Mangareader_Pandamanga)
-    @sites << Struct::Website.new('http://www.mangapanda.com/', %w(http://www.mangapanda.com www.mangapanda.com mangapanda.com mangapanda),
-                                  'mangapanda/', '', Download_Mangareader_Pandamanga)
+                                  'mangafox/', 'manga/', Download_Mangafox, true) # purposely left in the old directory
+    @sites << Struct::Website.new('https://www.mangareader.net/', %w(https://www.mangareader.net www.mangareader.net mangareader.net mangareader),
+                                  'mangareader/', '', Download_Mangareader_Pandamanga, false)
+    @sites << Struct::Website.new('https://www.mangapanda.com/', %w(https://www.mangapanda.com www.mangapanda.com mangapanda.com mangapanda),
+                                  'mangapanda/', '', Download_Mangareader_Pandamanga, false)
   end
 
   public
@@ -46,7 +46,7 @@ class Web_data
     else
       data[:name] = buff[4]
     end
-    data[:link] = data[:website][:link] + data[:website][:to_complete] + data[:name] + '/'
+    data[:link] = data[:website][:link] + data[:website][:to_complete] + data[:name] + ((data[:website][:index_link_ends_with_slash]) ? '/' : '')
     true
   end
 

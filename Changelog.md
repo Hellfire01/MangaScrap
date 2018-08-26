@@ -1,5 +1,6 @@
 ### Changelog :
 
+0.14.1 : stability : fixed a rediretion issue with mangareader and pandamanga<br />
 0.14.0 : stability : corrected the scraper in order to allow it to continue to use mangafox ho changed name ( mangafox.la to fanfox.net ) +implemented a parameter ( loop_on_todo_qt ) to allow configuration of the loop_on_todo option<br />
 
 ###### Warning : the params database is not compatible<br />Please look at the file migration/0.12.x_to_0.13.x.txt<br />

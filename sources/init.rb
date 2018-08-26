@@ -93,7 +93,7 @@ class Init
     Struct.new('Data', :volume, :chapter, :page, :link)
     Struct.new('Todo_value', :id, :manga_id, :volume, :chapter, :page, :date)
     Struct.new('Param_value', :string, :id, :type, :value, :class, :min_value, :max_value)
-    Struct.new('Website', :link, :aliases, :dir, :to_complete, :class)
+    Struct.new('Website', :link, :aliases, :dir, :to_complete, :class, :index_link_ends_with_slash)
     Struct.new('Manga_data_values', :name, :link, :id, :status, :website, :data, :download_class, :in_db, :index_page)
     Struct.new('Download_display_ref', :total_failed_pages, :failed, :total_pages, :pages, :downloaded_page)
     Struct.new('Connection_error', :link, :message, :nb_tries, :silent, :http_code, :error_code)
