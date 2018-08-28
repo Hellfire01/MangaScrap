@@ -4,6 +4,9 @@ class Download_Mangafox
   private
   def extract_links(manga)
     links = @manga_data[:index_page].xpath('//a[@class="tips"]').map{ |link| link['href'] }
+    if @manga_data[:index_page].xpath('//div[@class="warning"]').text.include?('it is not available in Manga Fox')
+      raise ('cannot download manga '.red + manga[:name].yellow + ' is licensed and cannot be downloaded'.red)
+    end
     if links == nil || links.size == 0
       raise ('failed to get manga '.red + manga[:name].yellow + ' chapter index'.red)
     end

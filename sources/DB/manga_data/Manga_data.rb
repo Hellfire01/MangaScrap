@@ -40,7 +40,7 @@ class Manga_data
       if @data[:website] == nil
         return false
       end
-      @data[:link] = @data[:website][:link] + @data[:website][:to_complete] + @data[:name] + '/'
+      @data[:link] = @data[:website][:link] + @data[:website][:to_complete] + @data[:name] + ((@data[:website][:index_link_ends_with_slash]) ? '/' : '')
     elsif @data[:link] != nil # got manga_data with link
       unless Web_data.instance.get_web_info_from_link(@data, display)
         return false
